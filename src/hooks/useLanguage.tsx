@@ -69,8 +69,8 @@ const translations: Record<Language, Record<string, string>> = {
     
     // Stats Section
     "stats.treesPlanted": "Trees Planted",
-    "stats.villagesServed": "Villages Served",
-    "stats.communityMembers": "Community Members",
+    "stats.users": "Users",
+    "stats.panchayatsServed": "Panchayats Served",
     
     // Mission Section
     "mission.title": "Our Mission",
@@ -278,8 +278,8 @@ const translations: Record<Language, Record<string, string>> = {
     
     // Stats Section
     "stats.treesPlanted": "पेड़ लगाए गए",
-    "stats.villagesServed": "गांवों में सेवा",
-    "stats.communityMembers": "समुदाय सदस्य",
+    "stats.users": "उपयोगकर्ता",
+    "stats.panchayatsServed": "पंचायतों में सेवा",
     
     // Mission Section
     "mission.title": "हमारा मिशन",
