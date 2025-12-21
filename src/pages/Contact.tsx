@@ -10,10 +10,12 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const Contact = () => {
   const { toast } = useToast();
   const { t } = useLanguage();
+  const { settings } = useSiteSettings();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -89,8 +91,7 @@ const Contact = () => {
                     </div>
                     <div>
                       <h3 className="font-semibold text-foreground mb-1">{t("common.email")}</h3>
-                      <p className="text-muted-foreground">info@himsols.com</p>
-                      <p className="text-muted-foreground">support@himsols.com</p>
+                      <p className="text-muted-foreground">{settings?.contact_email || "info@himsols.com"}</p>
                     </div>
                   </div>
 
@@ -100,8 +101,7 @@ const Contact = () => {
                     </div>
                     <div>
                       <h3 className="font-semibold text-foreground mb-1">{t("common.phone")}</h3>
-                      <p className="text-muted-foreground">+91 1234567890</p>
-                      <p className="text-muted-foreground">+91 9876543210</p>
+                      <p className="text-muted-foreground">{settings?.contact_phone || "+91 1234567890"}</p>
                     </div>
                   </div>
 

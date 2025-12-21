@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
-import { Leaf, Mail, Phone, MapPin } from "lucide-react";
+import { Leaf, Mail, Phone, MapPin, Facebook, Instagram, Twitter } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 export const Footer = () => {
   const { t } = useLanguage();
+  const { settings } = useSiteSettings();
 
   return (
     <footer className="bg-muted mt-20">
@@ -20,6 +22,40 @@ export const Footer = () => {
             <p className="text-muted-foreground text-sm">
               {t("footer.tagline")}
             </p>
+            
+            {/* Social Links */}
+            <div className="flex gap-3 mt-4">
+              {settings?.facebook_url && (
+                <a
+                  href={settings.facebook_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-primary/10 p-2 rounded-full hover:bg-primary/20 transition-colors"
+                >
+                  <Facebook className="h-4 w-4 text-primary" />
+                </a>
+              )}
+              {settings?.instagram_url && (
+                <a
+                  href={settings.instagram_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-primary/10 p-2 rounded-full hover:bg-primary/20 transition-colors"
+                >
+                  <Instagram className="h-4 w-4 text-primary" />
+                </a>
+              )}
+              {settings?.twitter_url && (
+                <a
+                  href={settings.twitter_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-primary/10 p-2 rounded-full hover:bg-primary/20 transition-colors"
+                >
+                  <Twitter className="h-4 w-4 text-primary" />
+                </a>
+              )}
+            </div>
           </div>
 
           {/* Quick Links */}
@@ -66,11 +102,11 @@ export const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-muted-foreground text-sm">
                 <Mail className="h-4 w-4 text-primary" />
-                <span>info@himsols.com</span>
+                <span>{settings?.contact_email || "info@himsols.com"}</span>
               </li>
               <li className="flex items-center gap-2 text-muted-foreground text-sm">
                 <Phone className="h-4 w-4 text-primary" />
-                <span>+91 1234567890</span>
+                <span>{settings?.contact_phone || "+91 1234567890"}</span>
               </li>
               <li className="flex items-center gap-2 text-muted-foreground text-sm">
                 <MapPin className="h-4 w-4 text-primary" />

@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { CartProvider } from "@/hooks/useCart";
 import { LanguageProvider } from "@/hooks/useLanguage";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
+import { WhatsAppButton } from "@/components/WhatsAppButton";
 import Index from "./pages/Index";
 import Services from "./pages/Services";
 import TreePlantation from "./pages/TreePlantation";
@@ -32,6 +33,7 @@ const App = () => (
             <Toaster />
             <Sonner />
             <PWAInstallPrompt />
+            <WhatsAppButton />
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<Index />} />
