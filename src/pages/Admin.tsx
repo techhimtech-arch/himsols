@@ -23,11 +23,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Users, TreePine, TrendingUp, Loader2, Package } from "lucide-react";
+import { Shield, Users, TreePine, TrendingUp, Loader2, Package, Settings } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OrdersTab } from "@/components/admin/OrdersTab";
 import { TreesTab } from "@/components/admin/TreesTab";
 import { ScrapRequestsTab } from "@/components/admin/ScrapRequestsTab";
+import { SettingsTab } from "@/components/admin/SettingsTab";
 import { INDIAN_STATES, getDistrictsForState, IndianState } from "@/lib/constants";
 
 interface Request {
@@ -528,6 +529,10 @@ const Admin = () => {
                 <TabsTrigger value="orders" className="text-xs md:text-sm">Orders</TabsTrigger>
                 <TabsTrigger value="trees" className="text-xs md:text-sm">Trees</TabsTrigger>
                 <TabsTrigger value="users" className="text-xs md:text-sm">Users</TabsTrigger>
+                <TabsTrigger value="settings" className="text-xs md:text-sm">
+                  <Settings className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  Settings
+                </TabsTrigger>
               </TabsList>
             </div>
 
@@ -723,6 +728,11 @@ const Admin = () => {
                   </div>
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            {/* Settings Tab */}
+            <TabsContent value="settings">
+              <SettingsTab />
             </TabsContent>
           </Tabs>
         </div>
