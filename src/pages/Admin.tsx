@@ -458,62 +458,62 @@ const Admin = () => {
       <div className="pt-24 pb-16 px-4">
         <div className="container mx-auto">
           {/* Header */}
-          <div className="mb-8">
-            <div className="flex items-center gap-3 mb-2">
-              <Shield className="h-8 w-8 text-primary" />
-              <h1 className="text-4xl font-bold text-foreground">Admin Dashboard</h1>
+          <div className="mb-6 md:mb-8">
+            <div className="flex items-center gap-2 md:gap-3 mb-2">
+              <Shield className="h-6 w-6 md:h-8 md:w-8 text-primary" />
+              <h1 className="text-2xl md:text-4xl font-bold text-foreground">Admin Dashboard</h1>
             </div>
-            <p className="text-muted-foreground">
+            <p className="text-sm md:text-base text-muted-foreground">
               Manage tree plantation requests and users
             </p>
           </div>
 
           {/* Stats Cards */}
-          <div className="grid md:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
             <Card>
-              <CardContent className="p-6">
+              <CardContent className="p-4 md:p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground">Total Requests</p>
-                    <p className="text-3xl font-bold text-foreground">{stats.totalRequests}</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">Total Requests</p>
+                    <p className="text-2xl md:text-3xl font-bold text-foreground">{stats.totalRequests}</p>
                   </div>
-                  <TreePine className="h-8 w-8 text-primary" />
+                  <TreePine className="h-6 w-6 md:h-8 md:w-8 text-primary" />
                 </div>
               </CardContent>
             </Card>
 
             <Card>
-              <CardContent className="p-6">
+              <CardContent className="p-4 md:p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground">Total Users</p>
-                    <p className="text-3xl font-bold text-foreground">{stats.totalUsers}</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">Total Users</p>
+                    <p className="text-2xl md:text-3xl font-bold text-foreground">{stats.totalUsers}</p>
                   </div>
-                  <Users className="h-8 w-8 text-secondary" />
+                  <Users className="h-6 w-6 md:h-8 md:w-8 text-secondary" />
                 </div>
               </CardContent>
             </Card>
 
             <Card>
-              <CardContent className="p-6">
+              <CardContent className="p-4 md:p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground">Total Trees</p>
-                    <p className="text-3xl font-bold text-foreground">{stats.totalTrees}</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">Total Trees</p>
+                    <p className="text-2xl md:text-3xl font-bold text-foreground">{stats.totalTrees}</p>
                   </div>
-                  <TrendingUp className="h-8 w-8 text-accent-foreground" />
+                  <TrendingUp className="h-6 w-6 md:h-8 md:w-8 text-accent-foreground" />
                 </div>
               </CardContent>
             </Card>
 
             <Card>
-              <CardContent className="p-6">
+              <CardContent className="p-4 md:p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground">Pending</p>
-                    <p className="text-3xl font-bold text-foreground">{stats.pendingRequests}</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">Pending</p>
+                    <p className="text-2xl md:text-3xl font-bold text-foreground">{stats.pendingRequests}</p>
                   </div>
-                  <TreePine className="h-8 w-8 text-primary" />
+                  <TreePine className="h-6 w-6 md:h-8 md:w-8 text-primary" />
                 </div>
               </CardContent>
             </Card>
@@ -521,13 +521,15 @@ const Admin = () => {
 
           {/* Tabs */}
           <Tabs defaultValue="requests" className="space-y-6">
-            <TabsList>
-              <TabsTrigger value="requests">Plantation Requests</TabsTrigger>
-              <TabsTrigger value="scrap">Scrap Collection</TabsTrigger>
-              <TabsTrigger value="orders">Orders</TabsTrigger>
-              <TabsTrigger value="trees">Trees</TabsTrigger>
-              <TabsTrigger value="users">Users</TabsTrigger>
-            </TabsList>
+            <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
+              <TabsList className="w-max md:w-auto">
+                <TabsTrigger value="requests" className="text-xs md:text-sm">Plantation</TabsTrigger>
+                <TabsTrigger value="scrap" className="text-xs md:text-sm">Scrap</TabsTrigger>
+                <TabsTrigger value="orders" className="text-xs md:text-sm">Orders</TabsTrigger>
+                <TabsTrigger value="trees" className="text-xs md:text-sm">Trees</TabsTrigger>
+                <TabsTrigger value="users" className="text-xs md:text-sm">Users</TabsTrigger>
+              </TabsList>
+            </div>
 
             {/* Requests Tab */}
             <TabsContent value="requests">
