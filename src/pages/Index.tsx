@@ -99,16 +99,16 @@ const Index = () => {
         <div className="container mx-auto">
           <div className="grid md:grid-cols-3 gap-8 text-center">
             <div className="space-y-4 p-8 rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10 backdrop-blur-sm border border-white/30 hover-lift animate-scale-in">
-              <div className="text-6xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">50,000+</div>
+              <div className="text-6xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">450+</div>
               <p className="text-foreground font-semibold text-lg">{t("stats.treesPlanted")}</p>
             </div>
             <div className="space-y-4 p-8 rounded-2xl bg-gradient-to-br from-secondary/10 to-primary/10 backdrop-blur-sm border border-white/30 hover-lift animate-scale-in" style={{animationDelay: '0.1s'}}>
-              <div className="text-6xl font-bold bg-gradient-to-r from-secondary to-primary bg-clip-text text-transparent">100+</div>
-              <p className="text-foreground font-semibold text-lg">{t("stats.villagesServed")}</p>
+              <div className="text-6xl font-bold bg-gradient-to-r from-secondary to-primary bg-clip-text text-transparent">120+</div>
+              <p className="text-foreground font-semibold text-lg">{t("stats.users")}</p>
             </div>
             <div className="space-y-4 p-8 rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10 backdrop-blur-sm border border-white/30 hover-lift animate-scale-in" style={{animationDelay: '0.2s'}}>
-              <div className="text-6xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">5,000+</div>
-              <p className="text-foreground font-semibold text-lg">{t("stats.communityMembers")}</p>
+              <div className="text-6xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">5</div>
+              <p className="text-foreground font-semibold text-lg">{t("stats.panchayatsServed")}</p>
             </div>
           </div>
         </div>
