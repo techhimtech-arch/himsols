@@ -44,6 +44,11 @@ const Auth = () => {
       return;
     }
 
+    // Require at least email or phone
+    if (!signupData.email && !signupData.phone) {
+      return;
+    }
+
     const { error } = await signUp(signupData.email, signupData.password, signupData.name, signupData.phone);
     if (!error) {
       navigate("/");
@@ -116,14 +121,13 @@ const Auth = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="signup-email">Email</Label>
+                      <Label htmlFor="signup-email">Email (Optional if phone provided)</Label>
                       <Input
                         id="signup-email"
                         type="email"
                         value={signupData.email}
                         onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
                         placeholder="your.email@example.com"
-                        required
                       />
                     </div>
                     <div className="space-y-2">
