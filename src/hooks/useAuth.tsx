@@ -43,13 +43,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signUp = async (email: string, password: string, fullName: string, phone: string) => {
     const redirectUrl = `${window.location.origin}/`;
     
-    // Check if phone already exists
+    // Check if phone already exists - clean to last 10 digits
     if (phone) {
-      const cleanPhone = phone.replace(/\s/g, '').replace(/^\+91/, '');
+      const cleanPhone = phone.replace(/[\s\-+]/g, '').slice(-10);
       const { data: existingProfile } = await supabase
         .from("profiles")
         .select("id")
-        .or(`phone.eq.${cleanPhone},phone.eq.+${cleanPhone},phone.eq.+91${cleanPhone},phone.eq.${phone}`)
+        .eq("phone", cleanPhone)
         .maybeSingle();
       
       if (existingProfile) {
@@ -112,13 +112,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     
     // If it's a phone number, look up the email from profiles
     if (isPhoneNumber(identifier)) {
-      // Clean the phone - remove spaces, dashes, and +91 prefix
-      let cleanPhone = identifier.replace(/[\s\-]/g, '');
-      if (cleanPhone.startsWith('+91')) {
-        cleanPhone = cleanPhone.substring(3);
-      } else if (cleanPhone.startsWith('91') && cleanPhone.length > 10) {
-        cleanPhone = cleanPhone.substring(2);
-      }
+      // Clean the phone - remove spaces and dashes only, keep just digits
+      const cleanPhone = identifier.replace(/[\s\-+]/g, '').slice(-10); // Get last 10 digits
       
       const { data: profile } = await supabase
         .from("profiles")
