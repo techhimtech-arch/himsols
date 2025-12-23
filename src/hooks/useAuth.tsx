@@ -88,12 +88,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         variant: "destructive",
       });
     } else {
-      // Also update phone in profiles table
+      // Store clean phone (10 digits only) in profiles table
       const { data: userData } = await supabase.auth.getUser();
-      if (userData?.user) {
+      if (userData?.user && phone) {
+        const cleanPhone = phone.replace(/\D/g, '').slice(-10);
         await supabase
           .from("profiles")
-          .update({ phone })
+          .update({ phone: cleanPhone })
           .eq("id", userData.user.id);
       }
     }
@@ -101,25 +102,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return { error };
   };
 
-  // Check if identifier is phone or email
+  // Check if identifier is phone (10 digits only)
   const isPhoneNumber = (value: string) => {
-    const cleaned = value.replace(/[\s\-+]/g, '');
-    return /^\d{10,12}$/.test(cleaned);
+    const cleaned = value.replace(/\D/g, ''); // Remove all non-digits
+    return cleaned.length === 10;
   };
 
   const signIn = async (identifier: string, password: string) => {
-    let email = identifier;
+    let email = identifier.trim();
     
-    // If it's a phone number, look up the email from profiles
-    if (isPhoneNumber(identifier)) {
-      // Clean the phone - remove spaces and dashes only, keep just digits
-      const cleanPhone = identifier.replace(/[\s\-+]/g, '').slice(-10); // Get last 10 digits
-      
-      const { data: profile } = await supabase
+    // If it's a 10-digit phone number, look up the email from profiles
+    const cleanedIdentifier = identifier.replace(/\D/g, '');
+    
+    if (cleanedIdentifier.length === 10) {
+      const { data: profile, error: lookupError } = await supabase
         .from("profiles")
         .select("email")
-        .eq("phone", cleanPhone)
+        .eq("phone", cleanedIdentifier)
         .maybeSingle();
+      
+      if (lookupError) {
+        console.error("Phone lookup error:", lookupError);
+      }
       
       if (profile?.email) {
         email = profile.email;
