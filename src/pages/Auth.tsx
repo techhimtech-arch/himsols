@@ -44,8 +44,8 @@ const Auth = () => {
       return;
     }
 
-    // Require at least email or phone
-    if (!signupData.email && !signupData.phone) {
+    // Both email and phone are mandatory
+    if (!signupData.email || !signupData.phone) {
       return;
     }
 
@@ -121,13 +121,14 @@ const Auth = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="signup-email">Email (Optional if phone provided)</Label>
+                      <Label htmlFor="signup-email">Email</Label>
                       <Input
                         id="signup-email"
                         type="email"
                         value={signupData.email}
                         onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
                         placeholder="your.email@example.com"
+                        required
                       />
                     </div>
                     <div className="space-y-2">

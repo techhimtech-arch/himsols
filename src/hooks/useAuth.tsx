@@ -103,7 +103,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Check if identifier is phone or email
   const isPhoneNumber = (value: string) => {
-    return /^[+]?[\d\s-]{10,}$/.test(value.replace(/\s/g, ''));
+    const cleaned = value.replace(/[\s\-+]/g, '');
+    return /^\d{10,12}$/.test(cleaned);
   };
 
   const signIn = async (identifier: string, password: string) => {
@@ -111,12 +112,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     
     // If it's a phone number, look up the email from profiles
     if (isPhoneNumber(identifier)) {
-      const cleanPhone = identifier.replace(/\s/g, '');
+      // Clean the phone - remove spaces, dashes, and +91 prefix
+      let cleanPhone = identifier.replace(/[\s\-]/g, '');
+      if (cleanPhone.startsWith('+91')) {
+        cleanPhone = cleanPhone.substring(3);
+      } else if (cleanPhone.startsWith('91') && cleanPhone.length > 10) {
+        cleanPhone = cleanPhone.substring(2);
+      }
+      
       const { data: profile } = await supabase
         .from("profiles")
         .select("email")
-        .or(`phone.eq.${cleanPhone},phone.eq.+${cleanPhone},phone.eq.+91${cleanPhone}`)
-        .single();
+        .eq("phone", cleanPhone)
+        .maybeSingle();
       
       if (profile?.email) {
         email = profile.email;
