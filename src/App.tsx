@@ -20,6 +20,7 @@ import Gallery from "./pages/Gallery";
 import OrderHistory from "./pages/OrderHistory";
 import Cart from "./pages/Cart";
 import WasteManagement from "./pages/WasteManagement";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -48,6 +49,7 @@ const App = () => (
                 <Route path="/order-history" element={<OrderHistory />} />
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/waste-management" element={<WasteManagement />} />
+                <Route path="/profile" element={<Profile />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

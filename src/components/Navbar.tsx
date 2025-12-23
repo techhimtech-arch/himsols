@@ -71,6 +71,9 @@ export const Navbar = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem asChild>
+                    <Link to="/profile">My Profile</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
                     <Link to="/order-history">{t("nav.myOrders")}</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => signOut()}>
@@ -152,12 +155,17 @@ export const Navbar = () => {
                 {t("nav.admin")}
               </Link>
             )}
-            <div className="flex gap-4 pt-4">
+            <div className="flex flex-col gap-4 pt-4">
               <CartSheet />
-            {user ? (
-                <Button className="w-full" onClick={() => { signOut(); setIsMenuOpen(false); }}>
-                  {t("nav.signOut")}
-                </Button>
+              {user ? (
+                <>
+                  <Link to="/profile" className="flex-1" onClick={() => setIsMenuOpen(false)}>
+                    <Button variant="outline" className="w-full">My Profile</Button>
+                  </Link>
+                  <Button className="w-full" onClick={() => { signOut(); setIsMenuOpen(false); }}>
+                    {t("nav.signOut")}
+                  </Button>
+                </>
               ) : (
                 <Link to="/auth" className="flex-1" onClick={() => setIsMenuOpen(false)}>
                   <Button className="w-full">{t("nav.login")}</Button>
