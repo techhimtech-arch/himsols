@@ -17,6 +17,7 @@ const Auth = () => {
   const [signupData, setSignupData] = useState({
     name: "",
     email: "",
+    phone: "",
     password: "",
     confirmPassword: "",
   });
@@ -43,7 +44,7 @@ const Auth = () => {
       return;
     }
 
-    const { error } = await signUp(signupData.email, signupData.password, signupData.name);
+    const { error } = await signUp(signupData.email, signupData.password, signupData.name, signupData.phone);
     if (!error) {
       navigate("/");
     }
@@ -76,13 +77,13 @@ const Auth = () => {
                 <TabsContent value="login">
                   <form onSubmit={handleLogin} className="space-y-4 mt-4">
                     <div className="space-y-2">
-                      <Label htmlFor="login-email">Email</Label>
+                      <Label htmlFor="login-email">Email or Phone Number</Label>
                       <Input
                         id="login-email"
-                        type="email"
+                        type="text"
                         value={loginData.email}
                         onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
-                        placeholder="your.email@example.com"
+                        placeholder="email@example.com or 9876543210"
                         required
                       />
                     </div>
@@ -122,6 +123,17 @@ const Auth = () => {
                         value={signupData.email}
                         onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
                         placeholder="your.email@example.com"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-phone">Phone Number</Label>
+                      <Input
+                        id="signup-phone"
+                        type="tel"
+                        value={signupData.phone}
+                        onChange={(e) => setSignupData({ ...signupData, phone: e.target.value })}
+                        placeholder="+91 9876543210"
                         required
                       />
                     </div>
