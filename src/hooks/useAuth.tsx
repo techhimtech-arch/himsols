@@ -43,8 +43,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signUp = async (email: string, password: string, fullName: string, phone: string) => {
     const redirectUrl = `${window.location.origin}/`;
     
+    // Check if phone already exists
+    if (phone) {
+      const cleanPhone = phone.replace(/\s/g, '').replace(/^\+91/, '');
+      const { data: existingProfile } = await supabase
+        .from("profiles")
+        .select("id")
+        .or(`phone.eq.${cleanPhone},phone.eq.+${cleanPhone},phone.eq.+91${cleanPhone},phone.eq.${phone}`)
+        .maybeSingle();
+      
+      if (existingProfile) {
+        toast({
+          title: "Signup Error",
+          description: "This phone number is already registered",
+          variant: "destructive",
+        });
+        return { error: { message: "Phone number already registered" } };
+      }
+    }
+
+    // If no email provided, generate placeholder from phone
+    let authEmail = email;
+    if (!email && phone) {
+      const cleanPhone = phone.replace(/\s/g, '').replace(/[^0-9]/g, '');
+      authEmail = `${cleanPhone}@phone.himsols.local`;
+    }
+    
     const { error } = await supabase.auth.signUp({
-      email,
+      email: authEmail,
       password,
       options: {
         emailRedirectTo: redirectUrl,
