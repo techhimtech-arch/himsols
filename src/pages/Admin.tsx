@@ -30,6 +30,7 @@ import { TreesTab } from "@/components/admin/TreesTab";
 import { ScrapRequestsTab } from "@/components/admin/ScrapRequestsTab";
 import { SettingsTab } from "@/components/admin/SettingsTab";
 import { INDIAN_STATES, getDistrictsForState, IndianState } from "@/lib/constants";
+import { MobileCard, MobileCardRow, StatusBadge } from "@/components/admin/MobileCard";
 
 interface Request {
   id: string;
@@ -540,10 +541,51 @@ const Admin = () => {
             <TabsContent value="requests">
               <Card>
                 <CardHeader>
-                  <CardTitle>Tree Plantation Requests</CardTitle>
+                  <CardTitle className="text-lg md:text-xl">Tree Plantation Requests</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="overflow-x-auto">
+                  {/* Mobile View */}
+                  <div className="block md:hidden space-y-4">
+                    {requests.length === 0 ? (
+                      <p className="text-center text-muted-foreground py-8">No requests found</p>
+                    ) : (
+                      requests.map((request) => (
+                        <MobileCard key={request.id}>
+                          <div className="flex justify-between items-start mb-2">
+                            <span className="font-semibold text-sm">{request.tracking_id}</span>
+                            <StatusBadge status={request.status} />
+                          </div>
+                          <MobileCardRow label="Name" value={request.name} />
+                          <MobileCardRow label="Location" value={request.location} />
+                          <MobileCardRow label="Tree Type" value={request.tree_type} />
+                          <MobileCardRow label="Quantity" value={request.quantity} />
+                          <MobileCardRow label="Date" value={new Date(request.created_at).toLocaleDateString()} />
+                          <div className="pt-2 border-t border-border">
+                            <Select
+                              value={request.status}
+                              onValueChange={(value) => updateRequestStatus(request.id, value)}
+                            >
+                              <SelectTrigger className="w-full bg-background">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent className="bg-popover border border-border z-50">
+                                <SelectItem value="pending">Pending</SelectItem>
+                                <SelectItem value="site_verified">Site Verified</SelectItem>
+                                <SelectItem value="saplings_arranged">Saplings Arranged</SelectItem>
+                                <SelectItem value="scheduled">Scheduled</SelectItem>
+                                <SelectItem value="in_progress">In Progress</SelectItem>
+                                <SelectItem value="completed">Completed</SelectItem>
+                                <SelectItem value="cancelled">Cancelled</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </MobileCard>
+                      ))
+                    )}
+                  </div>
+
+                  {/* Desktop View */}
+                  <div className="hidden md:block overflow-x-auto">
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -566,9 +608,7 @@ const Admin = () => {
                             <TableCell>{request.tree_type}</TableCell>
                             <TableCell>{request.quantity}</TableCell>
                             <TableCell>
-                              <span className="inline-block px-2 py-1 rounded-full text-xs bg-primary/10 text-primary">
-                                {request.status.replace('_', ' ')}
-                              </span>
+                              <StatusBadge status={request.status} />
                             </TableCell>
                             <TableCell>{new Date(request.created_at).toLocaleDateString()}</TableCell>
                             <TableCell>
@@ -576,10 +616,10 @@ const Admin = () => {
                                 value={request.status}
                                 onValueChange={(value) => updateRequestStatus(request.id, value)}
                               >
-                                <SelectTrigger className="w-[180px]">
+                                <SelectTrigger className="w-[150px] bg-background">
                                   <SelectValue />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="bg-popover border border-border z-50">
                                   <SelectItem value="pending">Pending</SelectItem>
                                   <SelectItem value="site_verified">Site Verified</SelectItem>
                                   <SelectItem value="saplings_arranged">Saplings Arranged</SelectItem>
@@ -650,10 +690,81 @@ const Admin = () => {
             <TabsContent value="users">
               <Card>
                 <CardHeader>
-                  <CardTitle>User Management</CardTitle>
+                  <CardTitle className="text-lg md:text-xl">User Management</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="overflow-x-auto">
+                  {/* Mobile View */}
+                  <div className="block md:hidden space-y-4">
+                    {profiles.length === 0 ? (
+                      <p className="text-center text-muted-foreground py-8">No users found</p>
+                    ) : (
+                      profiles.map((profile) => (
+                        <MobileCard key={profile.id}>
+                          <div className="flex justify-between items-start mb-2">
+                            <span className="font-semibold text-sm">{profile.full_name}</span>
+                            <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
+                              getUserRole(profile.id) === 'admin' 
+                                ? 'bg-primary/20 text-primary' 
+                                : 'bg-muted text-muted-foreground'
+                            }`}>
+                              {getUserRole(profile.id)}
+                            </span>
+                          </div>
+                          <MobileCardRow label="Email" value={<span className="text-xs break-all">{profile.email}</span>} />
+                          <MobileCardRow label="Phone" value={profile.phone || '-'} />
+                          <MobileCardRow label="Joined" value={new Date(profile.created_at).toLocaleDateString()} />
+                          <div className="pt-3 border-t border-border space-y-2">
+                            <Select
+                              value={getUserRole(profile.id)}
+                              onValueChange={(value) => updateUserRole(profile.id, value)}
+                            >
+                              <SelectTrigger className="w-full bg-background">
+                                <SelectValue placeholder="Select Role" />
+                              </SelectTrigger>
+                              <SelectContent className="bg-popover border border-border z-50">
+                                <SelectItem value="user">User</SelectItem>
+                                <SelectItem value="admin">Admin</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <Select
+                              value={getUserState(profile.id) || "himachal"}
+                              onValueChange={(value) => updateUserState(profile.id, value === "himachal" ? "Himachal Pradesh" : value)}
+                            >
+                              <SelectTrigger className="w-full bg-background">
+                                <SelectValue placeholder="Select State" />
+                              </SelectTrigger>
+                              <SelectContent className="bg-popover border border-border z-50">
+                                {INDIAN_STATES.map((state) => (
+                                  <SelectItem key={state} value={state === "Himachal Pradesh" ? "himachal" : state}>
+                                    {state}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <Select
+                              value={getUserDistrict(profile.id) || "all"}
+                              onValueChange={(value) => updateUserDistrict(profile.id, value === "all" ? null : value)}
+                            >
+                              <SelectTrigger className="w-full bg-background">
+                                <SelectValue placeholder="All Districts" />
+                              </SelectTrigger>
+                              <SelectContent className="bg-popover border border-border z-50">
+                                <SelectItem value="all">All Districts</SelectItem>
+                                {getDistrictsForState((getUserState(profile.id) as IndianState) || "Himachal Pradesh").map((district) => (
+                                  <SelectItem key={district} value={district}>
+                                    {district}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </MobileCard>
+                      ))
+                    )}
+                  </div>
+
+                  {/* Desktop View */}
+                  <div className="hidden md:block overflow-x-auto">
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -661,6 +772,7 @@ const Admin = () => {
                           <TableHead>Email</TableHead>
                           <TableHead>Phone</TableHead>
                           <TableHead>Role</TableHead>
+                          <TableHead>State</TableHead>
                           <TableHead>District</TableHead>
                           <TableHead>Joined</TableHead>
                         </TableRow>
@@ -676,10 +788,10 @@ const Admin = () => {
                                 value={getUserRole(profile.id)}
                                 onValueChange={(value) => updateUserRole(profile.id, value)}
                               >
-                                <SelectTrigger className="w-[110px]">
+                                <SelectTrigger className="w-[100px] bg-background">
                                   <SelectValue />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="bg-popover border border-border z-50">
                                   <SelectItem value="user">User</SelectItem>
                                   <SelectItem value="admin">Admin</SelectItem>
                                 </SelectContent>
@@ -690,10 +802,10 @@ const Admin = () => {
                                 value={getUserState(profile.id) || "himachal"}
                                 onValueChange={(value) => updateUserState(profile.id, value === "himachal" ? "Himachal Pradesh" : value)}
                               >
-                                <SelectTrigger className="w-[140px]">
+                                <SelectTrigger className="w-[130px] bg-background">
                                   <SelectValue placeholder="Select State" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="bg-popover border border-border z-50">
                                   {INDIAN_STATES.map((state) => (
                                     <SelectItem key={state} value={state === "Himachal Pradesh" ? "himachal" : state}>
                                       {state}
@@ -707,10 +819,10 @@ const Admin = () => {
                                 value={getUserDistrict(profile.id) || "all"}
                                 onValueChange={(value) => updateUserDistrict(profile.id, value === "all" ? null : value)}
                               >
-                                <SelectTrigger className="w-[140px]">
+                                <SelectTrigger className="w-[130px] bg-background">
                                   <SelectValue placeholder="All Districts" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="bg-popover border border-border z-50">
                                   <SelectItem value="all">All Districts</SelectItem>
                                   {getDistrictsForState((getUserState(profile.id) as IndianState) || "Himachal Pradesh").map((district) => (
                                     <SelectItem key={district} value={district}>

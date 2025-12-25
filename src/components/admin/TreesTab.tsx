@@ -31,6 +31,7 @@ import { useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { BulkTreeUpload } from "./BulkTreeUpload";
+import { MobileCard, MobileCardRow } from "./MobileCard";
 
 interface Tree {
   id: string;
@@ -230,16 +231,16 @@ export const TreesTab = ({ trees, onAddTree, onUpdateTree, onDeleteTree, onBulkU
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-4">
-        <CardTitle>Tree Management</CardTitle>
-        <div className="flex items-center gap-2">
+      <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <CardTitle className="text-lg md:text-xl">Tree Management</CardTitle>
+        <div className="flex flex-wrap items-center gap-2">
           <BulkTreeUpload onBulkUpload={onBulkUpload} />
           <Dialog open={isAddDialogOpen} onOpenChange={(open) => {
             setIsAddDialogOpen(open);
             if (!open) resetForm();
           }}>
             <DialogTrigger asChild>
-              <Button onClick={resetForm}>
+              <Button onClick={resetForm} size="sm" className="w-full sm:w-auto">
                 <Plus className="mr-2 h-4 w-4" />
                 Add Tree
               </Button>
@@ -472,7 +473,84 @@ export const TreesTab = ({ trees, onAddTree, onUpdateTree, onDeleteTree, onBulkU
         </div>
       </CardHeader>
       <CardContent>
-        <div className="overflow-x-auto">
+        {/* Mobile View */}
+        <div className="block md:hidden space-y-4">
+          {trees.length === 0 ? (
+            <p className="text-center text-muted-foreground py-8">No trees added yet. Click "Add Tree" to get started.</p>
+          ) : (
+            trees.map((tree) => (
+              <MobileCard key={tree.id}>
+                <div className="flex gap-3">
+                  {tree.image_url ? (
+                    <img 
+                      src={tree.image_url} 
+                      alt={tree.name}
+                      className="w-16 h-16 rounded object-cover flex-shrink-0"
+                    />
+                  ) : (
+                    <div className="w-16 h-16 rounded bg-muted flex items-center justify-center flex-shrink-0">
+                      <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="font-semibold text-sm truncate">{tree.name}</h4>
+                        {tree.scientific_name && (
+                          <p className="text-xs text-muted-foreground italic truncate">{tree.scientific_name}</p>
+                        )}
+                      </div>
+                      <span className={`inline-block px-2 py-0.5 rounded-full text-xs ${
+                        tree.is_active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+                      }`}>
+                        {tree.is_active ? "Active" : "Inactive"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <MobileCardRow label="Category" value={tree.category} />
+                <MobileCardRow label="Price" value={`₹${tree.price}`} />
+                <MobileCardRow 
+                  label="Stock" 
+                  value={
+                    <span className={tree.stock_quantity < 10 ? "text-destructive font-semibold" : ""}>
+                      {tree.stock_quantity}
+                    </span>
+                  } 
+                />
+                <div className="flex gap-2 pt-2 border-t border-border">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleEdit(tree)}
+                    className="flex-1"
+                  >
+                    <Pencil className="h-4 w-4 mr-1" />
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => toggleTreeStatus(tree)}
+                    className="flex-1"
+                  >
+                    {tree.is_active ? "Deactivate" : "Activate"}
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => onDeleteTree(tree.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </MobileCard>
+            ))
+          )}
+        </div>
+
+        {/* Desktop View */}
+        <div className="hidden md:block overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>

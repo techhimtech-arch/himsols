@@ -222,9 +222,10 @@ export const BulkTreeUpload = ({ onBulkUpload }: BulkTreeUploadProps) => {
       if (!open) resetState();
     }}>
       <DialogTrigger asChild>
-        <Button variant="outline">
+        <Button variant="outline" size="sm" className="w-full sm:w-auto">
           <FileSpreadsheet className="mr-2 h-4 w-4" />
-          Bulk Upload
+          <span className="hidden sm:inline">Bulk Upload</span>
+          <span className="sm:hidden">CSV</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">

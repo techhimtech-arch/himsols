@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { useState, useMemo } from "react";
 import { INDIAN_STATES, getDistrictsForState, IndianState } from "@/lib/constants";
+import { MobileCard, MobileCardRow, StatusBadge } from "./MobileCard";
 
 interface ScrapRequest {
   id: string;
@@ -58,10 +59,10 @@ export const ScrapRequestsTab = ({ requests, onUpdateStatus }: ScrapRequestsTabP
 
   return (
     <Card>
-      <CardHeader>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <CardTitle>Valuable Scrap Collection Requests</CardTitle>
-          <div className="flex flex-wrap gap-2">
+      <CardHeader className="pb-4">
+        <div className="flex flex-col gap-4">
+          <CardTitle className="text-lg md:text-xl">Valuable Scrap Collection Requests</CardTitle>
+          <div className="flex flex-col sm:flex-row gap-2">
             <Select
               value={filterState}
               onValueChange={(value) => {
@@ -69,10 +70,10 @@ export const ScrapRequestsTab = ({ requests, onUpdateStatus }: ScrapRequestsTabP
                 setFilterDistrict("all");
               }}
             >
-              <SelectTrigger className="w-[160px]">
+              <SelectTrigger className="w-full sm:w-[160px] bg-background">
                 <SelectValue placeholder="Filter by State" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-popover border border-border z-50">
                 <SelectItem value="all">All States</SelectItem>
                 {INDIAN_STATES.map((state) => (
                   <SelectItem key={state} value={state}>
@@ -86,10 +87,10 @@ export const ScrapRequestsTab = ({ requests, onUpdateStatus }: ScrapRequestsTabP
                 value={filterDistrict}
                 onValueChange={setFilterDistrict}
               >
-                <SelectTrigger className="w-[160px]">
+                <SelectTrigger className="w-full sm:w-[160px] bg-background">
                   <SelectValue placeholder="Filter by District" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-popover border border-border z-50">
                   <SelectItem value="all">All Districts</SelectItem>
                   {availableDistricts.map((district) => (
                     <SelectItem key={district} value={district}>
@@ -103,7 +104,50 @@ export const ScrapRequestsTab = ({ requests, onUpdateStatus }: ScrapRequestsTabP
         </div>
       </CardHeader>
       <CardContent>
-        <div className="overflow-x-auto">
+        {/* Mobile View */}
+        <div className="block md:hidden space-y-4">
+          {filteredRequests.length === 0 ? (
+            <p className="text-center text-muted-foreground py-8">No scrap collection requests found</p>
+          ) : (
+            filteredRequests.map((request) => (
+              <MobileCard key={request.id}>
+                <div className="flex justify-between items-start mb-2">
+                  <span className="font-semibold text-sm">{request.tracking_id}</span>
+                  <StatusBadge status={request.status} />
+                </div>
+                <MobileCardRow label="Name" value={request.name} />
+                <MobileCardRow label="Phone" value={request.phone} />
+                <MobileCardRow label="State" value={request.state || "-"} />
+                <MobileCardRow label="District" value={request.district || "-"} />
+                <MobileCardRow label="Address" value={<span className="line-clamp-2">{request.address}</span>} />
+                <MobileCardRow label="Pickup Date" value={new Date(request.pickup_date).toLocaleDateString()} />
+                <MobileCardRow label="Scrap Type" value={request.waste_type} />
+                <MobileCardRow label="Quantity" value={request.estimated_quantity || "-"} />
+                <div className="pt-2 border-t border-border">
+                  <Select
+                    value={request.status}
+                    onValueChange={(value) => onUpdateStatus(request.id, value)}
+                  >
+                    <SelectTrigger className="w-full bg-background">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover border border-border z-50">
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="site_verified">Verified</SelectItem>
+                      <SelectItem value="scheduled">Scheduled</SelectItem>
+                      <SelectItem value="in_progress">In Progress</SelectItem>
+                      <SelectItem value="completed">Completed</SelectItem>
+                      <SelectItem value="cancelled">Cancelled</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </MobileCard>
+            ))
+          )}
+        </div>
+
+        {/* Desktop View */}
+        <div className="hidden md:block overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -142,19 +186,17 @@ export const ScrapRequestsTab = ({ requests, onUpdateStatus }: ScrapRequestsTabP
                     <TableCell>{request.waste_type}</TableCell>
                     <TableCell>{request.estimated_quantity || "-"}</TableCell>
                     <TableCell>
-                      <span className="inline-block px-2 py-1 rounded-full text-xs bg-primary/10 text-primary">
-                        {request.status.replace('_', ' ')}
-                      </span>
+                      <StatusBadge status={request.status} />
                     </TableCell>
                     <TableCell>
                       <Select
                         value={request.status}
                         onValueChange={(value) => onUpdateStatus(request.id, value)}
                       >
-                        <SelectTrigger className="w-[180px]">
+                        <SelectTrigger className="w-[150px] bg-background">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-popover border border-border z-50">
                           <SelectItem value="pending">Pending</SelectItem>
                           <SelectItem value="site_verified">Verified</SelectItem>
                           <SelectItem value="scheduled">Scheduled</SelectItem>
