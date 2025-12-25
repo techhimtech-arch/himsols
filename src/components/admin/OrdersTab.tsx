@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { useState, useMemo } from "react";
 import { INDIAN_STATES, getDistrictsForState, IndianState } from "@/lib/constants";
+import { MobileCard, MobileCardRow, StatusBadge } from "./MobileCard";
 
 interface Order {
   id: string;
@@ -55,10 +56,10 @@ export const OrdersTab = ({ orders, onUpdateStatus }: OrdersTabProps) => {
 
   return (
     <Card>
-      <CardHeader>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <CardTitle>Tree Orders</CardTitle>
-          <div className="flex flex-wrap gap-2">
+      <CardHeader className="pb-4">
+        <div className="flex flex-col gap-4">
+          <CardTitle className="text-lg md:text-xl">Tree Orders</CardTitle>
+          <div className="flex flex-col sm:flex-row gap-2">
             <Select
               value={filterState}
               onValueChange={(value) => {
@@ -66,10 +67,10 @@ export const OrdersTab = ({ orders, onUpdateStatus }: OrdersTabProps) => {
                 setFilterDistrict("all");
               }}
             >
-              <SelectTrigger className="w-[160px]">
+              <SelectTrigger className="w-full sm:w-[160px] bg-background">
                 <SelectValue placeholder="Filter by State" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-popover border border-border z-50">
                 <SelectItem value="all">All States</SelectItem>
                 {INDIAN_STATES.map((state) => (
                   <SelectItem key={state} value={state}>
@@ -83,10 +84,10 @@ export const OrdersTab = ({ orders, onUpdateStatus }: OrdersTabProps) => {
                 value={filterDistrict}
                 onValueChange={setFilterDistrict}
               >
-                <SelectTrigger className="w-[160px]">
+                <SelectTrigger className="w-full sm:w-[160px] bg-background">
                   <SelectValue placeholder="Filter by District" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-popover border border-border z-50">
                   <SelectItem value="all">All Districts</SelectItem>
                   {availableDistricts.map((district) => (
                     <SelectItem key={district} value={district}>
@@ -100,7 +101,49 @@ export const OrdersTab = ({ orders, onUpdateStatus }: OrdersTabProps) => {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="overflow-x-auto">
+        {/* Mobile View */}
+        <div className="block md:hidden space-y-4">
+          {filteredOrders.length === 0 ? (
+            <p className="text-center text-muted-foreground py-8">No orders found</p>
+          ) : (
+            filteredOrders.map((order) => (
+              <MobileCard key={order.id}>
+                <div className="flex justify-between items-start mb-2">
+                  <span className="font-semibold text-sm">#{order.id.slice(0, 8)}</span>
+                  <StatusBadge status={order.status} />
+                </div>
+                <MobileCardRow label="Quantity" value={order.quantity} />
+                <MobileCardRow label="Total" value={`₹${order.total_price}`} />
+                <MobileCardRow label="State" value={order.state || "-"} />
+                <MobileCardRow label="District" value={order.district || "-"} />
+                <MobileCardRow label="Location" value={order.delivery_location} />
+                <MobileCardRow label="Date" value={new Date(order.created_at).toLocaleDateString()} />
+                <div className="pt-2 border-t border-border">
+                  <Select
+                    value={order.status}
+                    onValueChange={(value) => onUpdateStatus(order.id, value)}
+                  >
+                    <SelectTrigger className="w-full bg-background">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover border border-border z-50">
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="site_verified">Site Verified</SelectItem>
+                      <SelectItem value="saplings_arranged">Saplings Arranged</SelectItem>
+                      <SelectItem value="scheduled">Scheduled</SelectItem>
+                      <SelectItem value="in_progress">In Progress</SelectItem>
+                      <SelectItem value="completed">Completed</SelectItem>
+                      <SelectItem value="cancelled">Cancelled</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </MobileCard>
+            ))
+          )}
+        </div>
+
+        {/* Desktop View */}
+        <div className="hidden md:block overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -132,9 +175,7 @@ export const OrdersTab = ({ orders, onUpdateStatus }: OrdersTabProps) => {
                     <TableCell>{order.district || "-"}</TableCell>
                     <TableCell>{order.delivery_location}</TableCell>
                     <TableCell>
-                      <span className="inline-block px-2 py-1 rounded-full text-xs bg-primary/10 text-primary">
-                        {order.status.replace("_", " ")}
-                      </span>
+                      <StatusBadge status={order.status} />
                     </TableCell>
                     <TableCell>{new Date(order.created_at).toLocaleDateString()}</TableCell>
                     <TableCell>
@@ -142,10 +183,10 @@ export const OrdersTab = ({ orders, onUpdateStatus }: OrdersTabProps) => {
                         value={order.status}
                         onValueChange={(value) => onUpdateStatus(order.id, value)}
                       >
-                        <SelectTrigger className="w-[180px]">
+                        <SelectTrigger className="w-[150px] bg-background">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-popover border border-border z-50">
                           <SelectItem value="pending">Pending</SelectItem>
                           <SelectItem value="site_verified">Site Verified</SelectItem>
                           <SelectItem value="saplings_arranged">Saplings Arranged</SelectItem>
