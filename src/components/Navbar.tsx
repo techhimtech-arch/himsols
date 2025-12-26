@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Leaf, Menu, X, User } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
+import himsolsLogo from "@/assets/himsols-logo.png";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
@@ -25,9 +26,7 @@ export const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2 text-primary font-bold text-xl transition-all hover:scale-105">
-            <div className="bg-gradient-to-br from-primary to-secondary rounded-full p-2 shadow-lg animate-glow">
-              <Leaf className="h-5 w-5 text-primary-foreground" />
-            </div>
+            <img src={himsolsLogo} alt="Himsols Logo" className="h-10 w-10 object-contain" />
             <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Himsols</span>
           </Link>
 
