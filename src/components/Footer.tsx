@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
-import { Leaf, Mail, Phone, MapPin, Facebook, Instagram, Twitter } from "lucide-react";
+import { Mail, Phone, MapPin, Facebook, Instagram, Twitter } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import himsolsLogo from "@/assets/himsols-logo.png";
 
 export const Footer = () => {
   const { t } = useLanguage();
@@ -13,12 +14,10 @@ export const Footer = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           {/* About */}
           <div className="col-span-2 md:col-span-1">
-            <div className="flex items-center gap-2 text-primary font-bold text-lg md:text-xl mb-3 md:mb-4">
-              <div className="bg-primary rounded-full p-1.5 md:p-2">
-                <Leaf className="h-4 w-4 md:h-5 md:w-5 text-primary-foreground" />
-              </div>
+            <Link to="/" className="flex items-center gap-2 text-primary font-bold text-lg md:text-xl mb-3 md:mb-4">
+              <img src={himsolsLogo} alt="Himsols Logo" className="h-10 w-10 object-contain" />
               <span>Himsols</span>
-            </div>
+            </Link>
             <p className="text-muted-foreground text-xs md:text-sm">
               {t("footer.tagline")}
             </p>

@@ -32,6 +32,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { BulkTreeUpload } from "./BulkTreeUpload";
 import { MobileCard, MobileCardRow } from "./MobileCard";
+import { compressImage, formatFileSize } from "@/lib/imageCompression";
 
 interface Tree {
   id: string;
@@ -127,11 +128,11 @@ export const TreesTab = ({ trees, onAddTree, onUpdateTree, onDeleteTree, onBulkU
       return;
     }
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
+    // Validate file size (max 10MB before compression)
+    if (file.size > 10 * 1024 * 1024) {
       toast({
         title: "File Too Large",
-        description: "Image must be less than 5MB.",
+        description: "Image must be less than 10MB.",
         variant: "destructive",
       });
       return;
@@ -140,15 +141,23 @@ export const TreesTab = ({ trees, onAddTree, onUpdateTree, onDeleteTree, onBulkU
     setUploading(true);
 
     try {
+      // Compress the image before uploading
+      const originalSize = file.size;
+      const compressedBlob = await compressImage(file, 1200, 1200, 0.8);
+      const compressedSize = compressedBlob.size;
+      
+      console.log(`Image compressed: ${formatFileSize(originalSize)} → ${formatFileSize(compressedSize)}`);
+
       // Create unique filename
-      const fileExt = file.name.split(".").pop();
-      const fileName = `tree-${Date.now()}.${fileExt}`;
+      const fileName = `tree-${Date.now()}.jpg`;
       const filePath = `trees/${fileName}`;
 
-      // Upload to Supabase Storage
+      // Upload compressed image to Supabase Storage
       const { error: uploadError } = await supabase.storage
         .from("tree-photos")
-        .upload(filePath, file);
+        .upload(filePath, compressedBlob, {
+          contentType: 'image/jpeg'
+        });
 
       if (uploadError) throw uploadError;
 
@@ -162,7 +171,7 @@ export const TreesTab = ({ trees, onAddTree, onUpdateTree, onDeleteTree, onBulkU
 
       toast({
         title: "Image Uploaded",
-        description: "Tree image uploaded successfully.",
+        description: `Tree image compressed (${formatFileSize(originalSize)} → ${formatFileSize(compressedSize)}) and uploaded successfully.`,
       });
     } catch (error: any) {
       console.error("Upload error:", error);
