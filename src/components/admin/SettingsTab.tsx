@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,11 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useToast } from "@/hooks/use-toast";
-import { Phone, Mail, MessageCircle, Facebook, Instagram, Twitter, Save, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { compressImage, formatFileSize } from "@/lib/imageCompression";
+import { Phone, Mail, MessageCircle, Facebook, Instagram, Twitter, Save, Loader2, Upload, Image as ImageIcon } from "lucide-react";
 
 export const SettingsTab = () => {
   const { settings, isLoading, updateSetting } = useSiteSettings();
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     contact_phone: "",
     contact_email: "",
@@ -19,8 +22,10 @@ export const SettingsTab = () => {
     facebook_url: "",
     instagram_url: "",
     twitter_url: "",
+    logo_url: "",
   });
   const [saving, setSaving] = useState(false);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
 
   useEffect(() => {
     if (settings) {
@@ -32,9 +37,68 @@ export const SettingsTab = () => {
         facebook_url: settings.facebook_url || "",
         instagram_url: settings.instagram_url || "",
         twitter_url: settings.twitter_url || "",
+        logo_url: settings.logo_url || "",
       });
     }
   }, [settings]);
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast({
+        title: "Invalid File",
+        description: "Please upload an image file.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setUploadingLogo(true);
+
+    try {
+      // Compress the image
+      const originalSize = file.size;
+      const compressedBlob = await compressImage(file, 500, 500, 0.9);
+      const compressedSize = compressedBlob.size;
+      
+      console.log(`Logo compressed: ${formatFileSize(originalSize)} → ${formatFileSize(compressedSize)}`);
+
+      // Upload to Supabase Storage
+      const fileName = `logo-${Date.now()}.jpg`;
+      const filePath = `branding/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("tree-photos")
+        .upload(filePath, compressedBlob, {
+          contentType: 'image/jpeg'
+        });
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from("tree-photos")
+        .getPublicUrl(filePath);
+
+      setFormData({ ...formData, logo_url: urlData.publicUrl });
+
+      toast({
+        title: "Logo Uploaded",
+        description: `Logo compressed (${formatFileSize(originalSize)} → ${formatFileSize(compressedSize)}) and uploaded successfully.`,
+      });
+    } catch (error: any) {
+      console.error("Upload error:", error);
+      toast({
+        title: "Upload Failed",
+        description: error.message || "Failed to upload logo.",
+        variant: "destructive",
+      });
+    } finally {
+      setUploadingLogo(false);
+    }
+  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -47,6 +111,7 @@ export const SettingsTab = () => {
         updateSetting.mutateAsync({ key: "facebook_url", value: formData.facebook_url }),
         updateSetting.mutateAsync({ key: "instagram_url", value: formData.instagram_url }),
         updateSetting.mutateAsync({ key: "twitter_url", value: formData.twitter_url }),
+        updateSetting.mutateAsync({ key: "logo_url", value: formData.logo_url }),
       ]);
 
       toast({
@@ -74,6 +139,66 @@ export const SettingsTab = () => {
 
   return (
     <div className="space-y-6">
+      {/* Logo Settings */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg md:text-xl flex items-center gap-2">
+            <ImageIcon className="h-5 w-5 text-primary" />
+            Brand Logo
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-start gap-4">
+            <div 
+              className="w-24 h-24 border-2 border-dashed border-border rounded-lg flex items-center justify-center cursor-pointer hover:border-primary transition-colors overflow-hidden bg-muted"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {uploadingLogo ? (
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+              ) : formData.logo_url ? (
+                <img 
+                  src={formData.logo_url} 
+                  alt="Logo Preview" 
+                  className="w-full h-full object-contain p-2"
+                />
+              ) : (
+                <div className="text-center p-2">
+                  <ImageIcon className="h-8 w-8 mx-auto text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">Upload</span>
+                </div>
+              )}
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleLogoUpload}
+              className="hidden"
+            />
+            <div className="flex-1 space-y-2">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingLogo}
+              >
+                <Upload className="mr-2 h-4 w-4" />
+                {uploadingLogo ? "Uploading..." : "Upload Logo"}
+              </Button>
+              <p className="text-xs text-muted-foreground">
+                Upload your brand logo (PNG with transparent background recommended). Will appear in Navbar, Footer, and Login page.
+              </p>
+              <Input
+                type="url"
+                value={formData.logo_url}
+                onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
+                placeholder="Or paste logo URL here"
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Contact Information */}
       <Card>
         <CardHeader>
