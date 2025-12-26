@@ -481,6 +481,7 @@ const Shop = () => {
                             src={tree.image_url}
                             alt={getTreeName(tree)}
                             className="w-full h-40 sm:h-48 object-cover group-hover:scale-105 transition-transform duration-500"
+                            loading="lazy"
                           />
                         ) : (
                           <div className="w-full h-40 sm:h-48 bg-muted flex items-center justify-center">

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Leaf } from "lucide-react";
+import { Logo } from "@/components/Logo";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -62,8 +62,8 @@ const Auth = () => {
       <section className="pt-32 pb-16 px-4 min-h-screen flex items-center">
         <div className="container mx-auto max-w-md">
           <div className="text-center mb-8">
-            <div className="bg-primary rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-              <Leaf className="h-8 w-8 text-white" />
+            <div className="flex justify-center mb-4">
+              <Logo size="lg" showText={false} linkTo={null} />
             </div>
             <h1 className="text-3xl font-bold text-foreground">Join Himsols</h1>
             <p className="text-muted-foreground mt-2">

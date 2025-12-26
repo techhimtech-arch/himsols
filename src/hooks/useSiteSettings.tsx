@@ -9,6 +9,7 @@ export interface SiteSettings {
   facebook_url: string;
   instagram_url: string;
   twitter_url: string;
+  logo_url: string;
 }
 
 export const useSiteSettings = () => {
