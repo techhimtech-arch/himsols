@@ -47,6 +47,9 @@ export const Navbar = () => {
             <Link to="/contact" className="text-foreground hover:text-primary transition-all duration-300 font-medium hover:scale-110 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">
               {t("nav.contact")}
             </Link>
+            <Link to="/corporate" className="text-foreground hover:text-primary transition-all duration-300 font-medium hover:scale-110 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">
+              Corporate
+            </Link>
             {isAdmin && (
               <Link to="/admin" className="text-foreground hover:text-primary transition-all duration-300 font-medium hover:scale-110 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">
                 {t("nav.admin")}
@@ -141,6 +144,13 @@ export const Navbar = () => {
               onClick={() => setIsMenuOpen(false)}
             >
               {t("nav.contact")}
+            </Link>
+            <Link
+              to="/corporate"
+              className="block text-foreground hover:text-primary transition-colors py-2"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Corporate
             </Link>
             {isAdmin && (
               <Link
