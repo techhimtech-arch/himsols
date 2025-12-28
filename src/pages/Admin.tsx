@@ -29,6 +29,7 @@ import { OrdersTab } from "@/components/admin/OrdersTab";
 import { TreesTab } from "@/components/admin/TreesTab";
 import { ScrapRequestsTab } from "@/components/admin/ScrapRequestsTab";
 import { SettingsTab } from "@/components/admin/SettingsTab";
+import { CorporateTab } from "@/components/admin/CorporateTab";
 import { INDIAN_STATES, getDistrictsForState, IndianState } from "@/lib/constants";
 import { MobileCard, MobileCardRow, StatusBadge } from "@/components/admin/MobileCard";
 
@@ -530,6 +531,7 @@ const Admin = () => {
                 <TabsTrigger value="orders" className="text-xs md:text-sm">Orders</TabsTrigger>
                 <TabsTrigger value="trees" className="text-xs md:text-sm">Trees</TabsTrigger>
                 <TabsTrigger value="users" className="text-xs md:text-sm">Users</TabsTrigger>
+                <TabsTrigger value="corporate" className="text-xs md:text-sm">Corporate</TabsTrigger>
                 <TabsTrigger value="settings" className="text-xs md:text-sm">
                   <Settings className="h-3 w-3 md:h-4 md:w-4 mr-1" />
                   Settings
@@ -840,6 +842,11 @@ const Admin = () => {
                   </div>
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            {/* Corporate Tab */}
+            <TabsContent value="corporate">
+              <CorporateTab />
             </TabsContent>
 
             {/* Settings Tab */}
