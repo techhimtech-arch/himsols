@@ -22,6 +22,7 @@ import Cart from "./pages/Cart";
 import WasteManagement from "./pages/WasteManagement";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import B2BCorporate from "./pages/B2BCorporate";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,7 @@ const App = () => (
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/waste-management" element={<WasteManagement />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/corporate" element={<B2BCorporate />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
