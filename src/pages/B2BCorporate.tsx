@@ -478,8 +478,76 @@ const B2BCorporate = () => {
         </div>
       </section>
 
+      {/* Testimonials Section */}
+      <section className="py-16 md:py-24 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              What Our Corporate Partners Say
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Hear from businesses that have transformed their gifting with Himsols.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto mb-16">
+            {[
+              {
+                quote: "Himsols helped us gift 500+ plants to our employees on Environment Day. The packaging was beautiful and the team coordination was excellent.",
+                name: "Priya Sharma",
+                role: "HR Director",
+                company: "TechCorp India"
+              },
+              {
+                quote: "Our CSR tree plantation drive was a huge success. The geo-tagging feature lets us show our stakeholders exactly where our trees are growing.",
+                name: "Rajesh Kumar",
+                role: "CSR Head",
+                company: "GreenBuild Constructions"
+              },
+              {
+                quote: "We've been partnering with Himsols for 2 years now. Their professionalism and commitment to sustainability aligns perfectly with our values.",
+                name: "Anita Desai",
+                role: "Sustainability Manager",
+                company: "EcoFinance Ltd"
+              }
+            ].map((testimonial, index) => (
+              <Card key={index} className="border-border/50">
+                <CardContent className="pt-6">
+                  <div className="mb-4">
+                    <svg className="w-8 h-8 text-primary/30" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                    </svg>
+                  </div>
+                  <p className="text-muted-foreground mb-6 italic">"{testimonial.quote}"</p>
+                  <div>
+                    <p className="font-semibold text-foreground">{testimonial.name}</p>
+                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                    <p className="text-sm text-primary">{testimonial.company}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Client Logos */}
+          <div className="text-center">
+            <p className="text-sm text-muted-foreground mb-6 uppercase tracking-wider">Trusted by organizations across India</p>
+            <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 opacity-60">
+              {["TechCorp", "GreenBuild", "EcoFinance", "SustainCo", "NatureTech"].map((company, index) => (
+                <div 
+                  key={index} 
+                  className="px-6 py-3 bg-muted rounded-lg text-muted-foreground font-semibold text-lg"
+                >
+                  {company}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Corporate Inquiry Form */}
-      <section id="inquiry-form" className="py-16 md:py-24 bg-muted/30">
+      <section id="inquiry-form" className="py-16 md:py-24">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
             <div className="text-center mb-10">
