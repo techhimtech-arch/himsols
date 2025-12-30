@@ -8,6 +8,7 @@ import { CartProvider } from "@/hooks/useCart";
 import { LanguageProvider } from "@/hooks/useLanguage";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import Index from "./pages/Index";
 import Services from "./pages/Services";
 import TreePlantation from "./pages/TreePlantation";
@@ -26,6 +27,11 @@ import B2BCorporate from "./pages/B2BCorporate";
 
 const queryClient = new QueryClient();
 
+const AnalyticsWrapper = ({ children }: { children: React.ReactNode }) => {
+  useAnalytics();
+  return <>{children}</>;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <LanguageProvider>
@@ -37,24 +43,26 @@ const App = () => (
             <PWAInstallPrompt />
             <WhatsAppButton />
             <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/services" element={<Services />} />
-                <Route path="/tree-plantation" element={<TreePlantation />} />
-                
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/admin" element={<Admin />} />
-                <Route path="/shop" element={<Shop />} />
-                <Route path="/gallery" element={<Gallery />} />
-                <Route path="/order-history" element={<OrderHistory />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/waste-management" element={<WasteManagement />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/corporate" element={<B2BCorporate />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+              <AnalyticsWrapper>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/services" element={<Services />} />
+                  <Route path="/tree-plantation" element={<TreePlantation />} />
+                  
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/admin" element={<Admin />} />
+                  <Route path="/shop" element={<Shop />} />
+                  <Route path="/gallery" element={<Gallery />} />
+                  <Route path="/order-history" element={<OrderHistory />} />
+                  <Route path="/cart" element={<Cart />} />
+                  <Route path="/waste-management" element={<WasteManagement />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/corporate" element={<B2BCorporate />} />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </AnalyticsWrapper>
             </BrowserRouter>
           </TooltipProvider>
         </CartProvider>
