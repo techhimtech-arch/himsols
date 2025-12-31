@@ -21,10 +21,7 @@ const Blog = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("blog_posts")
-        .select(`
-          *,
-          profiles:author_id (full_name)
-        `)
+        .select("*")
         .eq("is_published", true)
         .order("published_at", { ascending: false });
 
@@ -145,7 +142,7 @@ const Blog = () => {
                       <CardFooter className="flex items-center gap-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <User className="h-4 w-4" />
-                          <span>{(post.profiles as any)?.full_name || "Admin"}</span>
+                          <span>Admin</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Calendar className="h-4 w-4" />
