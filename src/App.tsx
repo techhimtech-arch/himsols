@@ -12,6 +12,8 @@ import { useAnalytics } from "@/hooks/useAnalytics";
 import Index from "./pages/Index";
 import Services from "./pages/Services";
 import TreePlantation from "./pages/TreePlantation";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 
 import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
@@ -48,6 +50,8 @@ const App = () => (
                   <Route path="/" element={<Index />} />
                   <Route path="/services" element={<Services />} />
                   <Route path="/tree-plantation" element={<TreePlantation />} />
+                  <Route path="/blog" element={<Blog />} />
+                  <Route path="/blog/:slug" element={<BlogPost />} />
                   
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/auth" element={<Auth />} />
