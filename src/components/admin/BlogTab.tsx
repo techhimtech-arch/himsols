@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -32,8 +32,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Pencil, Trash2, Eye } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, Upload } from "lucide-react";
 import { format } from "date-fns";
+import { RichTextEditor } from "./RichTextEditor";
 
 interface BlogPost {
   id: string;
@@ -68,6 +69,8 @@ export const BlogTab = () => {
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const coverInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     title: "",
     title_hi: "",
@@ -218,6 +221,44 @@ export const BlogTab = () => {
     }
   };
 
+  const handleCoverUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast({ title: "Invalid file type", description: "Please upload an image", variant: "destructive" });
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: "File too large", description: "Maximum size is 5MB", variant: "destructive" });
+      return;
+    }
+
+    setUploadingCover(true);
+    try {
+      const fileName = `covers/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
+      
+      const { data, error } = await supabase.storage
+        .from("blog-images")
+        .upload(fileName, file);
+
+      if (error) throw error;
+
+      const { data: urlData } = supabase.storage
+        .from("blog-images")
+        .getPublicUrl(data.path);
+
+      setFormData({ ...formData, cover_image: urlData.publicUrl });
+      toast({ title: "Cover image uploaded!" });
+    } catch (error: any) {
+      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+    } finally {
+      setUploadingCover(false);
+      if (coverInputRef.current) coverInputRef.current.value = "";
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -286,13 +327,35 @@ export const BlogTab = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="cover_image">Cover Image URL</Label>
-                <Input
-                  id="cover_image"
-                  value={formData.cover_image}
-                  onChange={(e) => setFormData({ ...formData, cover_image: e.target.value })}
-                  placeholder="https://example.com/image.jpg"
-                />
+                <Label>Cover Image</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="cover_image"
+                    value={formData.cover_image}
+                    onChange={(e) => setFormData({ ...formData, cover_image: e.target.value })}
+                    placeholder="https://example.com/image.jpg or upload"
+                    className="flex-1"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => coverInputRef.current?.click()}
+                    disabled={uploadingCover}
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    {uploadingCover ? "Uploading..." : "Upload"}
+                  </Button>
+                  <input
+                    ref={coverInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleCoverUpload}
+                    className="hidden"
+                  />
+                </div>
+                {formData.cover_image && (
+                  <img src={formData.cover_image} alt="Cover preview" className="h-24 object-cover rounded-md" />
+                )}
               </div>
 
               <div className="space-y-2">
@@ -327,26 +390,22 @@ export const BlogTab = () => {
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="content">Content (English) *</Label>
-                  <Textarea
-                    id="content"
-                    value={formData.content}
-                    onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                    rows={10}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="content_hi">Content (Hindi)</Label>
-                  <Textarea
-                    id="content_hi"
-                    value={formData.content_hi}
-                    onChange={(e) => setFormData({ ...formData, content_hi: e.target.value })}
-                    rows={10}
-                  />
-                </div>
+              <div className="space-y-2">
+                <Label>Content (English) *</Label>
+                <RichTextEditor
+                  content={formData.content}
+                  onChange={(content) => setFormData({ ...formData, content })}
+                  placeholder="Write your blog content here..."
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Content (Hindi)</Label>
+                <RichTextEditor
+                  content={formData.content_hi}
+                  onChange={(content) => setFormData({ ...formData, content_hi: content })}
+                  placeholder="हिंदी में ब्लॉग सामग्री लिखें..."
+                />
               </div>
 
               <div className="flex items-center space-x-2">
