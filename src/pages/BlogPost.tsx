@@ -164,9 +164,10 @@ const BlogPost = () => {
           )}
 
           {/* Content */}
-          <div className="max-w-4xl mx-auto prose prose-lg dark:prose-invert">
-            <div dangerouslySetInnerHTML={{ __html: content.replace(/\n/g, '<br/>') }} />
-          </div>
+          <div 
+            className="max-w-4xl mx-auto prose prose-lg dark:prose-invert prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-a:text-primary prose-blockquote:border-l-primary prose-blockquote:text-muted-foreground prose-li:text-muted-foreground prose-img:rounded-lg prose-img:shadow-lg prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-pre:bg-muted prose-pre:text-foreground"
+            dangerouslySetInnerHTML={{ __html: content }} 
+          />
         </div>
       </article>
 
