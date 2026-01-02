@@ -21,7 +21,8 @@ import {
 } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Loader2, Image, Upload } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, Image, Upload, Images, X, CheckCircle } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/hooks/useAuth";
 import { compressImage, formatFileSize } from "@/lib/imageCompression";
 
@@ -34,12 +35,21 @@ interface PlantationPhoto {
   created_at: string;
 }
 
+interface BulkUploadFile {
+  file: File;
+  preview: string;
+  caption: string;
+  status: 'pending' | 'uploading' | 'done' | 'error';
+  progress: number;
+}
+
 export const ActivityPhotosTab = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [photos, setPhotos] = useState<PlantationPhoto[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [bulkDialogOpen, setBulkDialogOpen] = useState(false);
   const [editingPhoto, setEditingPhoto] = useState<PlantationPhoto | null>(null);
   const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
@@ -50,6 +60,11 @@ export const ActivityPhotosTab = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [compressionInfo, setCompressionInfo] = useState<string | null>(null);
+  
+  // Bulk upload state
+  const [bulkFiles, setBulkFiles] = useState<BulkUploadFile[]>([]);
+  const [bulkUploading, setBulkUploading] = useState(false);
+  const [bulkProgress, setBulkProgress] = useState(0);
 
   useEffect(() => {
     loadPhotos();
@@ -111,6 +126,114 @@ export const ActivityPhotosTab = () => {
       .getPublicUrl(filePath);
 
     return urlData.publicUrl;
+  };
+
+  // Bulk upload handlers
+  const handleBulkFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const newFiles: BulkUploadFile[] = files.map(file => ({
+      file,
+      preview: URL.createObjectURL(file),
+      caption: "",
+      status: 'pending' as const,
+      progress: 0
+    }));
+    setBulkFiles(prev => [...prev, ...newFiles]);
+  };
+
+  const updateBulkFileCaption = (index: number, caption: string) => {
+    setBulkFiles(prev => prev.map((f, i) => i === index ? { ...f, caption } : f));
+  };
+
+  const removeBulkFile = (index: number) => {
+    setBulkFiles(prev => {
+      URL.revokeObjectURL(prev[index].preview);
+      return prev.filter((_, i) => i !== index);
+    });
+  };
+
+  const handleBulkUpload = async () => {
+    if (!user || bulkFiles.length === 0) return;
+    
+    setBulkUploading(true);
+    setBulkProgress(0);
+    
+    let successCount = 0;
+    let errorCount = 0;
+
+    for (let i = 0; i < bulkFiles.length; i++) {
+      const bulkFile = bulkFiles[i];
+      
+      // Update status to uploading
+      setBulkFiles(prev => prev.map((f, idx) => 
+        idx === i ? { ...f, status: 'uploading' as const, progress: 50 } : f
+      ));
+
+      try {
+        const photoUrl = await uploadImageForBulk(bulkFile.file);
+        
+        const { error } = await supabase
+          .from("plantation_photos")
+          .insert({
+            photo_url: photoUrl,
+            caption: bulkFile.caption || null,
+            uploaded_by: user.id,
+          });
+
+        if (error) throw error;
+
+        // Update status to done
+        setBulkFiles(prev => prev.map((f, idx) => 
+          idx === i ? { ...f, status: 'done' as const, progress: 100 } : f
+        ));
+        successCount++;
+      } catch (error) {
+        console.error("Error uploading file:", error);
+        setBulkFiles(prev => prev.map((f, idx) => 
+          idx === i ? { ...f, status: 'error' as const, progress: 0 } : f
+        ));
+        errorCount++;
+      }
+
+      setBulkProgress(Math.round(((i + 1) / bulkFiles.length) * 100));
+    }
+
+    setBulkUploading(false);
+    
+    toast({
+      title: "Bulk Upload Complete",
+      description: `${successCount} photos uploaded successfully${errorCount > 0 ? `, ${errorCount} failed` : ''}.`,
+      variant: errorCount > 0 ? "destructive" : "default"
+    });
+
+    if (successCount > 0) {
+      loadPhotos();
+    }
+  };
+
+  const uploadImageForBulk = async (file: File): Promise<string> => {
+    const compressedBlob = await compressImage(file, 1200, 1200, 0.8);
+    const fileName = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}.jpg`;
+    const filePath = `activity/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("tree-photos")
+      .upload(filePath, compressedBlob, { contentType: 'image/jpeg' });
+
+    if (uploadError) throw uploadError;
+
+    const { data: urlData } = supabase.storage
+      .from("tree-photos")
+      .getPublicUrl(filePath);
+
+    return urlData.publicUrl;
+  };
+
+  const resetBulkUpload = () => {
+    bulkFiles.forEach(f => URL.revokeObjectURL(f.preview));
+    setBulkFiles([]);
+    setBulkProgress(0);
+    setBulkDialogOpen(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -235,21 +358,164 @@ export const ActivityPhotosTab = () => {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-2">
         <CardTitle className="flex items-center gap-2">
           <Image className="h-5 w-5" />
           Activity Photos
         </CardTitle>
-        <Dialog open={dialogOpen} onOpenChange={(open) => {
-          setDialogOpen(open);
-          if (!open) resetForm();
-        }}>
-          <DialogTrigger asChild>
-            <Button size="sm">
-              <Plus className="h-4 w-4 mr-2" />
-              Add Photo
-            </Button>
-          </DialogTrigger>
+        <div className="flex gap-2">
+          {/* Bulk Upload Dialog */}
+          <Dialog open={bulkDialogOpen} onOpenChange={(open) => {
+            setBulkDialogOpen(open);
+            if (!open) resetBulkUpload();
+          }}>
+            <DialogTrigger asChild>
+              <Button size="sm" variant="outline">
+                <Images className="h-4 w-4 mr-2" />
+                Bulk Upload
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Bulk Upload Photos</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                {/* File selector */}
+                <div className="space-y-2">
+                  <Label>Select Multiple Images</Label>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleBulkFileSelect}
+                    disabled={bulkUploading}
+                    className="cursor-pointer"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Images will be automatically compressed to max 1200x1200 @ 80% quality
+                  </p>
+                </div>
+
+                {/* Selected files preview */}
+                {bulkFiles.length > 0 && (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label>{bulkFiles.length} image(s) selected</Label>
+                      {!bulkUploading && (
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          onClick={() => {
+                            bulkFiles.forEach(f => URL.revokeObjectURL(f.preview));
+                            setBulkFiles([]);
+                          }}
+                        >
+                          Clear All
+                        </Button>
+                      )}
+                    </div>
+                    
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-[300px] overflow-y-auto">
+                      {bulkFiles.map((bulkFile, index) => (
+                        <div 
+                          key={index} 
+                          className={`relative border rounded-lg p-2 space-y-2 ${
+                            bulkFile.status === 'done' ? 'border-green-500 bg-green-500/10' :
+                            bulkFile.status === 'error' ? 'border-destructive bg-destructive/10' :
+                            bulkFile.status === 'uploading' ? 'border-primary bg-primary/10' :
+                            'border-border'
+                          }`}
+                        >
+                          <img
+                            src={bulkFile.preview}
+                            alt={`Preview ${index + 1}`}
+                            className="w-full h-20 object-cover rounded"
+                          />
+                          <Input
+                            placeholder="Caption (optional)"
+                            value={bulkFile.caption}
+                            onChange={(e) => updateBulkFileCaption(index, e.target.value)}
+                            disabled={bulkUploading}
+                            className="text-xs h-8"
+                          />
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-muted-foreground">
+                              {formatFileSize(bulkFile.file.size)}
+                            </span>
+                            {bulkFile.status === 'done' && (
+                              <CheckCircle className="h-4 w-4 text-green-500" />
+                            )}
+                            {bulkFile.status === 'uploading' && (
+                              <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                            )}
+                            {bulkFile.status === 'pending' && !bulkUploading && (
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-6 w-6 p-0"
+                                onClick={() => removeBulkFile(index)}
+                              >
+                                <X className="h-3 w-3" />
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Upload progress */}
+                    {bulkUploading && (
+                      <div className="space-y-2">
+                        <Progress value={bulkProgress} className="h-2" />
+                        <p className="text-sm text-center text-muted-foreground">
+                          Uploading... {bulkProgress}%
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Actions */}
+                <div className="flex gap-2 justify-end">
+                  <Button 
+                    variant="outline" 
+                    onClick={resetBulkUpload}
+                    disabled={bulkUploading}
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    onClick={handleBulkUpload}
+                    disabled={bulkFiles.length === 0 || bulkUploading || bulkFiles.every(f => f.status === 'done')}
+                  >
+                    {bulkUploading ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Uploading...
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="h-4 w-4 mr-2" />
+                        Upload {bulkFiles.filter(f => f.status === 'pending').length} Photos
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          {/* Single photo dialog */}
+          <Dialog open={dialogOpen} onOpenChange={(open) => {
+            setDialogOpen(open);
+            if (!open) resetForm();
+          }}>
+            <DialogTrigger asChild>
+              <Button size="sm">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Photo
+              </Button>
+            </DialogTrigger>
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle>
@@ -339,6 +605,7 @@ export const ActivityPhotosTab = () => {
             </form>
           </DialogContent>
         </Dialog>
+        </div>
       </CardHeader>
       <CardContent>
         {photos.length === 0 ? (
