@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Quote, Star, Building2, School, Users2, Leaf, Camera } from "lucide-react";
+import { Quote, Star, Building2, School, Users2, Leaf, Camera, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -8,6 +8,16 @@ interface PlantationPhoto {
   photo_url: string;
   caption: string | null;
   created_at: string;
+}
+
+interface Testimonial {
+  id: string;
+  quote: string;
+  name: string;
+  role: string;
+  location: string;
+  avatar: string | null;
+  rating: number;
 }
 
 // Fallback static activities when no photos in database
@@ -29,28 +39,31 @@ const fallbackActivities = [
   }
 ];
 
-// Testimonials data
-const testimonials = [
+// Fallback testimonials
+const fallbackTestimonials = [
   {
     quote: "Himsols planted 50 trees in our panchayat area. The team was professional and the saplings are growing well. Excellent initiative!",
     name: "Ramesh Sharma",
     role: "Panchayat Pradhan",
     location: "Kullu District",
-    avatar: "RS"
+    avatar: "RS",
+    rating: 5
   },
   {
     quote: "We organized a tree plantation drive with Himsols at our school. Students loved it! Great awareness program for the next generation.",
     name: "Anita Devi",
     role: "School Principal",
     location: "Mandi District",
-    avatar: "AD"
+    avatar: "AD",
+    rating: 5
   },
   {
     quote: "The scrap collection service is very convenient. They pick up from doorstep and pay fair prices. Highly recommended!",
     name: "Suresh Kumar",
     role: "Local Farmer",
     location: "Shimla District",
-    avatar: "SK"
+    avatar: "SK",
+    rating: 5
   }
 ];
 
@@ -64,10 +77,13 @@ const partnerTypes = [
 
 export const TrustSection = () => {
   const [photos, setPhotos] = useState<PlantationPhoto[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [loadingPhotos, setLoadingPhotos] = useState(true);
+  const [loadingTestimonials, setLoadingTestimonials] = useState(true);
 
   useEffect(() => {
     loadPhotos();
+    loadTestimonials();
   }, []);
 
   const loadPhotos = async () => {
@@ -83,7 +99,25 @@ export const TrustSection = () => {
     } catch (error) {
       console.error("Error loading photos:", error);
     } finally {
-      setLoading(false);
+      setLoadingPhotos(false);
+    }
+  };
+
+  const loadTestimonials = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("testimonials")
+        .select("id, quote, name, role, location, avatar, rating")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true })
+        .limit(3);
+
+      if (error) throw error;
+      setTestimonials(data || []);
+    } catch (error) {
+      console.error("Error loading testimonials:", error);
+    } finally {
+      setLoadingTestimonials(false);
     }
   };
 
@@ -100,6 +134,11 @@ export const TrustSection = () => {
         date: formatDate(photo.created_at)
       }))
     : fallbackActivities;
+
+  // Use database testimonials if available, otherwise fallback
+  const displayTestimonials = testimonials.length > 0 ? testimonials : fallbackTestimonials;
+
+  const loading = loadingPhotos || loadingTestimonials;
 
   return (
     <section className="py-16 md:py-24 px-4 relative">
@@ -155,40 +194,58 @@ export const TrustSection = () => {
 
         {/* Testimonials */}
         <div className="grid md:grid-cols-3 gap-6 mb-12">
-          {testimonials.map((testimonial, index) => (
-            <Card 
-              key={testimonial.name}
-              className="bg-background/60 backdrop-blur-xl border-border/50 hover:border-primary/30 transition-all duration-300 hover:-translate-y-1"
-            >
-              <CardContent className="p-6">
-                {/* Quote Icon */}
-                <Quote className="h-8 w-8 text-primary/30 mb-4" />
-                
-                {/* Quote Text */}
-                <p className="text-muted-foreground text-sm leading-relaxed mb-6 italic">
-                  "{testimonial.quote}"
-                </p>
-
-                {/* Author */}
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-sm">
-                    {testimonial.avatar}
+          {loadingTestimonials ? (
+            [...Array(3)].map((_, index) => (
+              <Card key={index} className="bg-background/60 backdrop-blur-xl border-border/50 animate-pulse">
+                <CardContent className="p-6">
+                  <div className="h-8 w-8 bg-muted rounded mb-4" />
+                  <div className="h-16 bg-muted rounded mb-6" />
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-muted" />
+                    <div className="space-y-2">
+                      <div className="h-4 w-24 bg-muted rounded" />
+                      <div className="h-3 w-32 bg-muted rounded" />
+                    </div>
                   </div>
-                  <div>
-                    <div className="font-semibold text-foreground text-sm">{testimonial.name}</div>
-                    <div className="text-muted-foreground text-xs">{testimonial.role} • {testimonial.location}</div>
-                  </div>
-                </div>
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            displayTestimonials.map((testimonial, index) => (
+              <Card 
+                key={testimonial.name}
+                className="bg-background/60 backdrop-blur-xl border-border/50 hover:border-primary/30 transition-all duration-300 hover:-translate-y-1"
+              >
+                <CardContent className="p-6">
+                  {/* Quote Icon */}
+                  <Quote className="h-8 w-8 text-primary/30 mb-4" />
+                  
+                  {/* Quote Text */}
+                  <p className="text-muted-foreground text-sm leading-relaxed mb-6 italic">
+                    "{testimonial.quote}"
+                  </p>
 
-                {/* Stars */}
-                <div className="flex gap-1 mt-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                  {/* Author */}
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-sm">
+                      {testimonial.avatar}
+                    </div>
+                    <div>
+                      <div className="font-semibold text-foreground text-sm">{testimonial.name}</div>
+                      <div className="text-muted-foreground text-xs">{testimonial.role} • {testimonial.location}</div>
+                    </div>
+                  </div>
+
+                  {/* Stars */}
+                  <div className="flex gap-1 mt-4">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
         </div>
 
         {/* Partner Logos */}
