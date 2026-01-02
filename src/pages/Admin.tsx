@@ -23,7 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Users, TreePine, TrendingUp, Loader2, Package, Settings, FileText } from "lucide-react";
+import { Shield, Users, TreePine, TrendingUp, Loader2, Package, Settings, FileText, Image, Quote } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OrdersTab } from "@/components/admin/OrdersTab";
 import { TreesTab } from "@/components/admin/TreesTab";
@@ -31,6 +31,8 @@ import { ScrapRequestsTab } from "@/components/admin/ScrapRequestsTab";
 import { SettingsTab } from "@/components/admin/SettingsTab";
 import { CorporateTab } from "@/components/admin/CorporateTab";
 import { BlogTab } from "@/components/admin/BlogTab";
+import { ActivityPhotosTab } from "@/components/admin/ActivityPhotosTab";
+import { TestimonialsTab } from "@/components/admin/TestimonialsTab";
 import { INDIAN_STATES, getDistrictsForState, IndianState } from "@/lib/constants";
 import { MobileCard, MobileCardRow, StatusBadge } from "@/components/admin/MobileCard";
 
@@ -535,6 +537,14 @@ const Admin = () => {
                   <FileText className="h-3 w-3 md:h-4 md:w-4 mr-1" />
                   Blog
                 </TabsTrigger>
+                <TabsTrigger value="photos" className="text-xs md:text-sm">
+                  <Image className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  Photos
+                </TabsTrigger>
+                <TabsTrigger value="testimonials" className="text-xs md:text-sm">
+                  <Quote className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  Reviews
+                </TabsTrigger>
                 <TabsTrigger value="users" className="text-xs md:text-sm">Users</TabsTrigger>
                 <TabsTrigger value="corporate" className="text-xs md:text-sm">Corporate</TabsTrigger>
                 <TabsTrigger value="settings" className="text-xs md:text-sm">
@@ -696,6 +706,16 @@ const Admin = () => {
             {/* Blog Tab */}
             <TabsContent value="blog">
               <BlogTab />
+            </TabsContent>
+
+            {/* Activity Photos Tab */}
+            <TabsContent value="photos">
+              <ActivityPhotosTab />
+            </TabsContent>
+
+            {/* Testimonials Tab */}
+            <TabsContent value="testimonials">
+              <TestimonialsTab />
             </TabsContent>
 
             {/* Users Tab */}

@@ -490,6 +490,48 @@ export type Database = {
         }
         Relationships: []
       }
+      testimonials: {
+        Row: {
+          avatar: string | null
+          created_at: string
+          id: string
+          is_active: boolean | null
+          location: string
+          name: string
+          quote: string
+          rating: number | null
+          role: string
+          sort_order: number | null
+          updated_at: string
+        }
+        Insert: {
+          avatar?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          location: string
+          name: string
+          quote: string
+          rating?: number | null
+          role: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Update: {
+          avatar?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          location?: string
+          name?: string
+          quote?: string
+          rating?: number | null
+          role?: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       tree_plantation_requests: {
         Row: {
           created_at: string | null

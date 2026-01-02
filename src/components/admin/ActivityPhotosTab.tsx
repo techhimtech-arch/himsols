@@ -1,0 +1,407 @@
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { Plus, Pencil, Trash2, Loader2, Image, Upload } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+
+interface PlantationPhoto {
+  id: string;
+  photo_url: string;
+  caption: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  created_at: string;
+}
+
+export const ActivityPhotosTab = () => {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [photos, setPhotos] = useState<PlantationPhoto[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingPhoto, setEditingPhoto] = useState<PlantationPhoto | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [formData, setFormData] = useState({
+    caption: "",
+    latitude: "",
+    longitude: "",
+  });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    loadPhotos();
+  }, []);
+
+  const loadPhotos = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("plantation_photos")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      setPhotos(data || []);
+    } catch (error: any) {
+      console.error("Error loading photos:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load photos.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
+  const uploadImage = async (file: File): Promise<string> => {
+    const fileExt = file.name.split(".").pop();
+    const fileName = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}.${fileExt}`;
+    const filePath = `activity/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("tree-photos")
+      .upload(filePath, file);
+
+    if (uploadError) throw uploadError;
+
+    const { data: urlData } = supabase.storage
+      .from("tree-photos")
+      .getPublicUrl(filePath);
+
+    return urlData.publicUrl;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+
+    setUploading(true);
+    try {
+      let photoUrl = editingPhoto?.photo_url || "";
+
+      if (selectedFile) {
+        photoUrl = await uploadImage(selectedFile);
+      }
+
+      if (!photoUrl) {
+        toast({
+          title: "Error",
+          description: "Please select an image to upload.",
+          variant: "destructive",
+        });
+        setUploading(false);
+        return;
+      }
+
+      const photoData = {
+        photo_url: photoUrl,
+        caption: formData.caption || null,
+        latitude: formData.latitude ? parseFloat(formData.latitude) : null,
+        longitude: formData.longitude ? parseFloat(formData.longitude) : null,
+        uploaded_by: user.id,
+      };
+
+      if (editingPhoto) {
+        const { error } = await supabase
+          .from("plantation_photos")
+          .update(photoData)
+          .eq("id", editingPhoto.id);
+
+        if (error) throw error;
+        toast({ title: "Success", description: "Photo updated successfully." });
+      } else {
+        const { error } = await supabase
+          .from("plantation_photos")
+          .insert(photoData);
+
+        if (error) throw error;
+        toast({ title: "Success", description: "Photo added successfully." });
+      }
+
+      resetForm();
+      loadPhotos();
+    } catch (error: any) {
+      console.error("Error saving photo:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to save photo.",
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleEdit = (photo: PlantationPhoto) => {
+    setEditingPhoto(photo);
+    setFormData({
+      caption: photo.caption || "",
+      latitude: photo.latitude?.toString() || "",
+      longitude: photo.longitude?.toString() || "",
+    });
+    setPreviewUrl(photo.photo_url);
+    setDialogOpen(true);
+  };
+
+  const handleDelete = async (photoId: string) => {
+    if (!confirm("Are you sure you want to delete this photo?")) return;
+
+    try {
+      const { error } = await supabase
+        .from("plantation_photos")
+        .delete()
+        .eq("id", photoId);
+
+      if (error) throw error;
+
+      toast({ title: "Success", description: "Photo deleted successfully." });
+      loadPhotos();
+    } catch (error: any) {
+      console.error("Error deleting photo:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete photo.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({ caption: "", latitude: "", longitude: "" });
+    setSelectedFile(null);
+    setPreviewUrl(null);
+    setEditingPhoto(null);
+    setDialogOpen(false);
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle className="flex items-center gap-2">
+          <Image className="h-5 w-5" />
+          Activity Photos
+        </CardTitle>
+        <Dialog open={dialogOpen} onOpenChange={(open) => {
+          setDialogOpen(open);
+          if (!open) resetForm();
+        }}>
+          <DialogTrigger asChild>
+            <Button size="sm">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Photo
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>
+                {editingPhoto ? "Edit Photo" : "Add Activity Photo"}
+              </DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="photo">Photo</Label>
+                <div className="flex flex-col gap-2">
+                  {previewUrl && (
+                    <img
+                      src={previewUrl}
+                      alt="Preview"
+                      className="w-full h-40 object-cover rounded-lg"
+                    />
+                  )}
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id="photo"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="cursor-pointer"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="caption">Caption</Label>
+                <Textarea
+                  id="caption"
+                  value={formData.caption}
+                  onChange={(e) => setFormData({ ...formData, caption: e.target.value })}
+                  placeholder="e.g., Plantation drive at XYZ Panchayat"
+                  rows={2}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="latitude">Latitude (optional)</Label>
+                  <Input
+                    id="latitude"
+                    type="number"
+                    step="any"
+                    value={formData.latitude}
+                    onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
+                    placeholder="31.1048"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="longitude">Longitude (optional)</Label>
+                  <Input
+                    id="longitude"
+                    type="number"
+                    step="any"
+                    value={formData.longitude}
+                    onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
+                    placeholder="77.1734"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-2 justify-end">
+                <Button type="button" variant="outline" onClick={resetForm}>
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={uploading}>
+                  {uploading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      {editingPhoto ? "Updating..." : "Uploading..."}
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="h-4 w-4 mr-2" />
+                      {editingPhoto ? "Update" : "Upload"}
+                    </>
+                  )}
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </CardHeader>
+      <CardContent>
+        {photos.length === 0 ? (
+          <p className="text-center text-muted-foreground py-8">
+            No activity photos yet. Add your first photo!
+          </p>
+        ) : (
+          <>
+            {/* Mobile View */}
+            <div className="block md:hidden space-y-4">
+              {photos.map((photo) => (
+                <div key={photo.id} className="border rounded-lg p-4 space-y-3">
+                  <img
+                    src={photo.photo_url}
+                    alt={photo.caption || "Activity photo"}
+                    className="w-full h-32 object-cover rounded-lg"
+                  />
+                  <p className="text-sm font-medium">{photo.caption || "No caption"}</p>
+                  <p className="text-xs text-muted-foreground">{formatDate(photo.created_at)}</p>
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline" onClick={() => handleEdit(photo)}>
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button size="sm" variant="destructive" onClick={() => handleDelete(photo.id)}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop View */}
+            <div className="hidden md:block">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-24">Photo</TableHead>
+                    <TableHead>Caption</TableHead>
+                    <TableHead>Location</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {photos.map((photo) => (
+                    <TableRow key={photo.id}>
+                      <TableCell>
+                        <img
+                          src={photo.photo_url}
+                          alt={photo.caption || "Activity photo"}
+                          className="w-20 h-14 object-cover rounded"
+                        />
+                      </TableCell>
+                      <TableCell className="max-w-xs truncate">
+                        {photo.caption || "-"}
+                      </TableCell>
+                      <TableCell>
+                        {photo.latitude && photo.longitude
+                          ? `${photo.latitude.toFixed(4)}, ${photo.longitude.toFixed(4)}`
+                          : "-"}
+                      </TableCell>
+                      <TableCell>{formatDate(photo.created_at)}</TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex gap-2 justify-end">
+                          <Button size="sm" variant="outline" onClick={() => handleEdit(photo)}>
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button size="sm" variant="destructive" onClick={() => handleDelete(photo.id)}>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
