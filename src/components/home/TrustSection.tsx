@@ -1,5 +1,33 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Quote, Star, Building2, School, Users2, Leaf } from "lucide-react";
+import { Quote, Star, Building2, School, Users2, Leaf, Camera } from "lucide-react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+
+interface PlantationPhoto {
+  id: string;
+  photo_url: string;
+  caption: string | null;
+  created_at: string;
+}
+
+// Fallback static activities when no photos in database
+const fallbackActivities = [
+  {
+    image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&h=300&fit=crop",
+    caption: "Plantation drive at Kullu Panchayat",
+    date: "Dec 2025"
+  },
+  {
+    image: "https://images.unsplash.com/photo-1618477461853-cf6ed80faba5?w=400&h=300&fit=crop",
+    caption: "Community cleanup campaign",
+    date: "Nov 2025"
+  },
+  {
+    image: "https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=400&h=300&fit=crop",
+    caption: "School awareness program",
+    date: "Oct 2025"
+  }
+];
 
 // Testimonials data
 const testimonials = [
@@ -26,25 +54,6 @@ const testimonials = [
   }
 ];
 
-// Activity Photos
-const activities = [
-  {
-    image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&h=300&fit=crop",
-    caption: "Plantation drive at Kullu Panchayat",
-    date: "Dec 2025"
-  },
-  {
-    image: "https://images.unsplash.com/photo-1618477461853-cf6ed80faba5?w=400&h=300&fit=crop",
-    caption: "Community cleanup campaign",
-    date: "Nov 2025"
-  },
-  {
-    image: "https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=400&h=300&fit=crop",
-    caption: "School awareness program",
-    date: "Oct 2025"
-  }
-];
-
 // Partner types
 const partnerTypes = [
   { icon: Building2, label: "5 Panchayats" },
@@ -54,6 +63,44 @@ const partnerTypes = [
 ];
 
 export const TrustSection = () => {
+  const [photos, setPhotos] = useState<PlantationPhoto[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadPhotos();
+  }, []);
+
+  const loadPhotos = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("plantation_photos")
+        .select("id, photo_url, caption, created_at")
+        .order("created_at", { ascending: false })
+        .limit(3);
+
+      if (error) throw error;
+      setPhotos(data || []);
+    } catch (error) {
+      console.error("Error loading photos:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  };
+
+  // Use database photos if available, otherwise fallback
+  const displayActivities = photos.length > 0 
+    ? photos.map(photo => ({
+        image: photo.photo_url,
+        caption: photo.caption || "Plantation activity",
+        date: formatDate(photo.created_at)
+      }))
+    : fallbackActivities;
+
   return (
     <section className="py-16 md:py-24 px-4 relative">
       <div className="container mx-auto">
@@ -72,24 +119,38 @@ export const TrustSection = () => {
 
         {/* Activity Photos Grid */}
         <div className="grid md:grid-cols-3 gap-4 mb-12">
-          {activities.map((activity, index) => (
-            <div 
-              key={activity.caption}
-              className="group relative overflow-hidden rounded-2xl aspect-[4/3]"
-            >
-              <img 
-                src={activity.image} 
-                alt={activity.caption}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-4">
-                <p className="text-white font-medium text-sm md:text-base">{activity.caption}</p>
-                <p className="text-white/70 text-xs md:text-sm">{activity.date}</p>
+          {loading ? (
+            // Loading skeleton
+            [...Array(3)].map((_, index) => (
+              <div 
+                key={index}
+                className="relative overflow-hidden rounded-2xl aspect-[4/3] bg-muted animate-pulse"
+              >
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Camera className="h-8 w-8 text-muted-foreground/50" />
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            displayActivities.map((activity, index) => (
+              <div 
+                key={index}
+                className="group relative overflow-hidden rounded-2xl aspect-[4/3]"
+              >
+                <img 
+                  src={activity.image} 
+                  alt={activity.caption}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-4">
+                  <p className="text-white font-medium text-sm md:text-base">{activity.caption}</p>
+                  <p className="text-white/70 text-xs md:text-sm">{activity.date}</p>
+                </div>
+              </div>
+            ))
+          )}
         </div>
 
         {/* Testimonials */}
