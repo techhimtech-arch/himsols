@@ -23,6 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Loader2, Image, Upload } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { compressImage, formatFileSize } from "@/lib/imageCompression";
 
 interface PlantationPhoto {
   id: string;
@@ -48,6 +49,7 @@ export const ActivityPhotosTab = () => {
   });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [compressionInfo, setCompressionInfo] = useState<string | null>(null);
 
   useEffect(() => {
     loadPhotos();
@@ -74,22 +76,33 @@ export const ActivityPhotosTab = () => {
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      const originalSize = file.size;
       setSelectedFile(file);
       setPreviewUrl(URL.createObjectURL(file));
+      setCompressionInfo(`Original: ${formatFileSize(originalSize)} → Will be compressed on upload`);
     }
   };
 
   const uploadImage = async (file: File): Promise<string> => {
-    const fileExt = file.name.split(".").pop();
-    const fileName = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}.${fileExt}`;
+    // Compress the image before uploading
+    const originalSize = file.size;
+    const compressedBlob = await compressImage(file, 1200, 1200, 0.8);
+    const compressedSize = compressedBlob.size;
+    
+    console.log(`Image compressed: ${formatFileSize(originalSize)} → ${formatFileSize(compressedSize)} (${Math.round((1 - compressedSize / originalSize) * 100)}% reduction)`);
+    setCompressionInfo(`Compressed: ${formatFileSize(originalSize)} → ${formatFileSize(compressedSize)}`);
+
+    const fileName = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}.jpg`;
     const filePath = `activity/${fileName}`;
 
     const { error: uploadError } = await supabase.storage
       .from("tree-photos")
-      .upload(filePath, file);
+      .upload(filePath, compressedBlob, {
+        contentType: 'image/jpeg'
+      });
 
     if (uploadError) throw uploadError;
 
@@ -199,6 +212,7 @@ export const ActivityPhotosTab = () => {
     setFormData({ caption: "", latitude: "", longitude: "" });
     setSelectedFile(null);
     setPreviewUrl(null);
+    setCompressionInfo(null);
     setEditingPhoto(null);
     setDialogOpen(false);
   };
@@ -254,7 +268,7 @@ export const ActivityPhotosTab = () => {
                     />
                   )}
                   <div className="flex items-center gap-2">
-                    <Input
+                  <Input
                       id="photo"
                       type="file"
                       accept="image/*"
@@ -262,6 +276,9 @@ export const ActivityPhotosTab = () => {
                       className="cursor-pointer"
                     />
                   </div>
+                  {compressionInfo && (
+                    <p className="text-xs text-muted-foreground">{compressionInfo}</p>
+                  )}
                 </div>
               </div>
 
