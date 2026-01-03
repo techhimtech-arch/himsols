@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Package, Calendar, MapPin, TreeDeciduous, IndianRupee } from "lucide-react";
+import { Package, Calendar, MapPin, TreeDeciduous, IndianRupee, Award, Download, Loader2 } from "lucide-react";
 
 interface Order {
   id: string;
@@ -31,6 +31,7 @@ const OrderHistory = () => {
   const { toast } = useToast();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [downloadingCert, setDownloadingCert] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -101,6 +102,61 @@ const OrderHistory = () => {
       month: "short",
       year: "numeric",
     });
+  };
+
+  const handleDownloadCertificate = async (orderId: string) => {
+    setDownloadingCert(orderId);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast({
+          title: "Error",
+          description: "Please login to download certificate",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-certificate`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({ orderId }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to generate certificate");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `HIMSOLS-Certificate-${orderId.slice(0, 8).toUpperCase()}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      toast({
+        title: "Certificate Downloaded",
+        description: "Your appreciation certificate has been downloaded successfully!",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to download certificate",
+        variant: "destructive",
+      });
+    } finally {
+      setDownloadingCert(null);
+    }
   };
 
   if (authLoading) {
@@ -195,6 +251,26 @@ const OrderHistory = () => {
                     <p className="text-sm text-muted-foreground italic">
                       "{order.notes}"
                     </p>
+                  )}
+                  {order.status === "completed" && (
+                    <Button
+                      onClick={() => handleDownloadCertificate(order.id)}
+                      disabled={downloadingCert === order.id}
+                      className="w-full mt-2 bg-primary hover:bg-primary/90"
+                      size="sm"
+                    >
+                      {downloadingCert === order.id ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Generating...
+                        </>
+                      ) : (
+                        <>
+                          <Award className="h-4 w-4 mr-2" />
+                          Download Certificate
+                        </>
+                      )}
+                    </Button>
                   )}
                 </CardContent>
               </Card>
