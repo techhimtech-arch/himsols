@@ -14,9 +14,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { useState, useMemo } from "react";
 import { INDIAN_STATES, getDistrictsForState, IndianState } from "@/lib/constants";
 import { MobileCard, MobileCardRow, StatusBadge } from "./MobileCard";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { Award, Loader2 } from "lucide-react";
 
 interface Order {
   id: string;
@@ -38,8 +42,10 @@ interface OrdersTabProps {
 }
 
 export const OrdersTab = ({ orders, onUpdateStatus }: OrdersTabProps) => {
+  const { toast } = useToast();
   const [filterState, setFilterState] = useState<string>("all");
   const [filterDistrict, setFilterDistrict] = useState<string>("all");
+  const [downloadingCert, setDownloadingCert] = useState<string | null>(null);
 
   const filteredOrders = useMemo(() => {
     return orders.filter((order) => {
@@ -53,6 +59,61 @@ export const OrdersTab = ({ orders, onUpdateStatus }: OrdersTabProps) => {
     if (filterState === "all") return [];
     return getDistrictsForState(filterState as IndianState);
   }, [filterState]);
+
+  const handleDownloadCertificate = async (orderId: string) => {
+    setDownloadingCert(orderId);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast({
+          title: "Error",
+          description: "Please login to download certificate",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-certificate`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({ orderId }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to generate certificate");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `HIMSOLS-Certificate-${orderId.slice(0, 8).toUpperCase()}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      toast({
+        title: "Certificate Generated",
+        description: "Certificate has been downloaded successfully!",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to generate certificate",
+        variant: "destructive",
+      });
+    } finally {
+      setDownloadingCert(null);
+    }
+  };
 
   return (
     <Card>
@@ -136,6 +197,24 @@ export const OrdersTab = ({ orders, onUpdateStatus }: OrdersTabProps) => {
                       <SelectItem value="cancelled">Cancelled</SelectItem>
                     </SelectContent>
                   </Select>
+                  {order.status === "completed" && (
+                    <Button
+                      onClick={() => handleDownloadCertificate(order.id)}
+                      disabled={downloadingCert === order.id}
+                      className="w-full mt-2"
+                      size="sm"
+                      variant="outline"
+                    >
+                      {downloadingCert === order.id ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <>
+                          <Award className="h-4 w-4 mr-1" />
+                          Certificate
+                        </>
+                      )}
+                    </Button>
+                  )}
                 </div>
               </MobileCard>
             ))
@@ -179,23 +258,40 @@ export const OrdersTab = ({ orders, onUpdateStatus }: OrdersTabProps) => {
                     </TableCell>
                     <TableCell>{new Date(order.created_at).toLocaleDateString()}</TableCell>
                     <TableCell>
-                      <Select
-                        value={order.status}
-                        onValueChange={(value) => onUpdateStatus(order.id, value)}
-                      >
-                        <SelectTrigger className="w-[150px] bg-background">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="bg-popover border border-border z-50">
-                          <SelectItem value="pending">Pending</SelectItem>
-                          <SelectItem value="site_verified">Site Verified</SelectItem>
-                          <SelectItem value="saplings_arranged">Saplings Arranged</SelectItem>
-                          <SelectItem value="scheduled">Scheduled</SelectItem>
-                          <SelectItem value="in_progress">In Progress</SelectItem>
-                          <SelectItem value="completed">Completed</SelectItem>
-                          <SelectItem value="cancelled">Cancelled</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <div className="flex items-center gap-2">
+                        <Select
+                          value={order.status}
+                          onValueChange={(value) => onUpdateStatus(order.id, value)}
+                        >
+                          <SelectTrigger className="w-[140px] bg-background">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-popover border border-border z-50">
+                            <SelectItem value="pending">Pending</SelectItem>
+                            <SelectItem value="site_verified">Site Verified</SelectItem>
+                            <SelectItem value="saplings_arranged">Saplings Arranged</SelectItem>
+                            <SelectItem value="scheduled">Scheduled</SelectItem>
+                            <SelectItem value="in_progress">In Progress</SelectItem>
+                            <SelectItem value="completed">Completed</SelectItem>
+                            <SelectItem value="cancelled">Cancelled</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        {order.status === "completed" && (
+                          <Button
+                            onClick={() => handleDownloadCertificate(order.id)}
+                            disabled={downloadingCert === order.id}
+                            size="sm"
+                            variant="outline"
+                            title="Generate Certificate"
+                          >
+                            {downloadingCert === order.id ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <Award className="h-4 w-4" />
+                            )}
+                          </Button>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))
