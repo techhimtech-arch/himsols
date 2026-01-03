@@ -1,7 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Quote, Star, Building2, School, Users2, Leaf, Camera, Loader2 } from "lucide-react";
+import { Quote, Star, Camera } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import * as LucideIcons from "lucide-react";
 
 interface PlantationPhoto {
   id: string;
@@ -18,6 +19,12 @@ interface Testimonial {
   location: string;
   avatar: string | null;
   rating: number;
+}
+
+interface PartnerType {
+  id: string;
+  icon: string;
+  label: string;
 }
 
 // Fallback static activities when no photos in database
@@ -67,23 +74,22 @@ const fallbackTestimonials = [
   }
 ];
 
-// Partner types
-const partnerTypes = [
-  { icon: Building2, label: "5 Panchayats" },
-  { icon: School, label: "3 Schools" },
-  { icon: Users2, label: "2 NGOs" },
-  { icon: Leaf, label: "4 Nurseries" }
-];
+const renderIcon = (iconName: string, className?: string) => {
+  const IconComponent = (LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[iconName];
+  return IconComponent ? <IconComponent className={className} /> : null;
+};
 
 export const TrustSection = () => {
   const [photos, setPhotos] = useState<PlantationPhoto[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [partnerTypes, setPartnerTypes] = useState<PartnerType[]>([]);
   const [loadingPhotos, setLoadingPhotos] = useState(true);
   const [loadingTestimonials, setLoadingTestimonials] = useState(true);
 
   useEffect(() => {
     loadPhotos();
     loadTestimonials();
+    loadPartnerTypes();
   }, []);
 
   const loadPhotos = async () => {
@@ -118,6 +124,21 @@ export const TrustSection = () => {
       console.error("Error loading testimonials:", error);
     } finally {
       setLoadingTestimonials(false);
+    }
+  };
+
+  const loadPartnerTypes = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("partner_types")
+        .select("id, icon, label")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true });
+
+      if (error) throw error;
+      setPartnerTypes(data || []);
+    } catch (error) {
+      console.error("Error loading partner types:", error);
     }
   };
 
@@ -253,8 +274,8 @@ export const TrustSection = () => {
           <p className="text-muted-foreground text-sm mb-6">Trusted by communities across Himachal</p>
           <div className="flex flex-wrap justify-center gap-6 md:gap-10">
             {partnerTypes.map((partner) => (
-              <div key={partner.label} className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
-                <partner.icon className="h-5 w-5" />
+              <div key={partner.id} className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
+                {renderIcon(partner.icon, "h-5 w-5")}
                 <span className="font-medium text-sm">{partner.label}</span>
               </div>
             ))}

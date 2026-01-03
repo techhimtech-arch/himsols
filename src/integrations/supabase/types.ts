@@ -427,6 +427,36 @@ export type Database = {
           },
         ]
       }
+      partner_types: {
+        Row: {
+          created_at: string
+          icon: string
+          id: string
+          is_active: boolean | null
+          label: string
+          sort_order: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          icon?: string
+          id?: string
+          is_active?: boolean | null
+          label: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          icon?: string
+          id?: string
+          is_active?: boolean | null
+          label?: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       plantation_photos: {
         Row: {
           caption: string | null
