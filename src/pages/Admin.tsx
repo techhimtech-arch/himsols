@@ -23,7 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Users, TreePine, TrendingUp, Loader2, Package, Settings, FileText, Image, Quote, Activity, Handshake } from "lucide-react";
+import { Shield, Users, TreePine, TrendingUp, Loader2, Package, Settings, FileText, Image, Quote, Activity, Handshake, Store } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OrdersTab } from "@/components/admin/OrdersTab";
 import { TreesTab } from "@/components/admin/TreesTab";
@@ -35,6 +35,9 @@ import { ActivityPhotosTab } from "@/components/admin/ActivityPhotosTab";
 import { TestimonialsTab } from "@/components/admin/TestimonialsTab";
 import { ActivitiesTab } from "@/components/admin/ActivitiesTab";
 import { PartnerTypesTab } from "@/components/admin/PartnerTypesTab";
+import { SellersTab } from "@/components/admin/SellersTab";
+import { MarketplaceProductsTab } from "@/components/admin/MarketplaceProductsTab";
+import { MarketplaceOrdersTab } from "@/components/admin/MarketplaceOrdersTab";
 import { INDIAN_STATES, getDistrictsForState, IndianState } from "@/lib/constants";
 import { MobileCard, MobileCardRow, StatusBadge } from "@/components/admin/MobileCard";
 
@@ -557,6 +560,10 @@ const Admin = () => {
                 </TabsTrigger>
                 <TabsTrigger value="users" className="text-xs md:text-sm">Users</TabsTrigger>
                 <TabsTrigger value="corporate" className="text-xs md:text-sm">Corporate</TabsTrigger>
+                <TabsTrigger value="marketplace" className="text-xs md:text-sm">
+                  <Store className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  Marketplace
+                </TabsTrigger>
                 <TabsTrigger value="settings" className="text-xs md:text-sm">
                   <Settings className="h-3 w-3 md:h-4 md:w-4 mr-1" />
                   Settings
@@ -897,6 +904,15 @@ const Admin = () => {
             {/* Corporate Tab */}
             <TabsContent value="corporate">
               <CorporateTab />
+            </TabsContent>
+
+            {/* Marketplace Tab */}
+            <TabsContent value="marketplace">
+              <div className="space-y-8">
+                <SellersTab />
+                <MarketplaceProductsTab />
+                <MarketplaceOrdersTab />
+              </div>
             </TabsContent>
 
             {/* Settings Tab */}

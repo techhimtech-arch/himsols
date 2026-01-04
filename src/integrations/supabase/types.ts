@@ -374,6 +374,125 @@ export type Database = {
         }
         Relationships: []
       }
+      marketplace_orders: {
+        Row: {
+          created_at: string
+          delivery_address: string
+          district: string | null
+          id: string
+          items: Json
+          notes: string | null
+          order_number: string
+          state: string | null
+          status: Database["public"]["Enums"]["request_status"] | null
+          total_price: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          delivery_address: string
+          district?: string | null
+          id?: string
+          items: Json
+          notes?: string | null
+          order_number: string
+          state?: string | null
+          status?: Database["public"]["Enums"]["request_status"] | null
+          total_price: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          delivery_address?: string
+          district?: string | null
+          id?: string
+          items?: Json
+          notes?: string | null
+          order_number?: string
+          state?: string | null
+          status?: Database["public"]["Enums"]["request_status"] | null
+          total_price?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      marketplace_products: {
+        Row: {
+          category: Database["public"]["Enums"]["marketplace_category"]
+          created_at: string
+          delivery_timeline: string | null
+          description: string
+          description_hi: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          is_seasonal: boolean | null
+          name: string
+          name_hi: string | null
+          origin_location: string | null
+          price: number
+          seller_id: string | null
+          sort_order: number | null
+          stock_quantity: number
+          subcategory: string | null
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["marketplace_category"]
+          created_at?: string
+          delivery_timeline?: string | null
+          description: string
+          description_hi?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          is_seasonal?: boolean | null
+          name: string
+          name_hi?: string | null
+          origin_location?: string | null
+          price: number
+          seller_id?: string | null
+          sort_order?: number | null
+          stock_quantity?: number
+          subcategory?: string | null
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["marketplace_category"]
+          created_at?: string
+          delivery_timeline?: string | null
+          description?: string
+          description_hi?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          is_seasonal?: boolean | null
+          name?: string
+          name_hi?: string | null
+          origin_location?: string | null
+          price?: number
+          seller_id?: string | null
+          sort_order?: number | null
+          stock_quantity?: number
+          subcategory?: string | null
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketplace_products_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
           created_at: string | null
@@ -532,6 +651,48 @@ export type Database = {
           id?: string
           phone?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      sellers: {
+        Row: {
+          avatar_url: string | null
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          region: string | null
+          updated_at: string
+          village: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          region?: string | null
+          updated_at?: string
+          village: string
+        }
+        Update: {
+          avatar_url?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          region?: string | null
+          updated_at?: string
+          village?: string
         }
         Relationships: []
       }
@@ -809,6 +970,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_marketplace_order_number: { Args: never; Returns: string }
       generate_tracking_id: { Args: never; Returns: string }
       generate_waste_tracking_id: { Args: never; Returns: string }
       has_role: {
@@ -821,6 +983,11 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      marketplace_category:
+        | "farmer_produce"
+        | "value_added"
+        | "plants_gardening"
+        | "home_utility"
       request_status:
         | "pending"
         | "site_verified"
@@ -957,6 +1124,12 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      marketplace_category: [
+        "farmer_produce",
+        "value_added",
+        "plants_gardening",
+        "home_utility",
+      ],
       request_status: [
         "pending",
         "site_verified",
