@@ -41,6 +41,9 @@ export const Navbar = () => {
             <Link to="/shop" className="text-foreground hover:text-primary transition-all duration-300 font-medium hover:scale-110 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">
               {t("nav.shopTrees")}
             </Link>
+            <Link to="/marketplace" className="text-foreground hover:text-primary transition-all duration-300 font-medium hover:scale-110 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">
+              Marketplace
+            </Link>
             <Link to="/gallery" className="text-foreground hover:text-primary transition-all duration-300 font-medium hover:scale-110 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">
               {t("nav.gallery")}
             </Link>
@@ -133,6 +136,13 @@ export const Navbar = () => {
               onClick={() => setIsMenuOpen(false)}
             >
               {t("nav.shopTrees")}
+            </Link>
+            <Link
+              to="/marketplace"
+              className="block text-foreground hover:text-primary transition-colors py-2"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Marketplace
             </Link>
             <Link
               to="/gallery"
