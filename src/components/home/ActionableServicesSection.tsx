@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -43,7 +44,7 @@ const services = [
   }
 ];
 
-export const ActionableServicesSection = () => {
+export const ActionableServicesSection = memo(() => {
   const { t } = useLanguage();
 
   return (
@@ -114,4 +115,6 @@ export const ActionableServicesSection = () => {
       </div>
     </section>
   );
-};
+});
+
+ActionableServicesSection.displayName = "ActionableServicesSection";

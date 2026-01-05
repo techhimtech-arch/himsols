@@ -1,9 +1,10 @@
+import { memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { TreePine, ArrowRight, Phone, MessageCircle } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
-export const FinalCTASection = () => {
+export const FinalCTASection = memo(() => {
   const { settings } = useSiteSettings();
   const whatsappNumber = settings?.whatsapp_number || "919876543210";
 
@@ -69,4 +70,6 @@ export const FinalCTASection = () => {
       </div>
     </section>
   );
-};
+});
+
+FinalCTASection.displayName = "FinalCTASection";

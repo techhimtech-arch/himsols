@@ -1,10 +1,11 @@
+import { memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { TreePine, Recycle, Users, Award, ArrowRight, Sparkles } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import heroImage from "@/assets/hero-tree.jpg";
 
-export const HeroSection = () => {
+export const HeroSection = memo(() => {
   const { t } = useLanguage();
 
   return (
@@ -87,6 +88,9 @@ export const HeroSection = () => {
                 src={heroImage}
                 alt="Beautiful tree representing sustainability"
                 className="relative rounded-3xl shadow-2xl hover:scale-[1.02] transition-transform duration-700 w-full h-[320px] sm:h-[400px] lg:h-[520px] object-cover border-4 border-white/50"
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
               />
               {/* Floating Stats Card */}
               <div className="absolute -bottom-6 -left-6 bg-background/95 backdrop-blur-xl rounded-2xl p-4 shadow-xl border border-border/50 animate-bounce-subtle hidden sm:block">
@@ -110,4 +114,6 @@ export const HeroSection = () => {
       </div>
     </section>
   );
-};
+});
+
+HeroSection.displayName = "HeroSection";
