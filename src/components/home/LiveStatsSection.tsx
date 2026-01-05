@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 import { TreePine, Users, MapPin, Recycle, TrendingUp } from "lucide-react";
 
 interface CounterProps {
@@ -85,7 +85,7 @@ const stats = [
   }
 ];
 
-export const LiveStatsSection = () => {
+export const LiveStatsSection = memo(() => {
   return (
     <section className="py-16 md:py-20 px-4 relative overflow-hidden">
       {/* Background */}
@@ -136,4 +136,6 @@ export const LiveStatsSection = () => {
       </div>
     </section>
   );
-};
+});
+
+LiveStatsSection.displayName = "LiveStatsSection";

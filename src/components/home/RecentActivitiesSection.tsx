@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -23,7 +23,7 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   Activity,
 };
 
-export const RecentActivitiesSection = () => {
+export const RecentActivitiesSection = memo(() => {
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -145,4 +145,6 @@ export const RecentActivitiesSection = () => {
       </div>
     </section>
   );
-};
+});
+
+RecentActivitiesSection.displayName = "RecentActivitiesSection";

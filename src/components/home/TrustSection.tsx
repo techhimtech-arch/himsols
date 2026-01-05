@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Quote, Star, Camera } from "lucide-react";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import * as LucideIcons from "lucide-react";
 
@@ -79,7 +79,7 @@ const renderIcon = (iconName: string, className?: string) => {
   return IconComponent ? <IconComponent className={className} /> : null;
 };
 
-export const TrustSection = () => {
+export const TrustSection = memo(() => {
   const [photos, setPhotos] = useState<PlantationPhoto[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [partnerTypes, setPartnerTypes] = useState<PartnerType[]>([]);
@@ -87,9 +87,8 @@ export const TrustSection = () => {
   const [loadingTestimonials, setLoadingTestimonials] = useState(true);
 
   useEffect(() => {
-    loadPhotos();
-    loadTestimonials();
-    loadPartnerTypes();
+    // Load all data in parallel
+    Promise.all([loadPhotos(), loadTestimonials(), loadPartnerTypes()]);
   }, []);
 
   const loadPhotos = async () => {
@@ -284,4 +283,6 @@ export const TrustSection = () => {
       </div>
     </section>
   );
-};
+});
+
+TrustSection.displayName = "TrustSection";

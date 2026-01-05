@@ -1,39 +1,73 @@
+import { Suspense, lazy } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { HeroSection } from "@/components/home/HeroSection";
-import { ActionableServicesSection } from "@/components/home/ActionableServicesSection";
-import { LiveStatsSection } from "@/components/home/LiveStatsSection";
-import { TrustSection } from "@/components/home/TrustSection";
-import { RecentActivitiesSection } from "@/components/home/RecentActivitiesSection";
-import { FinalCTASection } from "@/components/home/FinalCTASection";
 import { MobileStickyCTA } from "@/components/home/MobileStickyCTA";
+import { Skeleton } from "@/components/ui/skeleton";
+
+// Lazy load below-the-fold sections for faster initial paint
+const ActionableServicesSection = lazy(() => 
+  import("@/components/home/ActionableServicesSection").then(m => ({ default: m.ActionableServicesSection }))
+);
+const LiveStatsSection = lazy(() => 
+  import("@/components/home/LiveStatsSection").then(m => ({ default: m.LiveStatsSection }))
+);
+const TrustSection = lazy(() => 
+  import("@/components/home/TrustSection").then(m => ({ default: m.TrustSection }))
+);
+const RecentActivitiesSection = lazy(() => 
+  import("@/components/home/RecentActivitiesSection").then(m => ({ default: m.RecentActivitiesSection }))
+);
+const FinalCTASection = lazy(() => 
+  import("@/components/home/FinalCTASection").then(m => ({ default: m.FinalCTASection }))
+);
+
+// Simple loading skeleton
+const SectionLoader = () => (
+  <div className="py-16 px-4">
+    <div className="container mx-auto">
+      <Skeleton className="h-8 w-64 mx-auto mb-8" />
+      <div className="grid md:grid-cols-3 gap-6">
+        <Skeleton className="h-48 rounded-2xl" />
+        <Skeleton className="h-48 rounded-2xl" />
+        <Skeleton className="h-48 rounded-2xl" />
+      </div>
+    </div>
+  </div>
+);
 
 const Index = () => {
   return (
     <div className="min-h-screen">
       <Navbar />
       
-      {/* Hero Section - Action-focused with 3 CTAs */}
+      {/* Hero Section - Critical, loaded immediately */}
       <HeroSection />
 
-      {/* Actionable Services - Cards with Request buttons */}
-      <ActionableServicesSection />
+      {/* Lazy loaded sections with Suspense */}
+      <Suspense fallback={<SectionLoader />}>
+        <ActionableServicesSection />
+      </Suspense>
 
-      {/* Live Stats - Animated counters */}
-      <LiveStatsSection />
+      <Suspense fallback={<SectionLoader />}>
+        <LiveStatsSection />
+      </Suspense>
 
-      {/* Trust Section - Photos, Testimonials, Partner logos */}
-      <TrustSection />
+      <Suspense fallback={<SectionLoader />}>
+        <TrustSection />
+      </Suspense>
 
-      {/* Recent Activities - Live updates feed */}
-      <RecentActivitiesSection />
+      <Suspense fallback={<SectionLoader />}>
+        <RecentActivitiesSection />
+      </Suspense>
 
-      {/* Final CTA - Strong call to action */}
-      <FinalCTASection />
+      <Suspense fallback={<SectionLoader />}>
+        <FinalCTASection />
+      </Suspense>
 
       <Footer />
 
-      {/* Mobile Sticky CTA - Only shows on mobile after scroll */}
+      {/* Mobile Sticky CTA */}
       <MobileStickyCTA />
     </div>
   );
