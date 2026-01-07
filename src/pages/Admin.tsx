@@ -23,7 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Users, TreePine, TrendingUp, Loader2, Package, Settings, FileText, Image, Quote, Activity, Handshake, Store } from "lucide-react";
+import { Shield, Users, TreePine, TrendingUp, Loader2, Package, Settings, FileText, Image, Quote, Activity, Handshake, Store, Globe } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OrdersTab } from "@/components/admin/OrdersTab";
 import { TreesTab } from "@/components/admin/TreesTab";
@@ -38,6 +38,7 @@ import { PartnerTypesTab } from "@/components/admin/PartnerTypesTab";
 import { SellersTab } from "@/components/admin/SellersTab";
 import { MarketplaceProductsTab } from "@/components/admin/MarketplaceProductsTab";
 import { MarketplaceOrdersTab } from "@/components/admin/MarketplaceOrdersTab";
+import { ExternalAppsTab } from "@/components/admin/ExternalAppsTab";
 import { INDIAN_STATES, getDistrictsForState, IndianState } from "@/lib/constants";
 import { MobileCard, MobileCardRow, StatusBadge } from "@/components/admin/MobileCard";
 
@@ -564,6 +565,10 @@ const Admin = () => {
                   <Store className="h-3 w-3 md:h-4 md:w-4 mr-1" />
                   Marketplace
                 </TabsTrigger>
+                <TabsTrigger value="external-apps" className="text-xs md:text-sm">
+                  <Globe className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  Apps
+                </TabsTrigger>
                 <TabsTrigger value="settings" className="text-xs md:text-sm">
                   <Settings className="h-3 w-3 md:h-4 md:w-4 mr-1" />
                   Settings
@@ -913,6 +918,18 @@ const Admin = () => {
                 <MarketplaceProductsTab />
                 <MarketplaceOrdersTab />
               </div>
+            </TabsContent>
+
+            {/* External Apps Tab */}
+            <TabsContent value="external-apps">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg md:text-xl">External Himsols Apps</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ExternalAppsTab />
+                </CardContent>
+              </Card>
             </TabsContent>
 
             {/* Settings Tab */}
