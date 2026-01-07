@@ -6,6 +6,7 @@ import { LiveStatsSection } from "@/components/home/LiveStatsSection";
 import { TrustSection } from "@/components/home/TrustSection";
 import { RecentActivitiesSection } from "@/components/home/RecentActivitiesSection";
 import { FinalCTASection } from "@/components/home/FinalCTASection";
+import { MoreFromHimsolsSection } from "@/components/home/MoreFromHimsolsSection";
 import { MobileStickyCTA } from "@/components/home/MobileStickyCTA";
 
 const Index = () => {
@@ -27,6 +28,9 @@ const Index = () => {
 
       {/* Recent Activities - Live updates feed */}
       <RecentActivitiesSection />
+
+      {/* More from Himsols - External apps */}
+      <MoreFromHimsolsSection />
 
       {/* Final CTA - Strong call to action */}
       <FinalCTASection />
