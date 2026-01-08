@@ -6,7 +6,7 @@ import Placeholder from "@tiptap/extension-placeholder";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import {
   Bold,
   Italic,
@@ -65,6 +65,13 @@ export const RichTextEditor = ({ content, onChange, placeholder = "Start writing
       },
     },
   });
+
+  // Sync content when it changes externally (e.g., when editing a post)
+  useEffect(() => {
+    if (editor && content !== editor.getHTML()) {
+      editor.commands.setContent(content, { emitUpdate: false });
+    }
+  }, [content, editor]);
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
