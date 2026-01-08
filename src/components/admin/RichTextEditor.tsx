@@ -6,7 +6,15 @@ import Placeholder from "@tiptap/extension-placeholder";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Bold,
   Italic,
@@ -21,6 +29,7 @@ import {
   Undo,
   Redo,
   Code,
+  FileCode,
 } from "lucide-react";
 
 interface RichTextEditorProps {
@@ -32,6 +41,8 @@ interface RichTextEditorProps {
 export const RichTextEditor = ({ content, onChange, placeholder = "Start writing..." }: RichTextEditorProps) => {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [htmlModalOpen, setHtmlModalOpen] = useState(false);
+  const [htmlInput, setHtmlInput] = useState("");
 
   const editor = useEditor({
     extensions: [
@@ -131,6 +142,15 @@ export const RichTextEditor = ({ content, onChange, placeholder = "Start writing
     const url = window.prompt("Enter URL:");
     if (url) {
       editor?.chain().focus().setLink({ href: url }).run();
+    }
+  };
+
+  const handlePasteHtml = () => {
+    if (htmlInput.trim()) {
+      editor?.chain().focus().insertContent(htmlInput).run();
+      toast({ title: "HTML inserted successfully!" });
+      setHtmlInput("");
+      setHtmlModalOpen(false);
     }
   };
 
@@ -241,6 +261,15 @@ export const RichTextEditor = ({ content, onChange, placeholder = "Start writing
         >
           <ImageIcon className="h-4 w-4" />
         </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => setHtmlModalOpen(true)}
+          title="Paste HTML"
+        >
+          <FileCode className="h-4 w-4" />
+        </Button>
         <input
           ref={fileInputRef}
           type="file"
@@ -271,6 +300,27 @@ export const RichTextEditor = ({ content, onChange, placeholder = "Start writing
 
       {/* Editor Content */}
       <EditorContent editor={editor} />
+
+      {/* Paste HTML Modal */}
+      <Dialog open={htmlModalOpen} onOpenChange={setHtmlModalOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Paste HTML Code</DialogTitle>
+          </DialogHeader>
+          <Textarea
+            value={htmlInput}
+            onChange={(e) => setHtmlInput(e.target.value)}
+            placeholder="<h2>Your heading</h2><p>Your paragraph...</p>"
+            className="min-h-[200px] font-mono text-sm"
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setHtmlModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handlePasteHtml}>Insert HTML</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
