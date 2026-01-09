@@ -877,6 +877,7 @@ export type Database = {
           id: string
           image_url: string | null
           is_active: boolean | null
+          is_featured: boolean | null
           max_height: string | null
           name: string
           name_hi: string | null
@@ -895,6 +896,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_active?: boolean | null
+          is_featured?: boolean | null
           max_height?: string | null
           name: string
           name_hi?: string | null
@@ -913,6 +915,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_active?: boolean | null
+          is_featured?: boolean | null
           max_height?: string | null
           name?: string
           name_hi?: string | null

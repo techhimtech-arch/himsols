@@ -49,6 +49,7 @@ interface Tree {
   growth_rate: string | null;
   max_height: string | null;
   is_active: boolean;
+  is_featured: boolean;
 }
 
 interface TreesTabProps {
@@ -92,6 +93,7 @@ export const TreesTab = ({ trees, onAddTree, onUpdateTree, onDeleteTree, onBulkU
     growth_rate: "",
     max_height: "",
     is_active: true,
+    is_featured: false,
   });
 
   const resetForm = () => {
@@ -109,6 +111,7 @@ export const TreesTab = ({ trees, onAddTree, onUpdateTree, onDeleteTree, onBulkU
       growth_rate: "",
       max_height: "",
       is_active: true,
+      is_featured: false,
     });
     setEditingTree(null);
     setImagePreview(null);
@@ -201,6 +204,7 @@ export const TreesTab = ({ trees, onAddTree, onUpdateTree, onDeleteTree, onBulkU
       growth_rate: formData.growth_rate || null,
       max_height: formData.max_height || null,
       is_active: formData.is_active,
+      is_featured: formData.is_featured,
     };
 
     if (editingTree) {
@@ -229,6 +233,7 @@ export const TreesTab = ({ trees, onAddTree, onUpdateTree, onDeleteTree, onBulkU
       growth_rate: tree.growth_rate || "",
       max_height: tree.max_height || "",
       is_active: tree.is_active,
+      is_featured: tree.is_featured || false,
     });
     setImagePreview(tree.image_url);
     setIsAddDialogOpen(true);
@@ -462,15 +467,27 @@ export const TreesTab = ({ trees, onAddTree, onUpdateTree, onDeleteTree, onBulkU
                 />
               </div>
 
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="is_active"
-                  checked={formData.is_active}
-                  onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                  className="rounded border-border"
-                />
-                <Label htmlFor="is_active">Active (visible in shop)</Label>
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="is_active"
+                    checked={formData.is_active}
+                    onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                    className="rounded border-border"
+                  />
+                  <Label htmlFor="is_active">Active (visible in shop)</Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="is_featured"
+                    checked={formData.is_featured}
+                    onChange={(e) => setFormData({ ...formData, is_featured: e.target.checked })}
+                    className="rounded border-border accent-primary"
+                  />
+                  <Label htmlFor="is_featured" className="text-primary font-medium">⭐ Featured on Homepage</Label>
+                </div>
               </div>
 
               <Button type="submit" className="w-full">
