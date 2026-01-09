@@ -52,6 +52,7 @@ interface MarketplaceProduct {
   image_url: string | null;
   is_seasonal: boolean;
   is_active: boolean;
+  is_featured: boolean;
   sort_order: number;
   seller?: { name: string } | null;
 }
@@ -88,6 +89,7 @@ export const MarketplaceProductsTab = () => {
     image_url: "",
     is_seasonal: false,
     is_active: true,
+    is_featured: false,
     sort_order: 0,
   });
 
@@ -134,6 +136,7 @@ export const MarketplaceProductsTab = () => {
         image_url: data.image_url || null,
         is_seasonal: data.is_seasonal,
         is_active: data.is_active,
+        is_featured: data.is_featured,
         sort_order: data.sort_order,
       };
 
@@ -189,6 +192,7 @@ export const MarketplaceProductsTab = () => {
       image_url: "",
       is_seasonal: false,
       is_active: true,
+      is_featured: false,
       sort_order: 0,
     });
     setEditingProduct(null);
@@ -213,6 +217,7 @@ export const MarketplaceProductsTab = () => {
       image_url: product.image_url || "",
       is_seasonal: product.is_seasonal || false,
       is_active: product.is_active,
+      is_featured: product.is_featured || false,
       sort_order: product.sort_order,
     });
     setIsDialogOpen(true);
@@ -419,6 +424,13 @@ export const MarketplaceProductsTab = () => {
                     onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
                   />
                   <Label>Active</Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={formData.is_featured}
+                    onCheckedChange={(checked) => setFormData({ ...formData, is_featured: checked })}
+                  />
+                  <Label className="text-primary font-medium">⭐ Featured on Homepage</Label>
                 </div>
               </div>
 

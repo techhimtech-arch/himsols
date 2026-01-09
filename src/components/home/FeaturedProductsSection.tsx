@@ -17,6 +17,7 @@ export const FeaturedProductsSection = memo(() => {
           seller:sellers(name, village)
         `)
         .eq("is_active", true)
+        .eq("is_featured", true)
         .order("sort_order", { ascending: true })
         .limit(4);
       
