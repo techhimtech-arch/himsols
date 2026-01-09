@@ -2,6 +2,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { HeroSection } from "@/components/home/HeroSection";
 import { ActionableServicesSection } from "@/components/home/ActionableServicesSection";
+import { FeaturedProductsSection } from "@/components/home/FeaturedProductsSection";
 import { LiveStatsSection } from "@/components/home/LiveStatsSection";
 import { TrustSection } from "@/components/home/TrustSection";
 import { RecentActivitiesSection } from "@/components/home/RecentActivitiesSection";
@@ -19,6 +20,9 @@ const Index = () => {
 
       {/* Actionable Services - Cards with Request buttons */}
       <ActionableServicesSection />
+
+      {/* Featured Products - Marketplace products with Add to Cart */}
+      <FeaturedProductsSection />
 
       {/* Live Stats - Animated counters */}
       <LiveStatsSection />
