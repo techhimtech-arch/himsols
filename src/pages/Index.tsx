@@ -3,6 +3,7 @@ import { Footer } from "@/components/Footer";
 import { HeroSection } from "@/components/home/HeroSection";
 import { ActionableServicesSection } from "@/components/home/ActionableServicesSection";
 import { FeaturedProductsSection } from "@/components/home/FeaturedProductsSection";
+import { FeaturedTreesSection } from "@/components/home/FeaturedTreesSection";
 import { LiveStatsSection } from "@/components/home/LiveStatsSection";
 import { TrustSection } from "@/components/home/TrustSection";
 import { RecentActivitiesSection } from "@/components/home/RecentActivitiesSection";
@@ -23,6 +24,9 @@ const Index = () => {
 
       {/* Featured Products - Marketplace products with Add to Cart */}
       <FeaturedProductsSection />
+
+      {/* Featured Trees - Tree plants with Add to Cart */}
+      <FeaturedTreesSection />
 
       {/* Live Stats - Animated counters */}
       <LiveStatsSection />
