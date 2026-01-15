@@ -8,7 +8,8 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, Calendar, Clock, User, Eye } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, User, Eye, Share2, Link2, MessageCircle, Facebook, Twitter, Linkedin } from "lucide-react";
+import { toast } from "sonner";
 import { format } from "date-fns";
 
 const BlogPost = () => {
@@ -47,13 +48,53 @@ const BlogPost = () => {
       notFound: "Article not found",
       minRead: "min read",
       views: "views",
+      share: "Share:",
+      linkCopied: "Link copied!",
     },
     hi: {
       back: "ब्लॉग पर वापस",
       notFound: "लेख नहीं मिला",
       minRead: "मिनट पढ़ें",
       views: "बार देखा गया",
+      share: "शेयर करें:",
+      linkCopied: "लिंक कॉपी हो गया!",
     },
+  };
+
+  // Share functions
+  const shareWhatsApp = () => {
+    const url = `https://wa.me/?text=${encodeURIComponent(title + ' - ' + window.location.href)}`;
+    window.open(url, '_blank');
+  };
+
+  const shareFacebook = () => {
+    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`;
+    window.open(url, '_blank');
+  };
+
+  const shareTwitter = () => {
+    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(window.location.href)}`;
+    window.open(url, '_blank');
+  };
+
+  const shareLinkedIn = () => {
+    const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`;
+    window.open(url, '_blank');
+  };
+
+  const copyLink = async () => {
+    await navigator.clipboard.writeText(window.location.href);
+    toast.success(t.linkCopied);
+  };
+
+  const nativeShare = async () => {
+    if (navigator.share) {
+      await navigator.share({
+        title: title,
+        text: excerpt,
+        url: window.location.href,
+      });
+    }
   };
 
   const t = translations[language];
@@ -151,6 +192,41 @@ const BlogPost = () => {
               </div>
             </div>
           </header>
+
+          {/* Share Buttons */}
+          <div className="max-w-4xl mx-auto mb-8">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-sm text-muted-foreground mr-2">
+                {t.share}
+              </span>
+              
+              <Button variant="outline" size="icon" onClick={shareWhatsApp} className="bg-green-500 hover:bg-green-600 text-white border-0" title="WhatsApp">
+                <MessageCircle className="h-4 w-4" />
+              </Button>
+              
+              <Button variant="outline" size="icon" onClick={shareFacebook} className="bg-blue-600 hover:bg-blue-700 text-white border-0" title="Facebook">
+                <Facebook className="h-4 w-4" />
+              </Button>
+              
+              <Button variant="outline" size="icon" onClick={shareTwitter} className="bg-black hover:bg-gray-800 text-white border-0" title="Twitter/X">
+                <Twitter className="h-4 w-4" />
+              </Button>
+              
+              <Button variant="outline" size="icon" onClick={shareLinkedIn} className="bg-blue-700 hover:bg-blue-800 text-white border-0" title="LinkedIn">
+                <Linkedin className="h-4 w-4" />
+              </Button>
+              
+              <Button variant="outline" size="icon" onClick={copyLink} title="Copy Link">
+                <Link2 className="h-4 w-4" />
+              </Button>
+              
+              {typeof navigator !== 'undefined' && navigator.share && (
+                <Button variant="outline" size="icon" onClick={nativeShare} title="Share">
+                  <Share2 className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          </div>
 
           {/* Cover Image */}
           {post.cover_image && (
