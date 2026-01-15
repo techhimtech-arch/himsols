@@ -1,14 +1,60 @@
+# Himsols Robots.txt
+# https://himsols-web-companion.lovable.app
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://himsols-web-companion.lovable.app/sitemap.xml
+
+# Crawl delay for polite crawling
+Crawl-delay: 1
+
+# Block admin pages from indexing
+Disallow: /admin
+Disallow: /admin/*
+
+# Google
 User-agent: Googlebot
 Allow: /
 
+# Bing
 User-agent: Bingbot
 Allow: /
 
+# Twitter/X
 User-agent: Twitterbot
 Allow: /
 
+# Facebook
 User-agent: facebookexternalhit
 Allow: /
 
-User-agent: *
+# Amazon
+User-agent: Amazonbot
+Allow: /
+
+# AI Crawlers - Allow access to llms.txt
+User-agent: GPTBot
+Allow: /llms.txt
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /llms.txt
+Allow: /
+
+User-agent: CCBot
+Allow: /llms.txt
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /llms.txt
+Allow: /
+
+User-agent: Claude-Web
+Allow: /llms.txt
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /llms.txt
 Allow: /

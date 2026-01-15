@@ -10,10 +10,18 @@ import { RecentActivitiesSection } from "@/components/home/RecentActivitiesSecti
 import { FinalCTASection } from "@/components/home/FinalCTASection";
 import { MoreFromHimsolsSection } from "@/components/home/MoreFromHimsolsSection";
 import { MobileStickyCTA } from "@/components/home/MobileStickyCTA";
+import { SEO, SEOSchemas } from "@/components/SEO";
 
 const Index = () => {
   return (
     <div className="min-h-screen">
+      <SEO 
+        title="Himsols - Tree Plantation & Waste Management | Himachal Pradesh"
+        description="Book tree plantation, schedule scrap pickup, and shop eco-friendly products from rural Himachal Pradesh. पेड़ लगाओ, कबाड़ बेचो, पर्यावरण बचाओ।"
+        keywords="tree plantation Himachal, scrap pickup HP, waste management, eco products, farmer marketplace, पेड़ लगाओ, कबाड़"
+        url="https://himsols-web-companion.lovable.app"
+      />
+      <SEOSchemas includeServices={true} />
       <Navbar />
       
       {/* Hero Section - Action-focused with 3 CTAs */}
