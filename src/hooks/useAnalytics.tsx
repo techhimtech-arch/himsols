@@ -12,7 +12,7 @@ export const useAnalytics = () => {
 
   useEffect(() => {
     if (typeof window.gtag === "function") {
-      window.gtag("config", "G-1D1D7PHFW0", {
+      window.gtag("config", "G-QCBSWVTQS4", {
         page_path: location.pathname + location.search,
       });
     }
