@@ -711,7 +711,7 @@ const Admin = () => {
 
             {/* Orders Tab */}
             <TabsContent value="orders">
-              <OrdersTab orders={orders} onUpdateStatus={updateOrderStatus} />
+              <OrdersTab orders={orders} profiles={profiles} trees={trees} onUpdateStatus={updateOrderStatus} />
             </TabsContent>
 
             {/* Trees Tab */}
