@@ -108,8 +108,6 @@ serve(async (req) => {
 
     const recipientName = profile?.full_name || "Valued Customer";
     const treeCount = order.quantity;
-    const treeData = order.tree as unknown as { name: string } | null;
-    const treeName = treeData?.name || "Trees";
     const completionDate = new Date(order.updated_at);
     const formattedDate = completionDate.toLocaleDateString("en-IN", {
       day: "2-digit",
@@ -250,8 +248,8 @@ serve(async (req) => {
       color: textColor,
     });
 
-    // Tree count highlight
-    const treeText = `You have gifted ${treeCount}+ ${treeName} to Mother Earth.`;
+    // Tree count highlight - show total trees without specific name
+    const treeText = `You have gifted ${treeCount}+ Trees to Mother Earth.`;
     page.drawText(treeText, {
       x: width / 2 - helveticaBold.widthOfTextAtSize(treeText, 14) / 2,
       y: height - 350,
