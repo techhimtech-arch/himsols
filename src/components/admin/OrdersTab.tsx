@@ -20,7 +20,7 @@ import { INDIAN_STATES, getDistrictsForState, IndianState } from "@/lib/constant
 import { MobileCard, MobileCardRow, StatusBadge } from "./MobileCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Award, Loader2 } from "lucide-react";
+import { Award, Loader2, Download, FileSpreadsheet, User, TreeDeciduous, Phone, Mail } from "lucide-react";
 
 interface Order {
   id: string;
@@ -36,16 +36,40 @@ interface Order {
   district: string | null;
 }
 
+interface Profile {
+  id: string;
+  full_name: string;
+  email: string;
+  phone: string | null;
+}
+
+interface Tree {
+  id: string;
+  name: string;
+}
+
 interface OrdersTabProps {
   orders: Order[];
+  profiles: Profile[];
+  trees: Tree[];
   onUpdateStatus: (orderId: string, newStatus: string) => Promise<void>;
 }
 
-export const OrdersTab = ({ orders, onUpdateStatus }: OrdersTabProps) => {
+export const OrdersTab = ({ orders, profiles, trees, onUpdateStatus }: OrdersTabProps) => {
   const { toast } = useToast();
   const [filterState, setFilterState] = useState<string>("all");
   const [filterDistrict, setFilterDistrict] = useState<string>("all");
   const [downloadingCert, setDownloadingCert] = useState<string | null>(null);
+
+  // Helper functions to get user and tree info
+  const getUserInfo = (userId: string) => {
+    return profiles.find(p => p.id === userId);
+  };
+
+  const getTreeName = (treeId: string) => {
+    const tree = trees.find(t => t.id === treeId);
+    return tree?.name || "Unknown Tree";
+  };
 
   const filteredOrders = useMemo(() => {
     return orders.filter((order) => {
@@ -115,11 +139,76 @@ export const OrdersTab = ({ orders, onUpdateStatus }: OrdersTabProps) => {
     }
   };
 
+  const exportToExcel = () => {
+    // Create CSV content
+    const headers = [
+      "Order ID",
+      "Customer Name",
+      "Email",
+      "Phone",
+      "Tree Name",
+      "Quantity",
+      "Total Price (₹)",
+      "State",
+      "District",
+      "Delivery Location",
+      "Status",
+      "Order Date",
+      "Notes"
+    ];
+
+    const rows = filteredOrders.map(order => {
+      const user = getUserInfo(order.user_id);
+      return [
+        order.id.slice(0, 8).toUpperCase(),
+        user?.full_name || "Unknown",
+        user?.email || "-",
+        user?.phone || "-",
+        getTreeName(order.tree_id),
+        order.quantity,
+        order.total_price,
+        order.state || "-",
+        order.district || "-",
+        order.delivery_location,
+        order.status.replace(/_/g, " ").toUpperCase(),
+        new Date(order.created_at).toLocaleDateString("en-IN"),
+        order.notes || "-"
+      ];
+    });
+
+    const csvContent = [
+      headers.join(","),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(","))
+    ].join("\n");
+
+    // Download CSV file
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `HIMSOLS-Orders-${new Date().toISOString().split("T")[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+
+    toast({
+      title: "Export Successful",
+      description: `${filteredOrders.length} orders exported to Excel/CSV`,
+    });
+  };
+
   return (
     <Card>
       <CardHeader className="pb-4">
         <div className="flex flex-col gap-4">
-          <CardTitle className="text-lg md:text-xl">Tree Orders</CardTitle>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+            <CardTitle className="text-lg md:text-xl">Tree Orders ({filteredOrders.length})</CardTitle>
+            <Button onClick={exportToExcel} variant="outline" size="sm" className="gap-2">
+              <FileSpreadsheet className="h-4 w-4" />
+              Export Excel
+            </Button>
+          </div>
           <div className="flex flex-col sm:flex-row gap-2">
             <Select
               value={filterState}
@@ -167,57 +256,90 @@ export const OrdersTab = ({ orders, onUpdateStatus }: OrdersTabProps) => {
           {filteredOrders.length === 0 ? (
             <p className="text-center text-muted-foreground py-8">No orders found</p>
           ) : (
-            filteredOrders.map((order) => (
-              <MobileCard key={order.id}>
-                <div className="flex justify-between items-start mb-2">
-                  <span className="font-semibold text-sm">#{order.id.slice(0, 8)}</span>
-                  <StatusBadge status={order.status} />
-                </div>
-                <MobileCardRow label="Quantity" value={order.quantity} />
-                <MobileCardRow label="Total" value={`₹${order.total_price}`} />
-                <MobileCardRow label="State" value={order.state || "-"} />
-                <MobileCardRow label="District" value={order.district || "-"} />
-                <MobileCardRow label="Location" value={order.delivery_location} />
-                <MobileCardRow label="Date" value={new Date(order.created_at).toLocaleDateString()} />
-                <div className="pt-2 border-t border-border">
-                  <Select
-                    value={order.status}
-                    onValueChange={(value) => onUpdateStatus(order.id, value)}
-                  >
-                    <SelectTrigger className="w-full bg-background">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-popover border border-border z-50">
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="site_verified">Site Verified</SelectItem>
-                      <SelectItem value="saplings_arranged">Saplings Arranged</SelectItem>
-                      <SelectItem value="scheduled">Scheduled</SelectItem>
-                      <SelectItem value="in_progress">In Progress</SelectItem>
-                      <SelectItem value="completed">Completed</SelectItem>
-                      <SelectItem value="cancelled">Cancelled</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {order.status === "completed" && (
-                    <Button
-                      onClick={() => handleDownloadCertificate(order.id)}
-                      disabled={downloadingCert === order.id}
-                      className="w-full mt-2"
-                      size="sm"
-                      variant="outline"
-                    >
-                      {downloadingCert === order.id ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <>
-                          <Award className="h-4 w-4 mr-1" />
-                          Certificate
-                        </>
-                      )}
-                    </Button>
+            filteredOrders.map((order) => {
+              const user = getUserInfo(order.user_id);
+              return (
+                <MobileCard key={order.id}>
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="font-semibold text-sm">#{order.id.slice(0, 8)}</span>
+                    <StatusBadge status={order.status} />
+                  </div>
+                  
+                  {/* Customer Info */}
+                  <div className="bg-muted/50 rounded-lg p-2 mb-2 space-y-1">
+                    <div className="flex items-center gap-2 text-sm font-medium">
+                      <User className="h-3 w-3 text-primary" />
+                      {user?.full_name || "Unknown Customer"}
+                    </div>
+                    {user?.phone && (
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Phone className="h-3 w-3" />
+                        {user.phone}
+                      </div>
+                    )}
+                    {user?.email && (
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground truncate">
+                        <Mail className="h-3 w-3" />
+                        {user.email}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Tree Info */}
+                  <div className="flex items-center gap-2 mb-2 text-sm">
+                    <TreeDeciduous className="h-4 w-4 text-primary" />
+                    <span className="font-medium">{getTreeName(order.tree_id)}</span>
+                  </div>
+
+                  <MobileCardRow label="Quantity" value={order.quantity} />
+                  <MobileCardRow label="Total" value={`₹${order.total_price}`} />
+                  <MobileCardRow label="State" value={order.state || "-"} />
+                  <MobileCardRow label="District" value={order.district || "-"} />
+                  <MobileCardRow label="Location" value={order.delivery_location} />
+                  <MobileCardRow label="Date" value={new Date(order.created_at).toLocaleDateString()} />
+                  {order.notes && (
+                    <MobileCardRow label="Notes" value={order.notes} />
                   )}
-                </div>
-              </MobileCard>
-            ))
+                  <div className="pt-2 border-t border-border">
+                    <Select
+                      value={order.status}
+                      onValueChange={(value) => onUpdateStatus(order.id, value)}
+                    >
+                      <SelectTrigger className="w-full bg-background">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover border border-border z-50">
+                        <SelectItem value="pending">Pending</SelectItem>
+                        <SelectItem value="site_verified">Site Verified</SelectItem>
+                        <SelectItem value="saplings_arranged">Saplings Arranged</SelectItem>
+                        <SelectItem value="scheduled">Scheduled</SelectItem>
+                        <SelectItem value="in_progress">In Progress</SelectItem>
+                        <SelectItem value="completed">Completed</SelectItem>
+                        <SelectItem value="cancelled">Cancelled</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {order.status === "completed" && (
+                      <Button
+                        onClick={() => handleDownloadCertificate(order.id)}
+                        disabled={downloadingCert === order.id}
+                        className="w-full mt-2"
+                        size="sm"
+                        variant="outline"
+                      >
+                        {downloadingCert === order.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <>
+                            <Award className="h-4 w-4 mr-1" />
+                            Certificate
+                          </>
+                        )}
+                      </Button>
+                    )}
+                  </div>
+                </MobileCard>
+              );
+            })
           )}
         </div>
 
@@ -227,8 +349,10 @@ export const OrdersTab = ({ orders, onUpdateStatus }: OrdersTabProps) => {
             <TableHeader>
               <TableRow>
                 <TableHead>Order ID</TableHead>
-                <TableHead>Quantity</TableHead>
-                <TableHead>Total Price</TableHead>
+                <TableHead>Customer</TableHead>
+                <TableHead>Tree</TableHead>
+                <TableHead>Qty</TableHead>
+                <TableHead>Total</TableHead>
                 <TableHead>State</TableHead>
                 <TableHead>District</TableHead>
                 <TableHead>Location</TableHead>
@@ -240,61 +364,92 @@ export const OrdersTab = ({ orders, onUpdateStatus }: OrdersTabProps) => {
             <TableBody>
               {filteredOrders.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center text-muted-foreground py-8">
+                  <TableCell colSpan={11} className="text-center text-muted-foreground py-8">
                     No orders found
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredOrders.map((order) => (
-                  <TableRow key={order.id}>
-                    <TableCell className="font-medium">{order.id.slice(0, 8)}</TableCell>
-                    <TableCell>{order.quantity}</TableCell>
-                    <TableCell>₹{order.total_price}</TableCell>
-                    <TableCell>{order.state || "-"}</TableCell>
-                    <TableCell>{order.district || "-"}</TableCell>
-                    <TableCell>{order.delivery_location}</TableCell>
-                    <TableCell>
-                      <StatusBadge status={order.status} />
-                    </TableCell>
-                    <TableCell>{new Date(order.created_at).toLocaleDateString()}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Select
-                          value={order.status}
-                          onValueChange={(value) => onUpdateStatus(order.id, value)}
-                        >
-                          <SelectTrigger className="w-[140px] bg-background">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="bg-popover border border-border z-50">
-                            <SelectItem value="pending">Pending</SelectItem>
-                            <SelectItem value="site_verified">Site Verified</SelectItem>
-                            <SelectItem value="saplings_arranged">Saplings Arranged</SelectItem>
-                            <SelectItem value="scheduled">Scheduled</SelectItem>
-                            <SelectItem value="in_progress">In Progress</SelectItem>
-                            <SelectItem value="completed">Completed</SelectItem>
-                            <SelectItem value="cancelled">Cancelled</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        {order.status === "completed" && (
-                          <Button
-                            onClick={() => handleDownloadCertificate(order.id)}
-                            disabled={downloadingCert === order.id}
-                            size="sm"
-                            variant="outline"
-                            title="Generate Certificate"
+                filteredOrders.map((order) => {
+                  const user = getUserInfo(order.user_id);
+                  return (
+                    <TableRow key={order.id}>
+                      <TableCell className="font-medium">{order.id.slice(0, 8)}</TableCell>
+                      <TableCell>
+                        <div className="space-y-0.5">
+                          <div className="font-medium flex items-center gap-1">
+                            <User className="h-3 w-3 text-primary" />
+                            {user?.full_name || "Unknown"}
+                          </div>
+                          {user?.phone && (
+                            <div className="text-xs text-muted-foreground flex items-center gap-1">
+                              <Phone className="h-3 w-3" />
+                              {user.phone}
+                            </div>
+                          )}
+                          {user?.email && (
+                            <div className="text-xs text-muted-foreground flex items-center gap-1 max-w-[150px] truncate">
+                              <Mail className="h-3 w-3 flex-shrink-0" />
+                              <span className="truncate">{user.email}</span>
+                            </div>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1">
+                          <TreeDeciduous className="h-4 w-4 text-primary" />
+                          {getTreeName(order.tree_id)}
+                        </div>
+                      </TableCell>
+                      <TableCell>{order.quantity}</TableCell>
+                      <TableCell>₹{order.total_price}</TableCell>
+                      <TableCell>{order.state || "-"}</TableCell>
+                      <TableCell>{order.district || "-"}</TableCell>
+                      <TableCell className="max-w-[150px] truncate" title={order.delivery_location}>
+                        {order.delivery_location}
+                      </TableCell>
+                      <TableCell>
+                        <StatusBadge status={order.status} />
+                      </TableCell>
+                      <TableCell>{new Date(order.created_at).toLocaleDateString()}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Select
+                            value={order.status}
+                            onValueChange={(value) => onUpdateStatus(order.id, value)}
                           >
-                            {downloadingCert === order.id ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                              <Award className="h-4 w-4" />
-                            )}
-                          </Button>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
+                            <SelectTrigger className="w-[130px] bg-background">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="bg-popover border border-border z-50">
+                              <SelectItem value="pending">Pending</SelectItem>
+                              <SelectItem value="site_verified">Site Verified</SelectItem>
+                              <SelectItem value="saplings_arranged">Saplings Arranged</SelectItem>
+                              <SelectItem value="scheduled">Scheduled</SelectItem>
+                              <SelectItem value="in_progress">In Progress</SelectItem>
+                              <SelectItem value="completed">Completed</SelectItem>
+                              <SelectItem value="cancelled">Cancelled</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          {order.status === "completed" && (
+                            <Button
+                              onClick={() => handleDownloadCertificate(order.id)}
+                              disabled={downloadingCert === order.id}
+                              size="sm"
+                              variant="outline"
+                              title="Generate Certificate"
+                            >
+                              {downloadingCert === order.id ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <Award className="h-4 w-4" />
+                              )}
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
               )}
             </TableBody>
           </Table>
