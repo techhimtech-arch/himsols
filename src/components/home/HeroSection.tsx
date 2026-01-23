@@ -26,7 +26,7 @@ export const HeroSection = memo(() => {
   );
 
   const ctaText = section ? getLocalizedText(section, "cta_text", language) : (
-    language === "hi" ? "पेड़ लगाओ अभी" : "Plant a Tree Now"
+    language === "hi" ? "पेड़ खरीदें" : "Shop Trees"
   );
 
   const treesPlanted = counters?.total_trees_planted || 450;
@@ -62,7 +62,7 @@ export const HeroSection = memo(() => {
 
             {/* Primary CTAs - 3 Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-              <Link to={section?.cta_link || "/tree-plantation"}>
+              <Link to="/shop">
                 <Button size="lg" className="w-full sm:w-auto gap-2 shadow-lg hover:shadow-xl transition-all group">
                   <TreePine className="h-5 w-5" />
                   {ctaText}
