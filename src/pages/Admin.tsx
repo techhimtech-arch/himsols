@@ -39,6 +39,7 @@ import { SellersTab } from "@/components/admin/SellersTab";
 import { MarketplaceProductsTab } from "@/components/admin/MarketplaceProductsTab";
 import { MarketplaceOrdersTab } from "@/components/admin/MarketplaceOrdersTab";
 import { ExternalAppsTab } from "@/components/admin/ExternalAppsTab";
+import { RequestsTab } from "@/components/admin/RequestsTab";
 import { INDIAN_STATES, getDistrictsForState, IndianState } from "@/lib/constants";
 import { MobileCard, MobileCardRow, StatusBadge } from "@/components/admin/MobileCard";
 
@@ -578,104 +579,10 @@ const Admin = () => {
 
             {/* Requests Tab */}
             <TabsContent value="requests">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg md:text-xl">Tree Plantation Requests</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {/* Mobile View */}
-                  <div className="block md:hidden space-y-4">
-                    {requests.length === 0 ? (
-                      <p className="text-center text-muted-foreground py-8">No requests found</p>
-                    ) : (
-                      requests.map((request) => (
-                        <MobileCard key={request.id}>
-                          <div className="flex justify-between items-start mb-2">
-                            <span className="font-semibold text-sm">{request.tracking_id}</span>
-                            <StatusBadge status={request.status} />
-                          </div>
-                          <MobileCardRow label="Name" value={request.name} />
-                          <MobileCardRow label="Location" value={request.location} />
-                          <MobileCardRow label="Tree Type" value={request.tree_type} />
-                          <MobileCardRow label="Quantity" value={request.quantity} />
-                          <MobileCardRow label="Date" value={new Date(request.created_at).toLocaleDateString()} />
-                          <div className="pt-2 border-t border-border">
-                            <Select
-                              value={request.status}
-                              onValueChange={(value) => updateRequestStatus(request.id, value)}
-                            >
-                              <SelectTrigger className="w-full bg-background">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent className="bg-popover border border-border z-50">
-                                <SelectItem value="pending">Pending</SelectItem>
-                                <SelectItem value="site_verified">Site Verified</SelectItem>
-                                <SelectItem value="saplings_arranged">Saplings Arranged</SelectItem>
-                                <SelectItem value="scheduled">Scheduled</SelectItem>
-                                <SelectItem value="in_progress">In Progress</SelectItem>
-                                <SelectItem value="completed">Completed</SelectItem>
-                                <SelectItem value="cancelled">Cancelled</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </MobileCard>
-                      ))
-                    )}
-                  </div>
-
-                  {/* Desktop View */}
-                  <div className="hidden md:block overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Tracking ID</TableHead>
-                          <TableHead>Name</TableHead>
-                          <TableHead>Location</TableHead>
-                          <TableHead>Tree Type</TableHead>
-                          <TableHead>Quantity</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead>Date</TableHead>
-                          <TableHead>Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {requests.map((request) => (
-                          <TableRow key={request.id}>
-                            <TableCell className="font-medium">{request.tracking_id}</TableCell>
-                            <TableCell>{request.name}</TableCell>
-                            <TableCell>{request.location}</TableCell>
-                            <TableCell>{request.tree_type}</TableCell>
-                            <TableCell>{request.quantity}</TableCell>
-                            <TableCell>
-                              <StatusBadge status={request.status} />
-                            </TableCell>
-                            <TableCell>{new Date(request.created_at).toLocaleDateString()}</TableCell>
-                            <TableCell>
-                              <Select
-                                value={request.status}
-                                onValueChange={(value) => updateRequestStatus(request.id, value)}
-                              >
-                                <SelectTrigger className="w-[150px] bg-background">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent className="bg-popover border border-border z-50">
-                                  <SelectItem value="pending">Pending</SelectItem>
-                                  <SelectItem value="site_verified">Site Verified</SelectItem>
-                                  <SelectItem value="saplings_arranged">Saplings Arranged</SelectItem>
-                                  <SelectItem value="scheduled">Scheduled</SelectItem>
-                                  <SelectItem value="in_progress">In Progress</SelectItem>
-                                  <SelectItem value="completed">Completed</SelectItem>
-                                  <SelectItem value="cancelled">Cancelled</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                </CardContent>
-              </Card>
+              <RequestsTab 
+                requests={requests} 
+                onUpdateStatus={updateRequestStatus} 
+              />
             </TabsContent>
 
             {/* Scrap Requests Tab */}
