@@ -39,25 +39,25 @@ export const HeroSection = memo(() => {
               <span className="font-semibold text-foreground">Plant trees</span> • <span className="font-semibold text-foreground">Manage waste</span> • <span className="font-semibold text-foreground">Build sustainable villages</span> with Himsols
             </p>
 
-            {/* Primary CTAs - 3 Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-              <Link to="/tree-plantation">
+            {/* Primary CTAs - 4 Action Buttons */}
+            <div className="flex flex-col sm:flex-row flex-wrap gap-3 justify-center lg:justify-start">
+              <Link to="/shop">
                 <Button size="lg" className="w-full sm:w-auto gap-2 shadow-lg hover:shadow-xl transition-all group">
                   <TreePine className="h-5 w-5" />
-                  Book Tree Plantation
+                  Shop Trees
                   <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-              <Link to="/waste-management">
+              <Link to="/tree-plantation">
                 <Button size="lg" variant="secondary" className="w-full sm:w-auto gap-2 shadow-lg hover:shadow-xl transition-all">
-                  <Recycle className="h-5 w-5" />
-                  Schedule Scrap Pickup
+                  <TreePine className="h-5 w-5" />
+                  Book Plantation
                 </Button>
               </Link>
-              <Link to="/contact?type=volunteer">
+              <Link to="/waste-management">
                 <Button size="lg" variant="outline" className="w-full sm:w-auto gap-2 border-2 hover:bg-accent transition-all">
-                  <Users className="h-5 w-5" />
-                  Join as Volunteer
+                  <Recycle className="h-5 w-5" />
+                  Scrap Pickup
                 </Button>
               </Link>
             </div>
