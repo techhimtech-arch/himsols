@@ -435,7 +435,8 @@ const translations: Record<Language, Record<string, string>> = {
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [language, setLanguageState] = useState<Language>(() => {
     const saved = localStorage.getItem("himsols-language");
-    return (saved as Language) || "en";
+    // Default to Hindi as per requirements
+    return (saved as Language) || "hi";
   });
 
   useEffect(() => {

@@ -3,7 +3,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { Languages } from "lucide-react";
 
 export const LanguageToggle = () => {
-  const { language, setLanguage, t } = useLanguage();
+  const { language, setLanguage } = useLanguage();
 
   const toggleLanguage = () => {
     setLanguage(language === "en" ? "hi" : "en");
@@ -14,10 +14,12 @@ export const LanguageToggle = () => {
       variant="outline"
       size="sm"
       onClick={toggleLanguage}
-      className="gap-2 font-medium"
+      className="gap-2 font-medium min-w-[100px] border-2 hover:border-primary/50 transition-colors"
     >
       <Languages className="h-4 w-4" />
-      <span>{t("language.toggle")}</span>
+      <span className="font-semibold">
+        {language === "en" ? "हिंदी" : "EN"}
+      </span>
     </Button>
   );
 };
