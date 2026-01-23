@@ -3,33 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { TreePine, ArrowRight, Phone, MessageCircle } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useHomepageContent, getLocalizedText } from "@/hooks/useHomepageContent";
 
 export const FinalCTASection = memo(() => {
   const { settings } = useSiteSettings();
-  const { language } = useLanguage();
-  const { getSection, counters } = useHomepageContent();
-  
   const whatsappNumber = settings?.whatsapp_number || "919876543210";
-  const section = getSection("final_cta");
-
-  // Default values
-  const title = section ? getLocalizedText(section, "title", language) : (
-    language === "hi" ? "बदलाव लाने के लिए तैयार हैं?" : "Ready to Make an Impact?"
-  );
-
-  const subtitle = section ? getLocalizedText(section, "subtitle", language) : (
-    language === "hi" 
-      ? `${counters?.people_involved || 120}+ समुदाय सदस्यों के साथ जुड़ें जो एक हरित हिमाचल बना रहे हैं`
-      : `Join ${counters?.people_involved || 120}+ community members building a greener Himachal`
-  );
-
-  const ctaText = section ? getLocalizedText(section, "cta_text", language) : (
-    language === "hi" ? "पेड़ लगाना शुरू करें" : "Start Planting Trees"
-  );
-
-  if (!section?.is_active && section !== undefined) return null;
 
   return (
     <section className="py-20 md:py-28 px-4 relative overflow-hidden">
@@ -49,33 +26,34 @@ export const FinalCTASection = memo(() => {
 
         {/* Heading */}
         <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white drop-shadow-lg leading-tight">
-          {title}
+          Ready to Make an Impact?
         </h2>
         
         {/* Subheading */}
         <p className="text-lg md:text-xl max-w-2xl mx-auto mb-10 text-white/90 leading-relaxed">
-          {subtitle}
+          Join 120+ community members who are already building a greener Himachal. 
+          Start with a single tree or schedule a scrap pickup today.
         </p>
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-          <Link to={section?.cta_link || "/tree-plantation"}>
+          <Link to="/tree-plantation">
             <Button 
               size="lg" 
               className="bg-white text-primary hover:bg-white/90 shadow-2xl gap-2 text-base px-8 w-full sm:w-auto"
             >
-              {ctaText}
+              Start Planting Trees
               <ArrowRight className="h-5 w-5" />
             </Button>
           </Link>
-          <a href={`https://wa.me/${whatsappNumber}?text=${language === "hi" ? "नमस्ते! मुझे हिमसोल्स की सेवाओं के बारे में जानना है।" : "Hi! I want to know more about Himsols services."}`} target="_blank" rel="noopener noreferrer">
+          <a href={`https://wa.me/${whatsappNumber}?text=Hi! I want to know more about Himsols services.`} target="_blank" rel="noopener noreferrer">
             <Button 
               size="lg" 
               variant="outline" 
               className="border-2 border-white text-white hover:bg-white/20 gap-2 text-base px-8 w-full sm:w-auto"
             >
               <MessageCircle className="h-5 w-5" />
-              {language === "hi" ? "WhatsApp पर चैट करें" : "Chat on WhatsApp"}
+              Chat on WhatsApp
             </Button>
           </a>
         </div>
@@ -87,7 +65,7 @@ export const FinalCTASection = memo(() => {
             <span>+91 {whatsappNumber.slice(2)}</span>
           </a>
           <span className="hidden sm:inline">•</span>
-          <span>{language === "hi" ? "सोम-शनि, सुबह 9 - शाम 6" : "Available Mon-Sat, 9 AM - 6 PM"}</span>
+          <span>Available Mon-Sat, 9 AM - 6 PM</span>
         </div>
       </div>
     </section>
