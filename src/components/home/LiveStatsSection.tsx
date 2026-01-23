@@ -1,13 +1,16 @@
 import { useEffect, useState, memo } from "react";
 import { TreePine, Users, MapPin, Recycle, TrendingUp } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
+import { useHomepageContent, getLocalizedText } from "@/hooks/useHomepageContent";
 
 interface CounterProps {
   end: number;
   suffix?: string;
   duration?: number;
+  uniqueId: string;
 }
 
-const AnimatedCounter = ({ end, suffix = "", duration = 2000 }: CounterProps) => {
+const AnimatedCounter = ({ end, suffix = "", duration = 2000, uniqueId }: CounterProps) => {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
@@ -37,55 +40,63 @@ const AnimatedCounter = ({ end, suffix = "", duration = 2000 }: CounterProps) =>
       { threshold: 0.3 }
     );
 
-    const element = document.getElementById(`counter-${end}`);
+    const element = document.getElementById(uniqueId);
     if (element) observer.observe(element);
 
     return () => observer.disconnect();
-  }, [end, duration]);
+  }, [end, duration, uniqueId]);
 
   return (
-    <span id={`counter-${end}`}>
+    <span id={uniqueId}>
       {count}{suffix}
     </span>
   );
 };
 
-const stats = [
-  {
-    icon: TreePine,
-    value: 450,
-    suffix: "+",
-    label: "Trees Planted",
-    sublabel: "This Year",
-    color: "primary"
-  },
-  {
-    icon: MapPin,
-    value: 5,
-    suffix: "",
-    label: "Villages Onboarded",
-    sublabel: "Active Regions",
-    color: "secondary"
-  },
-  {
-    icon: Users,
-    value: 120,
-    suffix: "+",
-    label: "Community Members",
-    sublabel: "And Growing",
-    color: "primary"
-  },
-  {
-    icon: Recycle,
-    value: 2,
-    suffix: "T",
-    label: "Scrap Recycled",
-    sublabel: "Tonnes Saved",
-    color: "secondary"
-  }
-];
-
 export const LiveStatsSection = memo(() => {
+  const { language } = useLanguage();
+  const { getSection, counters, isLoading } = useHomepageContent();
+
+  const section = getSection("impact");
+
+  // Dynamic stats from CMS
+  const stats = [
+    {
+      icon: TreePine,
+      value: counters?.total_trees_planted || 450,
+      suffix: "+",
+      label: language === "hi" ? "पेड़ लगाए गए" : "Trees Planted",
+      sublabel: language === "hi" ? "इस साल" : "This Year",
+      color: "primary"
+    },
+    {
+      icon: MapPin,
+      value: counters?.villages_covered || 5,
+      suffix: "",
+      label: language === "hi" ? "गांव जुड़े" : "Villages Onboarded",
+      sublabel: language === "hi" ? "सक्रिय क्षेत्र" : "Active Regions",
+      color: "secondary"
+    },
+    {
+      icon: Users,
+      value: counters?.people_involved || 120,
+      suffix: "+",
+      label: language === "hi" ? "समुदाय सदस्य" : "Community Members",
+      sublabel: language === "hi" ? "और बढ़ रहे हैं" : "And Growing",
+      color: "primary"
+    },
+    {
+      icon: Recycle,
+      value: counters?.scrap_recycled_tonnes || 2,
+      suffix: "T",
+      label: language === "hi" ? "स्क्रैप रीसाइकल किया" : "Scrap Recycled",
+      sublabel: language === "hi" ? "टन बचाए" : "Tonnes Saved",
+      color: "secondary"
+    }
+  ];
+
+  if (!section?.is_active && section !== undefined) return null;
+
   return (
     <section className="py-16 md:py-20 px-4 relative overflow-hidden">
       {/* Background */}
@@ -96,13 +107,13 @@ export const LiveStatsSection = memo(() => {
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent text-accent-foreground text-sm font-medium mb-4">
             <TrendingUp className="h-4 w-4" />
-            <span>Live Impact</span>
+            <span>{language === "hi" ? "लाइव प्रभाव" : "Live Impact"}</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-            Real Work, Real Numbers
+            {section ? getLocalizedText(section, "title", language) : (language === "hi" ? "असली काम, असली आंकड़े" : "Real Work, Real Numbers")}
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            Track our progress in building sustainable communities across Himachal Pradesh
+            {section ? getLocalizedText(section, "subtitle", language) : (language === "hi" ? "हिमाचल प्रदेश में टिकाऊ समुदाय बनाने में हमारी प्रगति देखें" : "Track our progress in building sustainable communities across Himachal Pradesh")}
           </p>
         </div>
 
@@ -123,7 +134,7 @@ export const LiveStatsSection = memo(() => {
                 
                 {/* Value */}
                 <div className={`text-3xl md:text-4xl lg:text-5xl font-bold mb-1 bg-gradient-to-r ${stat.color === 'primary' ? 'from-primary to-secondary' : 'from-secondary to-primary'} bg-clip-text text-transparent`}>
-                  <AnimatedCounter end={stat.value} suffix={stat.suffix} />
+                  <AnimatedCounter end={stat.value} suffix={stat.suffix} uniqueId={`counter-${index}-${stat.label.replace(/\s/g, '')}`} />
                 </div>
                 
                 {/* Labels */}

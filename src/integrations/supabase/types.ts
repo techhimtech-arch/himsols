@@ -413,6 +413,111 @@ export type Database = {
         }
         Relationships: []
       }
+      homepage_items: {
+        Row: {
+          created_at: string | null
+          description_en: string | null
+          description_hi: string | null
+          icon: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          link: string | null
+          section_key: string
+          sort_order: number | null
+          title_en: string
+          title_hi: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description_en?: string | null
+          description_hi?: string | null
+          icon?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          link?: string | null
+          section_key: string
+          sort_order?: number | null
+          title_en: string
+          title_hi?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description_en?: string | null
+          description_hi?: string | null
+          icon?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          link?: string | null
+          section_key?: string
+          sort_order?: number | null
+          title_en?: string
+          title_hi?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      homepage_sections: {
+        Row: {
+          background_image: string | null
+          content_en: string | null
+          content_hi: string | null
+          created_at: string | null
+          cta_link: string | null
+          cta_text_en: string | null
+          cta_text_hi: string | null
+          id: string
+          is_active: boolean | null
+          section_key: string
+          sort_order: number | null
+          subtitle_en: string | null
+          subtitle_hi: string | null
+          title_en: string | null
+          title_hi: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          background_image?: string | null
+          content_en?: string | null
+          content_hi?: string | null
+          created_at?: string | null
+          cta_link?: string | null
+          cta_text_en?: string | null
+          cta_text_hi?: string | null
+          id?: string
+          is_active?: boolean | null
+          section_key: string
+          sort_order?: number | null
+          subtitle_en?: string | null
+          subtitle_hi?: string | null
+          title_en?: string | null
+          title_hi?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          background_image?: string | null
+          content_en?: string | null
+          content_hi?: string | null
+          created_at?: string | null
+          cta_link?: string | null
+          cta_text_en?: string | null
+          cta_text_hi?: string | null
+          id?: string
+          is_active?: boolean | null
+          section_key?: string
+          sort_order?: number | null
+          subtitle_en?: string | null
+          subtitle_hi?: string | null
+          title_en?: string | null
+          title_hi?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       marketplace_orders: {
         Row: {
           created_at: string
