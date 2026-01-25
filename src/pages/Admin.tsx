@@ -23,7 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Users, TreePine, TrendingUp, Loader2, Package, Settings, FileText, Image, Quote, Activity, Handshake, Store, Globe } from "lucide-react";
+import { Shield, Users, TreePine, TrendingUp, Loader2, Package, Settings, FileText, Image, Quote, Activity, Handshake, Store, Globe, BarChart3 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OrdersTab } from "@/components/admin/OrdersTab";
 import { TreesTab } from "@/components/admin/TreesTab";
@@ -40,6 +40,7 @@ import { MarketplaceProductsTab } from "@/components/admin/MarketplaceProductsTa
 import { MarketplaceOrdersTab } from "@/components/admin/MarketplaceOrdersTab";
 import { ExternalAppsTab } from "@/components/admin/ExternalAppsTab";
 import { RequestsTab } from "@/components/admin/RequestsTab";
+import { LiveStatsTab } from "@/components/admin/LiveStatsTab";
 import { INDIAN_STATES, getDistrictsForState, IndianState } from "@/lib/constants";
 import { MobileCard, MobileCardRow, StatusBadge } from "@/components/admin/MobileCard";
 
@@ -556,6 +557,10 @@ const Admin = () => {
                   <Activity className="h-3 w-3 md:h-4 md:w-4 mr-1" />
                   Activities
                 </TabsTrigger>
+                <TabsTrigger value="live-stats" className="text-xs md:text-sm">
+                  <BarChart3 className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  Stats
+                </TabsTrigger>
                 <TabsTrigger value="partners" className="text-xs md:text-sm">
                   <Handshake className="h-3 w-3 md:h-4 md:w-4 mr-1" />
                   Partners
@@ -650,6 +655,11 @@ const Admin = () => {
             {/* Activities Tab */}
             <TabsContent value="activities">
               <ActivitiesTab />
+            </TabsContent>
+
+            {/* Live Stats Tab */}
+            <TabsContent value="live-stats">
+              <LiveStatsTab />
             </TabsContent>
 
             {/* Partner Types Tab */}
