@@ -1,5 +1,7 @@
 import { useEffect, useState, memo } from "react";
-import { TreePine, Users, MapPin, Recycle, TrendingUp } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { TreePine, Users, MapPin, Recycle, TrendingUp, Building2, Leaf, Award, LucideIcon } from "lucide-react";
 
 interface CounterProps {
   end: number;
@@ -18,7 +20,6 @@ const AnimatedCounter = ({ end, suffix = "", duration = 2000 }: CounterProps) =>
       if (!startTime) startTime = timestamp;
       const progress = Math.min((timestamp - startTime) / duration, 1);
       
-      // Easing function for smooth animation
       const easeOutQuart = 1 - Math.pow(1 - progress, 4);
       setCount(Math.floor(startCount + (end - startCount) * easeOutQuart));
 
@@ -50,42 +51,46 @@ const AnimatedCounter = ({ end, suffix = "", duration = 2000 }: CounterProps) =>
   );
 };
 
-const stats = [
-  {
-    icon: TreePine,
-    value: 450,
-    suffix: "+",
-    label: "Trees Planted",
-    sublabel: "This Year",
-    color: "primary"
-  },
-  {
-    icon: MapPin,
-    value: 5,
-    suffix: "",
-    label: "Villages Onboarded",
-    sublabel: "Active Regions",
-    color: "secondary"
-  },
-  {
-    icon: Users,
-    value: 120,
-    suffix: "+",
-    label: "Community Members",
-    sublabel: "And Growing",
-    color: "primary"
-  },
-  {
-    icon: Recycle,
-    value: 2,
-    suffix: "T",
-    label: "Scrap Recycled",
-    sublabel: "Tonnes Saved",
-    color: "secondary"
-  }
-];
+const ICON_MAP: Record<string, LucideIcon> = {
+  TreePine,
+  MapPin,
+  Users,
+  Recycle,
+  Building2,
+  Leaf,
+  Award,
+  TrendingUp,
+};
+
+interface LiveStat {
+  id: string;
+  icon: string;
+  value: number;
+  suffix: string;
+  label: string;
+  sublabel: string | null;
+  color: string;
+  sort_order: number;
+}
 
 export const LiveStatsSection = memo(() => {
+  const { data: stats, isLoading } = useQuery({
+    queryKey: ["live-stats"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("live_stats")
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order");
+      if (error) throw error;
+      return data as LiveStat[];
+    },
+  });
+
+  if (isLoading || !stats?.length) {
+    return null;
+  }
+
   return (
     <section className="py-16 md:py-20 px-4 relative overflow-hidden">
       {/* Background */}
@@ -108,30 +113,33 @@ export const LiveStatsSection = memo(() => {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-          {stats.map((stat, index) => (
-            <div
-              key={stat.label}
-              className="relative group"
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative p-6 md:p-8 rounded-2xl bg-background/60 backdrop-blur-xl border border-border/50 hover:border-primary/30 transition-all duration-300 hover:-translate-y-1">
-                {/* Icon */}
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${stat.color === 'primary' ? 'bg-primary/10' : 'bg-secondary/10'}`}>
-                  <stat.icon className={`h-6 w-6 ${stat.color === 'primary' ? 'text-primary' : 'text-secondary'}`} />
+          {stats.map((stat, index) => {
+            const IconComponent = ICON_MAP[stat.icon] || TreePine;
+            return (
+              <div
+                key={stat.id}
+                className="relative group"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="relative p-6 md:p-8 rounded-2xl bg-background/60 backdrop-blur-xl border border-border/50 hover:border-primary/30 transition-all duration-300 hover:-translate-y-1">
+                  {/* Icon */}
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${stat.color === 'primary' ? 'bg-primary/10' : 'bg-secondary/10'}`}>
+                    <IconComponent className={`h-6 w-6 ${stat.color === 'primary' ? 'text-primary' : 'text-secondary'}`} />
+                  </div>
+                  
+                  {/* Value */}
+                  <div className={`text-3xl md:text-4xl lg:text-5xl font-bold mb-1 bg-gradient-to-r ${stat.color === 'primary' ? 'from-primary to-secondary' : 'from-secondary to-primary'} bg-clip-text text-transparent`}>
+                    <AnimatedCounter end={stat.value} suffix={stat.suffix || ""} />
+                  </div>
+                  
+                  {/* Labels */}
+                  <div className="text-foreground font-medium text-sm md:text-base">{stat.label}</div>
+                  <div className="text-muted-foreground text-xs md:text-sm">{stat.sublabel}</div>
                 </div>
-                
-                {/* Value */}
-                <div className={`text-3xl md:text-4xl lg:text-5xl font-bold mb-1 bg-gradient-to-r ${stat.color === 'primary' ? 'from-primary to-secondary' : 'from-secondary to-primary'} bg-clip-text text-transparent`}>
-                  <AnimatedCounter end={stat.value} suffix={stat.suffix} />
-                </div>
-                
-                {/* Labels */}
-                <div className="text-foreground font-medium text-sm md:text-base">{stat.label}</div>
-                <div className="text-muted-foreground text-xs md:text-sm">{stat.sublabel}</div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

@@ -518,6 +518,48 @@ export type Database = {
         }
         Relationships: []
       }
+      live_stats: {
+        Row: {
+          color: string
+          created_at: string
+          icon: string
+          id: string
+          is_active: boolean | null
+          label: string
+          sort_order: number | null
+          sublabel: string | null
+          suffix: string | null
+          updated_at: string
+          value: number
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          icon?: string
+          id?: string
+          is_active?: boolean | null
+          label: string
+          sort_order?: number | null
+          sublabel?: string | null
+          suffix?: string | null
+          updated_at?: string
+          value?: number
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          icon?: string
+          id?: string
+          is_active?: boolean | null
+          label?: string
+          sort_order?: number | null
+          sublabel?: string | null
+          suffix?: string | null
+          updated_at?: string
+          value?: number
+        }
+        Relationships: []
+      }
       marketplace_orders: {
         Row: {
           created_at: string
