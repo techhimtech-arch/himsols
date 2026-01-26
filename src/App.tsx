@@ -30,6 +30,9 @@ import B2BCorporate from "./pages/B2BCorporate";
 import Marketplace from "./pages/Marketplace";
 import MarketplaceProduct from "./pages/MarketplaceProduct";
 import MarketplaceCheckout from "./pages/MarketplaceCheckout";
+import Campaigns from "./pages/Campaigns";
+import CampaignDetail from "./pages/CampaignDetail";
+import MyContributions from "./pages/MyContributions";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +63,9 @@ const App = () => (
                     <Route path="/marketplace" element={<Marketplace />} />
                     <Route path="/marketplace/:id" element={<MarketplaceProduct />} />
                     <Route path="/marketplace/checkout" element={<MarketplaceCheckout />} />
+                    <Route path="/campaigns" element={<Campaigns />} />
+                    <Route path="/campaign/:id" element={<CampaignDetail />} />
+                    <Route path="/my-contributions" element={<MyContributions />} />
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/auth" element={<Auth />} />
                     <Route path="/admin" element={<Admin />} />
