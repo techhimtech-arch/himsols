@@ -4,6 +4,7 @@ import { HeroSection } from "@/components/home/HeroSection";
 import { ActionableServicesSection } from "@/components/home/ActionableServicesSection";
 import { FeaturedProductsSection } from "@/components/home/FeaturedProductsSection";
 import { FeaturedTreesSection } from "@/components/home/FeaturedTreesSection";
+import { FeaturedCampaignsSection } from "@/components/home/FeaturedCampaignsSection";
 import { LiveStatsSection } from "@/components/home/LiveStatsSection";
 import { TrustSection } from "@/components/home/TrustSection";
 import { RecentActivitiesSection } from "@/components/home/RecentActivitiesSection";
@@ -35,6 +36,9 @@ const Index = () => {
 
       {/* Featured Trees - Tree plants with Add to Cart */}
       <FeaturedTreesSection />
+
+      {/* Featured Campaigns - Active campaigns with show_on_homepage=true */}
+      <FeaturedCampaignsSection />
 
       {/* Live Stats - Animated counters */}
       <LiveStatsSection />
