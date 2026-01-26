@@ -113,6 +113,63 @@ export type Database = {
         }
         Relationships: []
       }
+      campaigns: {
+        Row: {
+          allow_direct_payment: boolean
+          allow_gift_card: boolean
+          banner_image: string | null
+          collected_amount: number
+          created_at: string
+          description: string
+          end_date: string | null
+          goal_amount: number
+          id: string
+          price_per_tree: number | null
+          show_on_homepage: boolean
+          sort_order: number | null
+          start_date: string | null
+          status: Database["public"]["Enums"]["campaign_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          allow_direct_payment?: boolean
+          allow_gift_card?: boolean
+          banner_image?: string | null
+          collected_amount?: number
+          created_at?: string
+          description: string
+          end_date?: string | null
+          goal_amount?: number
+          id?: string
+          price_per_tree?: number | null
+          show_on_homepage?: boolean
+          sort_order?: number | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["campaign_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          allow_direct_payment?: boolean
+          allow_gift_card?: boolean
+          banner_image?: string | null
+          collected_amount?: number
+          created_at?: string
+          description?: string
+          end_date?: string | null
+          goal_amount?: number
+          id?: string
+          price_per_tree?: number | null
+          show_on_homepage?: boolean
+          sort_order?: number | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["campaign_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contact_messages: {
         Row: {
           created_at: string | null
@@ -373,6 +430,68 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      donations: {
+        Row: {
+          amount: number
+          campaign_id: string | null
+          created_at: string
+          donor_email: string | null
+          donor_name: string | null
+          donor_phone: string | null
+          gift_card_id: string | null
+          id: string
+          notes: string | null
+          payment_gateway: string | null
+          payment_id: string | null
+          payment_mode: Database["public"]["Enums"]["payment_mode"]
+          payment_status: Database["public"]["Enums"]["payment_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          campaign_id?: string | null
+          created_at?: string
+          donor_email?: string | null
+          donor_name?: string | null
+          donor_phone?: string | null
+          gift_card_id?: string | null
+          id?: string
+          notes?: string | null
+          payment_gateway?: string | null
+          payment_id?: string | null
+          payment_mode?: Database["public"]["Enums"]["payment_mode"]
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          campaign_id?: string | null
+          created_at?: string
+          donor_email?: string | null
+          donor_name?: string | null
+          donor_phone?: string | null
+          gift_card_id?: string | null
+          id?: string
+          notes?: string | null
+          payment_gateway?: string | null
+          payment_id?: string | null
+          payment_mode?: Database["public"]["Enums"]["payment_mode"]
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "donations_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       external_apps: {
         Row: {
@@ -1175,11 +1294,14 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      campaign_status: "ACTIVE" | "INACTIVE" | "COMPLETED"
       marketplace_category:
         | "farmer_produce"
         | "value_added"
         | "plants_gardening"
         | "home_utility"
+      payment_mode: "DIRECT" | "GIFT_CARD"
+      payment_status: "PENDING" | "SUCCESS" | "FAILED" | "REFUNDED"
       request_status:
         | "pending"
         | "site_verified"
@@ -1316,12 +1438,15 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      campaign_status: ["ACTIVE", "INACTIVE", "COMPLETED"],
       marketplace_category: [
         "farmer_produce",
         "value_added",
         "plants_gardening",
         "home_utility",
       ],
+      payment_mode: ["DIRECT", "GIFT_CARD"],
+      payment_status: ["PENDING", "SUCCESS", "FAILED", "REFUNDED"],
       request_status: [
         "pending",
         "site_verified",

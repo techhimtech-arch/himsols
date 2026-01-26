@@ -23,7 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Users, TreePine, TrendingUp, Loader2, Package, Settings, FileText, Image, Quote, Activity, Handshake, Store, Globe, BarChart3 } from "lucide-react";
+import { Shield, Users, TreePine, TrendingUp, Loader2, Package, Settings, FileText, Image, Quote, Activity, Handshake, Store, Globe, BarChart3, Heart } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OrdersTab } from "@/components/admin/OrdersTab";
 import { TreesTab } from "@/components/admin/TreesTab";
@@ -41,6 +41,8 @@ import { MarketplaceOrdersTab } from "@/components/admin/MarketplaceOrdersTab";
 import { ExternalAppsTab } from "@/components/admin/ExternalAppsTab";
 import { RequestsTab } from "@/components/admin/RequestsTab";
 import { LiveStatsTab } from "@/components/admin/LiveStatsTab";
+import { CampaignsTab } from "@/components/admin/CampaignsTab";
+import { DonationsTab } from "@/components/admin/DonationsTab";
 import { INDIAN_STATES, getDistrictsForState, IndianState } from "@/lib/constants";
 import { MobileCard, MobileCardRow, StatusBadge } from "@/components/admin/MobileCard";
 
@@ -565,6 +567,11 @@ const Admin = () => {
                   <Handshake className="h-3 w-3 md:h-4 md:w-4 mr-1" />
                   Partners
                 </TabsTrigger>
+                <TabsTrigger value="campaigns" className="text-xs md:text-sm">
+                  <Heart className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  Campaigns
+                </TabsTrigger>
+                <TabsTrigger value="donations" className="text-xs md:text-sm">Donations</TabsTrigger>
                 <TabsTrigger value="users" className="text-xs md:text-sm">Users</TabsTrigger>
                 <TabsTrigger value="corporate" className="text-xs md:text-sm">Corporate</TabsTrigger>
                 <TabsTrigger value="marketplace" className="text-xs md:text-sm">
@@ -581,6 +588,16 @@ const Admin = () => {
                 </TabsTrigger>
               </TabsList>
             </div>
+
+            {/* Campaigns Tab */}
+            <TabsContent value="campaigns">
+              <CampaignsTab />
+            </TabsContent>
+
+            {/* Donations Tab */}
+            <TabsContent value="donations">
+              <DonationsTab />
+            </TabsContent>
 
             {/* Requests Tab */}
             <TabsContent value="requests">
