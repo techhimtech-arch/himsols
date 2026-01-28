@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useRazorpay } from "@/hooks/useRazorpay";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
@@ -37,10 +38,10 @@ const CampaignDetail = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { initiatePayment, isLoading: isPaymentLoading } = useRazorpay();
   
   const [selectedAmount, setSelectedAmount] = useState<number | null>(499);
   const [customAmount, setCustomAmount] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
   const { data: campaign, isLoading } = useQuery({
@@ -72,34 +73,6 @@ const CampaignDetail = () => {
     enabled: !!id,
   });
 
-  const donateMutation = useMutation({
-    mutationFn: async (amount: number) => {
-      if (!user) throw new Error("Please login to contribute");
-      
-      // For now, create donation as SUCCESS (manual payment)
-      // In production, integrate with Razorpay here
-      const { error } = await supabase.from("donations").insert({
-        campaign_id: id,
-        user_id: user.id,
-        amount,
-        payment_mode: "DIRECT" as const,
-        payment_status: "SUCCESS" as const,
-        payment_gateway: "manual",
-        donor_name: user.user_metadata?.full_name,
-        donor_email: user.email,
-      });
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["campaign", id] });
-      queryClient.invalidateQueries({ queryKey: ["campaign-donors", id] });
-      setShowSuccess(true);
-    },
-    onError: (error) => {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    },
-  });
-
   const handleContribute = async () => {
     const amount = selectedAmount || parseFloat(customAmount);
     if (!amount || amount < 1) {
@@ -113,12 +86,22 @@ const CampaignDetail = () => {
       return;
     }
 
-    setIsProcessing(true);
-    try {
-      await donateMutation.mutateAsync(amount);
-    } finally {
-      setIsProcessing(false);
-    }
+    if (!campaign) return;
+
+    initiatePayment({
+      amount,
+      campaignId: id!,
+      campaignTitle: campaign.title,
+      donorName: user.user_metadata?.full_name || "Anonymous",
+      donorEmail: user.email || "",
+      donorPhone: user.user_metadata?.phone,
+      userId: user.id,
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["campaign", id] });
+        queryClient.invalidateQueries({ queryKey: ["campaign-donors", id] });
+        setShowSuccess(true);
+      },
+    });
   };
 
   if (isLoading) {
@@ -331,9 +314,9 @@ const CampaignDetail = () => {
                   <Button 
                     className="w-full h-12 text-lg" 
                     onClick={handleContribute}
-                    disabled={isProcessing || finalAmount < 1}
+                    disabled={isPaymentLoading || finalAmount < 1}
                   >
-                    {isProcessing ? "Processing..." : `Contribute ₹${finalAmount.toLocaleString()}`}
+                    {isPaymentLoading ? "Processing..." : `Contribute ₹${finalAmount.toLocaleString()}`}
                   </Button>
 
                   <p className="text-xs text-muted-foreground text-center">
