@@ -21,7 +21,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { Shield, Users, TreePine, TrendingUp, Loader2, Package, Settings, FileText, Image, Quote, Activity, Handshake, Store, Globe, BarChart3, Heart } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -79,6 +79,7 @@ const Admin = () => {
   const { user } = useAuth();
   const { isAdmin, loading: adminLoading } = useIsAdmin();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { toast } = useToast();
   const [requests, setRequests] = useState<Request[]>([]);
   const [scrapRequests, setScrapRequests] = useState<any[]>([]);
@@ -94,6 +95,13 @@ const Admin = () => {
     pendingRequests: 0,
     scrapRequests: 0,
   });
+
+  // Get current tab from URL or default to 'requests'
+  const currentTab = searchParams.get('tab') || 'requests';
+  
+  const handleTabChange = (value: string) => {
+    setSearchParams({ tab: value });
+  };
 
   useEffect(() => {
     if (!adminLoading && !isAdmin) {
@@ -536,7 +544,7 @@ const Admin = () => {
           </div>
 
           {/* Tabs */}
-          <Tabs defaultValue="requests" className="space-y-6">
+          <Tabs value={currentTab} onValueChange={handleTabChange} className="space-y-6">
             <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
               <TabsList className="w-max md:w-auto">
                 <TabsTrigger value="requests" className="text-xs md:text-sm">Plantation</TabsTrigger>
