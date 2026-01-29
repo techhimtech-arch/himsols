@@ -276,6 +276,8 @@ export const FeaturedPlantsSection = memo(() => {
                   </Badge>
                 </div>
                 
+                {/* Click to view details */}
+                <Link to={`/plants/${plant.id}`} className="absolute inset-0 z-10" />
                 {/* Image count indicator */}
                 {plant.images.length > 1 && (
                   <div className="absolute top-3 right-3 px-2 py-1 rounded-full bg-black/50 text-white text-xs">
