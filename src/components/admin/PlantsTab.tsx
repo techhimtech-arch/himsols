@@ -15,7 +15,7 @@ import { toast } from "@/hooks/use-toast";
 import { MobileCard, MobileCardRow } from "./MobileCard";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { compressImage } from "@/lib/imageCompression";
-
+import { BulkPlantUpload } from "./BulkPlantUpload";
 interface Plant {
   id: string;
   name: string;
@@ -321,6 +321,24 @@ export const PlantsTab = ({ plants, setPlants }: PlantsTabProps) => {
     }
   };
 
+  const handleBulkUpload = async (plantsData: any[]) => {
+    try {
+      const { data, error } = await supabase
+        .from("plants")
+        .insert(plantsData)
+        .select();
+
+      if (error) throw error;
+
+      setPlants(prev => [...prev, ...data].sort((a, b) => a.name.localeCompare(b.name)));
+      
+      toast({ title: "Success", description: `${data.length} plants uploaded successfully` });
+    } catch (error: any) {
+      console.error("Bulk upload error:", error);
+      throw error;
+    }
+  };
+
   const renderForm = () => (
     <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -539,22 +557,25 @@ export const PlantsTab = ({ plants, setPlants }: PlantsTabProps) => {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <h3 className="text-lg font-semibold">Ornamental Plants ({plants.length})</h3>
-        <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) resetForm(); }}>
-          <DialogTrigger asChild>
-            <Button size="sm">
-              <Plus className="w-4 h-4 mr-2" />
-              Add Plant
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>{editingPlant ? "Edit Plant" : "Add New Plant"}</DialogTitle>
-            </DialogHeader>
-            {renderForm()}
-          </DialogContent>
-        </Dialog>
+        <div className="flex gap-2 w-full sm:w-auto">
+          <BulkPlantUpload onBulkUpload={handleBulkUpload} />
+          <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) resetForm(); }}>
+            <DialogTrigger asChild>
+              <Button size="sm" className="flex-1 sm:flex-initial">
+                <Plus className="w-4 h-4 mr-2" />
+                Add Plant
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>{editingPlant ? "Edit Plant" : "Add New Plant"}</DialogTitle>
+              </DialogHeader>
+              {renderForm()}
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       {isMobile ? (
