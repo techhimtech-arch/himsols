@@ -368,16 +368,17 @@ const Admin = () => {
 
   const addTree = async (treeData: any) => {
     try {
-      const { error } = await supabase.from("trees").insert(treeData);
+      const { data, error } = await supabase.from("trees").insert(treeData).select().single();
 
       if (error) throw error;
+
+      // Optimistic update - add to local state
+      setTrees(prev => [...prev, data].sort((a, b) => a.name.localeCompare(b.name)));
 
       toast({
         title: "Success",
         description: "Tree added successfully.",
       });
-
-      loadData();
     } catch (error: any) {
       console.error("Error adding tree:", error);
       toast({
@@ -397,12 +398,15 @@ const Admin = () => {
 
       if (error) throw error;
 
+      // Optimistic update - update local state
+      setTrees(prev => prev.map(tree => 
+        tree.id === treeId ? { ...tree, ...treeData } : tree
+      ));
+
       toast({
         title: "Success",
         description: "Tree updated successfully.",
       });
-
-      loadData();
     } catch (error: any) {
       console.error("Error updating tree:", error);
       toast({
@@ -424,12 +428,13 @@ const Admin = () => {
 
       if (error) throw error;
 
+      // Optimistic update - remove from local state
+      setTrees(prev => prev.filter(tree => tree.id !== treeId));
+
       toast({
         title: "Success",
         description: "Tree deleted successfully.",
       });
-
-      loadData();
     } catch (error: any) {
       console.error("Error deleting tree:", error);
       toast({
