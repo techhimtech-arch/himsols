@@ -33,6 +33,8 @@ import MarketplaceCheckout from "./pages/MarketplaceCheckout";
 import Campaigns from "./pages/Campaigns";
 import CampaignDetail from "./pages/CampaignDetail";
 import MyContributions from "./pages/MyContributions";
+import Plants from "./pages/Plants";
+import PlantDetail from "./pages/PlantDetail";
 
 const queryClient = new QueryClient();
 
@@ -63,6 +65,8 @@ const App = () => (
                     <Route path="/marketplace" element={<Marketplace />} />
                     <Route path="/marketplace/:id" element={<MarketplaceProduct />} />
                     <Route path="/marketplace/checkout" element={<MarketplaceCheckout />} />
+                    <Route path="/plants" element={<Plants />} />
+                    <Route path="/plants/:id" element={<PlantDetail />} />
                     <Route path="/campaigns" element={<Campaigns />} />
                     <Route path="/campaign/:id" element={<CampaignDetail />} />
                     <Route path="/my-contributions" element={<MyContributions />} />
