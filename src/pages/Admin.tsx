@@ -23,8 +23,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Users, TreePine, TrendingUp, Loader2, Package, Settings, FileText, Image, Quote, Activity, Handshake, Store, Globe, BarChart3, Heart } from "lucide-react";
+import { Shield, Users, TreePine, TrendingUp, Loader2, Package, Settings, FileText, Image, Quote, Activity, Handshake, Store, Globe, BarChart3, Heart, Flower2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PlantsTab } from "@/components/admin/PlantsTab";
 import { OrdersTab } from "@/components/admin/OrdersTab";
 import { TreesTab } from "@/components/admin/TreesTab";
 import { ScrapRequestsTab } from "@/components/admin/ScrapRequestsTab";
@@ -87,6 +88,7 @@ const Admin = () => {
   const [userRoles, setUserRoles] = useState<UserRole[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [trees, setTrees] = useState<any[]>([]);
+  const [plants, setPlants] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     totalRequests: 0,
@@ -162,6 +164,14 @@ const Admin = () => {
 
       if (treesError) throw treesError;
 
+      // Load plants
+      const { data: plantsData, error: plantsError } = await supabase
+        .from("plants")
+        .select("*")
+        .order("name");
+
+      if (plantsError) throw plantsError;
+
       // Load scrap requests
       const { data: scrapData, error: scrapError } = await supabase
         .from("waste_management_requests")
@@ -176,6 +186,7 @@ const Admin = () => {
       setUserRoles(rolesData || []);
       setOrders(ordersData || []);
       setTrees(treesData || []);
+      setPlants(plantsData || []);
 
       // Calculate stats
       const totalTrees = requestsData?.reduce((sum, req) => sum + req.quantity, 0) || 0;
@@ -556,6 +567,10 @@ const Admin = () => {
                 <TabsTrigger value="scrap" className="text-xs md:text-sm">Scrap</TabsTrigger>
                 <TabsTrigger value="orders" className="text-xs md:text-sm">Orders</TabsTrigger>
                 <TabsTrigger value="trees" className="text-xs md:text-sm">Trees</TabsTrigger>
+                <TabsTrigger value="plants" className="text-xs md:text-sm">
+                  <Flower2 className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  Plants
+                </TabsTrigger>
                 <TabsTrigger value="blog" className="text-xs md:text-sm">
                   <FileText className="h-3 w-3 md:h-4 md:w-4 mr-1" />
                   Blog
@@ -665,6 +680,11 @@ const Admin = () => {
                 onDeleteTree={deleteTree}
                 onBulkUpload={bulkUploadTrees}
               />
+            </TabsContent>
+
+            {/* Plants Tab */}
+            <TabsContent value="plants">
+              <PlantsTab plants={plants} setPlants={setPlants} />
             </TabsContent>
 
             {/* Blog Tab */}

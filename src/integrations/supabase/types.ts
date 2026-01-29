@@ -884,6 +884,44 @@ export type Database = {
         }
         Relationships: []
       }
+      plant_images: {
+        Row: {
+          caption: string | null
+          created_at: string | null
+          id: string
+          image_url: string
+          is_primary: boolean | null
+          plant_id: string
+          sort_order: number | null
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string | null
+          id?: string
+          image_url: string
+          is_primary?: boolean | null
+          plant_id: string
+          sort_order?: number | null
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string | null
+          id?: string
+          image_url?: string
+          is_primary?: boolean | null
+          plant_id?: string
+          sort_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plant_images_plant_id_fkey"
+            columns: ["plant_id"]
+            isOneToOne: false
+            referencedRelation: "plants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       plantation_photos: {
         Row: {
           caption: string | null
@@ -934,6 +972,69 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      plants: {
+        Row: {
+          care_level: string | null
+          category: string
+          category_hi: string | null
+          created_at: string | null
+          description: string
+          description_hi: string | null
+          id: string
+          is_active: boolean | null
+          is_featured: boolean | null
+          light_requirement: string | null
+          name: string
+          name_hi: string | null
+          price: number
+          scientific_name: string | null
+          sort_order: number | null
+          stock_quantity: number
+          updated_at: string | null
+          water_requirement: string | null
+        }
+        Insert: {
+          care_level?: string | null
+          category?: string
+          category_hi?: string | null
+          created_at?: string | null
+          description: string
+          description_hi?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          light_requirement?: string | null
+          name: string
+          name_hi?: string | null
+          price: number
+          scientific_name?: string | null
+          sort_order?: number | null
+          stock_quantity?: number
+          updated_at?: string | null
+          water_requirement?: string | null
+        }
+        Update: {
+          care_level?: string | null
+          category?: string
+          category_hi?: string | null
+          created_at?: string | null
+          description?: string
+          description_hi?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          light_requirement?: string | null
+          name?: string
+          name_hi?: string | null
+          price?: number
+          scientific_name?: string | null
+          sort_order?: number | null
+          stock_quantity?: number
+          updated_at?: string | null
+          water_requirement?: string | null
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
