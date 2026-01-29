@@ -33,12 +33,13 @@ serve(async (req) => {
       );
     }
 
-    // Create Razorpay order
+    // Create Razorpay order - receipt must be ≤40 chars
+    const receiptId = `hms_${Date.now()}`;
     const orderData = {
       amount: Math.round(amount * 100), // Razorpay expects amount in paise
       currency,
-      receipt: `campaign_${campaign_id}_${Date.now()}`,
-      notes: notes || {},
+      receipt: receiptId,
+      notes: { campaign_id, ...notes },
     };
 
     const auth = btoa(`${razorpayKeyId}:${razorpayKeySecret}`);
