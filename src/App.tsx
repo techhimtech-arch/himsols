@@ -35,6 +35,8 @@ import CampaignDetail from "./pages/CampaignDetail";
 import MyContributions from "./pages/MyContributions";
 import Plants from "./pages/Plants";
 import PlantDetail from "./pages/PlantDetail";
+import GiftCards from "./pages/GiftCards";
+import RedeemGiftCard from "./pages/RedeemGiftCard";
 
 const queryClient = new QueryClient();
 
@@ -70,6 +72,8 @@ const App = () => (
                     <Route path="/campaigns" element={<Campaigns />} />
                     <Route path="/campaign/:id" element={<CampaignDetail />} />
                     <Route path="/my-contributions" element={<MyContributions />} />
+                    <Route path="/gift-cards" element={<GiftCards />} />
+                    <Route path="/redeem-gift-card" element={<RedeemGiftCard />} />
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/auth" element={<Auth />} />
                     <Route path="/admin" element={<Admin />} />
