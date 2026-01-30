@@ -532,6 +532,118 @@ export type Database = {
         }
         Relationships: []
       }
+      gift_card_redemptions: {
+        Row: {
+          amount: number
+          campaign_id: string
+          donation_id: string | null
+          gift_card_id: string
+          id: string
+          redeemed_at: string
+          trees_planted: number | null
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          campaign_id: string
+          donation_id?: string | null
+          gift_card_id: string
+          id?: string
+          redeemed_at?: string
+          trees_planted?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          campaign_id?: string
+          donation_id?: string | null
+          gift_card_id?: string
+          id?: string
+          redeemed_at?: string
+          trees_planted?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gift_card_redemptions_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gift_card_redemptions_donation_id_fkey"
+            columns: ["donation_id"]
+            isOneToOne: false
+            referencedRelation: "donations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gift_card_redemptions_gift_card_id_fkey"
+            columns: ["gift_card_id"]
+            isOneToOne: false
+            referencedRelation: "gift_cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gift_cards: {
+        Row: {
+          balance: number
+          code: string
+          created_at: string
+          expires_at: string
+          gift_message: string | null
+          id: string
+          payment_gateway: string | null
+          payment_id: string | null
+          purchaser_email: string | null
+          purchaser_id: string | null
+          purchaser_name: string | null
+          recipient_email: string | null
+          recipient_name: string | null
+          status: string
+          updated_at: string
+          value: number
+        }
+        Insert: {
+          balance: number
+          code: string
+          created_at?: string
+          expires_at?: string
+          gift_message?: string | null
+          id?: string
+          payment_gateway?: string | null
+          payment_id?: string | null
+          purchaser_email?: string | null
+          purchaser_id?: string | null
+          purchaser_name?: string | null
+          recipient_email?: string | null
+          recipient_name?: string | null
+          status?: string
+          updated_at?: string
+          value: number
+        }
+        Update: {
+          balance?: number
+          code?: string
+          created_at?: string
+          expires_at?: string
+          gift_message?: string | null
+          id?: string
+          payment_gateway?: string | null
+          payment_id?: string | null
+          purchaser_email?: string | null
+          purchaser_id?: string | null
+          purchaser_name?: string | null
+          recipient_email?: string | null
+          recipient_name?: string | null
+          status?: string
+          updated_at?: string
+          value?: number
+        }
+        Relationships: []
+      }
       homepage_items: {
         Row: {
           created_at: string | null
@@ -1382,6 +1494,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_gift_card_code: { Args: never; Returns: string }
       generate_marketplace_order_number: { Args: never; Returns: string }
       generate_tracking_id: { Args: never; Returns: string }
       generate_waste_tracking_id: { Args: never; Returns: string }
