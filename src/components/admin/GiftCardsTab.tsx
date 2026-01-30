@@ -1,17 +1,33 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Gift, Search } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Gift, Search, Plus } from "lucide-react";
 import { format } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
 
 export const GiftCardsTab = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [newCard, setNewCard] = useState({
+    value: "",
+    recipientName: "",
+    recipientEmail: "",
+    giftMessage: "",
+  });
+  
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: giftCards = [], isLoading } = useQuery({
     queryKey: ["admin-gift-cards", statusFilter],
@@ -37,6 +53,63 @@ export const GiftCardsTab = () => {
     card.recipient_name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleCreateGiftCard = async () => {
+    const amount = parseFloat(newCard.value);
+    if (!amount || amount < 1) {
+      toast({
+        title: "Invalid Amount",
+        description: "Please enter a valid amount (minimum ₹1)",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsCreating(true);
+    try {
+      // Generate code using database function
+      const { data: codeData, error: codeError } = await supabase
+        .rpc('generate_gift_card_code');
+
+      if (codeError) throw codeError;
+
+      // Insert gift card directly (admin bypass - no payment)
+      const { error: insertError } = await supabase
+        .from("gift_cards")
+        .insert({
+          code: codeData,
+          value: amount,
+          balance: amount,
+          status: "active",
+          recipient_name: newCard.recipientName || null,
+          recipient_email: newCard.recipientEmail || null,
+          gift_message: newCard.giftMessage || null,
+          purchaser_name: "Admin",
+          purchaser_email: "admin@himsols.com",
+          payment_gateway: "admin_created",
+          payment_id: `admin_${Date.now()}`,
+        });
+
+      if (insertError) throw insertError;
+
+      toast({
+        title: "Gift Card Created! 🎁",
+        description: `Code: ${codeData} - Value: ₹${amount.toLocaleString()}`,
+      });
+
+      setNewCard({ value: "", recipientName: "", recipientEmail: "", giftMessage: "" });
+      setIsCreateDialogOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["admin-gift-cards"] });
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "active": return <Badge className="bg-green-500">Active</Badge>;
@@ -54,6 +127,72 @@ export const GiftCardsTab = () => {
           <Gift className="h-5 w-5" />
           Gift Cards Management
         </h2>
+        
+        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="gap-2">
+              <Plus className="h-4 w-4" />
+              Create Gift Card
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Create Gift Card (Admin)</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 pt-4">
+              <div className="space-y-2">
+                <Label htmlFor="value">Amount (₹) *</Label>
+                <Input
+                  id="value"
+                  type="number"
+                  placeholder="Enter amount"
+                  value={newCard.value}
+                  onChange={(e) => setNewCard({ ...newCard, value: e.target.value })}
+                  min={1}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="recipientName">Recipient Name (Optional)</Label>
+                <Input
+                  id="recipientName"
+                  placeholder="Enter recipient name"
+                  value={newCard.recipientName}
+                  onChange={(e) => setNewCard({ ...newCard, recipientName: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="recipientEmail">Recipient Email (Optional)</Label>
+                <Input
+                  id="recipientEmail"
+                  type="email"
+                  placeholder="Enter recipient email"
+                  value={newCard.recipientEmail}
+                  onChange={(e) => setNewCard({ ...newCard, recipientEmail: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="giftMessage">Gift Message (Optional)</Label>
+                <Textarea
+                  id="giftMessage"
+                  placeholder="Enter a personal message"
+                  value={newCard.giftMessage}
+                  onChange={(e) => setNewCard({ ...newCard, giftMessage: e.target.value })}
+                  rows={3}
+                />
+              </div>
+              <Button 
+                onClick={handleCreateGiftCard} 
+                className="w-full"
+                disabled={isCreating || !newCard.value}
+              >
+                {isCreating ? "Creating..." : "Create Gift Card"}
+              </Button>
+              <p className="text-xs text-muted-foreground text-center">
+                ⚠️ This creates a gift card without payment (Admin only)
+              </p>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <div className="flex gap-4">
