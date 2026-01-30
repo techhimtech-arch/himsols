@@ -254,10 +254,10 @@ const GiftCards = () => {
                 <div className="relative">
                   <Input
                     type="number"
-                    placeholder="Or enter custom amount (min ₹100)"
+                    placeholder="Or enter custom amount (min ₹1)"
                     value={customAmount}
                     onChange={(e) => handleCustomAmountChange(e.target.value)}
-                    min={100}
+                    min={1}
                     max={100000}
                     className="pl-8"
                   />
@@ -310,13 +310,13 @@ const GiftCards = () => {
               <Button 
                 className="w-full h-12 text-lg" 
                 onClick={handlePurchase}
-                disabled={isLoading || !finalAmount || finalAmount < 100}
+                disabled={isLoading || !finalAmount || finalAmount < 1}
               >
                 {isLoading ? "Processing..." : `🎁 Buy Gift Card - ₹${finalAmount.toLocaleString()}`}
               </Button>
 
               {/* Impact Preview */}
-              {finalAmount >= 100 && (
+              {finalAmount >= 1 && (
                 <p className="text-sm text-center text-muted-foreground">
                   This gift card can plant up to <strong className="text-primary">{treesEquivalent} trees</strong>
                 </p>
