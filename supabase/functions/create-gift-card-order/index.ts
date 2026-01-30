@@ -31,8 +31,8 @@ serve(async (req) => {
 
     const { amount, recipient_name, recipient_email, gift_message, purchaser_name, purchaser_email }: GiftCardOrderRequest = await req.json();
 
-    if (!amount || amount < 100) {
-      throw new Error("Minimum gift card amount is ₹100");
+    if (!amount || amount < 1) {
+      throw new Error("Minimum gift card amount is ₹1");
     }
 
     if (amount > 100000) {

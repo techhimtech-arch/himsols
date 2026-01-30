@@ -52,10 +52,10 @@ const GiftCards = () => {
   };
 
   const handlePurchase = async () => {
-    if (!finalAmount || finalAmount < 100) {
+    if (!finalAmount || finalAmount < 1) {
       toast({
         title: "Invalid Amount",
-        description: "Minimum gift card amount is ₹100",
+        description: "Minimum gift card amount is ₹1",
         variant: "destructive",
       });
       return;
