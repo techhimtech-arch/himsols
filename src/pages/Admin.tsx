@@ -23,7 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Users, TreePine, TrendingUp, Loader2, Package, Settings, FileText, Image, Quote, Activity, Handshake, Store, Globe, BarChart3, Heart, Flower2 } from "lucide-react";
+import { Shield, Users, TreePine, TrendingUp, Loader2, Package, Settings, FileText, Image, Quote, Activity, Handshake, Store, Globe, BarChart3, Heart, Flower2, Gift } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlantsTab } from "@/components/admin/PlantsTab";
 import { OrdersTab } from "@/components/admin/OrdersTab";
@@ -44,6 +44,7 @@ import { RequestsTab } from "@/components/admin/RequestsTab";
 import { LiveStatsTab } from "@/components/admin/LiveStatsTab";
 import { CampaignsTab } from "@/components/admin/CampaignsTab";
 import { DonationsTab } from "@/components/admin/DonationsTab";
+import { GiftCardsTab } from "@/components/admin/GiftCardsTab";
 import { INDIAN_STATES, getDistrictsForState, IndianState } from "@/lib/constants";
 import { MobileCard, MobileCardRow, StatusBadge } from "@/components/admin/MobileCard";
 
@@ -600,6 +601,10 @@ const Admin = () => {
                   Campaigns
                 </TabsTrigger>
                 <TabsTrigger value="donations" className="text-xs md:text-sm">Donations</TabsTrigger>
+                <TabsTrigger value="gift-cards" className="text-xs md:text-sm">
+                  <Gift className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  Gift Cards
+                </TabsTrigger>
                 <TabsTrigger value="users" className="text-xs md:text-sm">Users</TabsTrigger>
                 <TabsTrigger value="corporate" className="text-xs md:text-sm">Corporate</TabsTrigger>
                 <TabsTrigger value="marketplace" className="text-xs md:text-sm">
@@ -625,6 +630,11 @@ const Admin = () => {
             {/* Donations Tab */}
             <TabsContent value="donations">
               <DonationsTab />
+            </TabsContent>
+
+            {/* Gift Cards Tab */}
+            <TabsContent value="gift-cards">
+              <GiftCardsTab />
             </TabsContent>
 
             {/* Requests Tab */}
