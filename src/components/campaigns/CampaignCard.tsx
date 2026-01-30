@@ -67,12 +67,17 @@ export const CampaignCard = ({ campaign }: CampaignCardProps) => {
             <span>{treesPlanted} / {treesGoal} trees</span>
           </div>
         </div>
+
+        {/* Emotional Line */}
+        <p className="text-xs text-muted-foreground italic">
+          Your contribution supports local farmers and Himachal's future.
+        </p>
       </CardContent>
 
       <CardFooter className="p-4 pt-0">
         <Link to={`/campaign/${campaign.id}`} className="w-full">
           <Button className="w-full group/btn">
-            Contribute Now
+            🌱 Plant a Tree Now
             <ArrowRight className="h-4 w-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
           </Button>
         </Link>
