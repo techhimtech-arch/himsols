@@ -310,13 +310,18 @@ const CampaignDetail = () => {
                     </div>
                   )}
 
+                  {/* Emotional Line */}
+                  <p className="text-sm text-muted-foreground text-center italic border-t pt-3">
+                    Your contribution supports local farmers and Himachal's future.
+                  </p>
+
                   {/* CTA */}
                   <Button 
                     className="w-full h-12 text-lg" 
                     onClick={handleContribute}
                     disabled={isPaymentLoading || finalAmount < 1}
                   >
-                    {isPaymentLoading ? "Processing..." : `Contribute ₹${finalAmount.toLocaleString()}`}
+                    {isPaymentLoading ? "Processing..." : `🌱 Plant a Tree Now - ₹${finalAmount.toLocaleString()}`}
                   </Button>
 
                   <p className="text-xs text-muted-foreground text-center">
