@@ -23,7 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Users, TreePine, TrendingUp, Loader2, Package, Settings, FileText, Image, Quote, Activity, Handshake, Store, Globe, BarChart3, Heart, Flower2, Gift } from "lucide-react";
+import { Shield, Users, TreePine, TrendingUp, Loader2, Package, Settings, FileText, Image, Quote, Activity, Handshake, Store, Globe, BarChart3, Heart, Flower2, Gift, MessageSquare, Menu, Link2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlantsTab } from "@/components/admin/PlantsTab";
 import { OrdersTab } from "@/components/admin/OrdersTab";
@@ -45,6 +45,9 @@ import { LiveStatsTab } from "@/components/admin/LiveStatsTab";
 import { CampaignsTab } from "@/components/admin/CampaignsTab";
 import { DonationsTab } from "@/components/admin/DonationsTab";
 import { GiftCardsTab } from "@/components/admin/GiftCardsTab";
+import { ContactMessagesTab } from "@/components/admin/ContactMessagesTab";
+import { NavigationTab } from "@/components/admin/NavigationTab";
+import { FooterLinksTab } from "@/components/admin/FooterLinksTab";
 import { INDIAN_STATES, getDistrictsForState, IndianState } from "@/lib/constants";
 import { MobileCard, MobileCardRow, StatusBadge } from "@/components/admin/MobileCard";
 
@@ -615,6 +618,18 @@ const Admin = () => {
                   <Globe className="h-3 w-3 md:h-4 md:w-4 mr-1" />
                   Apps
                 </TabsTrigger>
+                <TabsTrigger value="messages" className="text-xs md:text-sm">
+                  <MessageSquare className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  Messages
+                </TabsTrigger>
+                <TabsTrigger value="navigation" className="text-xs md:text-sm">
+                  <Menu className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  Navbar
+                </TabsTrigger>
+                <TabsTrigger value="footer" className="text-xs md:text-sm">
+                  <Link2 className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  Footer
+                </TabsTrigger>
                 <TabsTrigger value="settings" className="text-xs md:text-sm">
                   <Settings className="h-3 w-3 md:h-4 md:w-4 mr-1" />
                   Settings
@@ -907,6 +922,21 @@ const Admin = () => {
                   <ExternalAppsTab />
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            {/* Contact Messages Tab */}
+            <TabsContent value="messages">
+              <ContactMessagesTab />
+            </TabsContent>
+
+            {/* Navigation Tab */}
+            <TabsContent value="navigation">
+              <NavigationTab />
+            </TabsContent>
+
+            {/* Footer Links Tab */}
+            <TabsContent value="footer">
+              <FooterLinksTab />
             </TabsContent>
 
             {/* Settings Tab */}

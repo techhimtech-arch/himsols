@@ -532,6 +532,48 @@ export type Database = {
         }
         Relationships: []
       }
+      footer_links: {
+        Row: {
+          created_at: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          is_external: boolean | null
+          label: string
+          label_hi: string | null
+          section: string
+          sort_order: number | null
+          updated_at: string | null
+          url: string
+        }
+        Insert: {
+          created_at?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_external?: boolean | null
+          label: string
+          label_hi?: string | null
+          section: string
+          sort_order?: number | null
+          updated_at?: string | null
+          url: string
+        }
+        Update: {
+          created_at?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_external?: boolean | null
+          label?: string
+          label_hi?: string | null
+          section?: string
+          sort_order?: number | null
+          updated_at?: string | null
+          url?: string
+        }
+        Relationships: []
+      }
       gift_card_redemptions: {
         Row: {
           amount: number
@@ -909,6 +951,56 @@ export type Database = {
             columns: ["seller_id"]
             isOneToOne: false
             referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      navigation_items: {
+        Row: {
+          created_at: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          is_visible_mobile: boolean | null
+          label: string
+          label_hi: string | null
+          parent_id: string | null
+          path: string
+          sort_order: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_visible_mobile?: boolean | null
+          label: string
+          label_hi?: string | null
+          parent_id?: string | null
+          path: string
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_visible_mobile?: boolean | null
+          label?: string
+          label_hi?: string | null
+          parent_id?: string | null
+          path?: string
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "navigation_items_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "navigation_items"
             referencedColumns: ["id"]
           },
         ]

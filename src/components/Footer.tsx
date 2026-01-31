@@ -2,11 +2,72 @@ import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin, Facebook, Instagram, Twitter } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { Logo } from "@/components/Logo";
 
+interface FooterLink {
+  id: string;
+  section: string;
+  label: string;
+  label_hi: string | null;
+  url: string;
+  icon: string | null;
+  sort_order: number;
+  is_active: boolean;
+  is_external: boolean;
+}
+
 export const Footer = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { settings } = useSiteSettings();
+
+  // Fetch dynamic footer links
+  const { data: footerLinks = [] } = useQuery({
+    queryKey: ["footer-links"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("footer_links")
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order");
+      if (error) throw error;
+      return data as FooterLink[];
+    },
+  });
+
+  const getLinksForSection = (section: string) => footerLinks.filter(link => link.section === section);
+  
+  const getLabel = (link: FooterLink) => {
+    return language === "hi" && link.label_hi ? link.label_hi : link.label;
+  };
+
+  const renderLink = (link: FooterLink) => {
+    if (link.is_external) {
+      return (
+        <a
+          href={link.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm"
+        >
+          {getLabel(link)}
+        </a>
+      );
+    }
+    return (
+      <Link
+        to={link.url}
+        className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm"
+      >
+        {getLabel(link)}
+      </Link>
+    );
+  };
+
+  const servicesLinks = getLinksForSection("services");
+  const companyLinks = getLinksForSection("company");
+  const supportLinks = getLinksForSection("support");
 
   return (
     <footer className="bg-muted mt-12 md:mt-20">
@@ -56,41 +117,56 @@ export const Footer = () => {
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Services Links (Dynamic) */}
           <div>
-            <h3 className="font-semibold text-foreground text-sm md:text-base mb-3 md:mb-4">{t("footer.quickLinks")}</h3>
+            <h3 className="font-semibold text-foreground text-sm md:text-base mb-3 md:mb-4">
+              {servicesLinks.length > 0 ? (language === "hi" ? "सेवाएं" : "Services") : t("footer.quickLinks")}
+            </h3>
             <ul className="space-y-1.5 md:space-y-2">
-              <li>
-                <Link to="/" className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm">
-                  {t("nav.home")}
-                </Link>
-              </li>
-              <li>
-                <Link to="/services" className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm">
-                  {t("nav.services")}
-                </Link>
-              </li>
-              <li>
-                <Link to="/tree-plantation" className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm">
-                  {t("nav.treePlantation")}
-                </Link>
-              </li>
-              <li>
-                <Link to="/track-request" className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm">
-                  {t("nav.trackRequest")}
-                </Link>
-              </li>
+              {servicesLinks.length > 0 ? (
+                servicesLinks.map((link) => (
+                  <li key={link.id}>{renderLink(link)}</li>
+                ))
+              ) : (
+                <>
+                  <li>
+                    <Link to="/" className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm">
+                      {t("nav.home")}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/services" className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm">
+                      {t("nav.services")}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/tree-plantation" className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm">
+                      {t("nav.treePlantation")}
+                    </Link>
+                  </li>
+                </>
+              )}
             </ul>
           </div>
 
-          {/* Services */}
+          {/* Company/Support Links (Dynamic) */}
           <div className="hidden md:block">
-            <h3 className="font-semibold text-foreground mb-4">{t("services.title")}</h3>
+            <h3 className="font-semibold text-foreground mb-4">
+              {companyLinks.length > 0 ? (language === "hi" ? "कंपनी" : "Company") : t("services.title")}
+            </h3>
             <ul className="space-y-2">
-              <li className="text-muted-foreground text-sm">{t("services.treePlantation")}</li>
-              <li className="text-muted-foreground text-sm">{t("services.wasteManagement")}</li>
-              <li className="text-muted-foreground text-sm">{t("services.conservation")}</li>
-              <li className="text-muted-foreground text-sm">{t("services.ecoEvents")}</li>
+              {companyLinks.length > 0 ? (
+                companyLinks.map((link) => (
+                  <li key={link.id}>{renderLink(link)}</li>
+                ))
+              ) : (
+                <>
+                  <li className="text-muted-foreground text-sm">{t("services.treePlantation")}</li>
+                  <li className="text-muted-foreground text-sm">{t("services.wasteManagement")}</li>
+                  <li className="text-muted-foreground text-sm">{t("services.conservation")}</li>
+                  <li className="text-muted-foreground text-sm">{t("services.ecoEvents")}</li>
+                </>
+              )}
             </ul>
           </div>
 
@@ -111,6 +187,14 @@ export const Footer = () => {
                 <span>Himachal Pradesh</span>
               </li>
             </ul>
+            {/* Support Links */}
+            {supportLinks.length > 0 && (
+              <ul className="space-y-1.5 mt-3">
+                {supportLinks.map((link) => (
+                  <li key={link.id}>{renderLink(link)}</li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
 
