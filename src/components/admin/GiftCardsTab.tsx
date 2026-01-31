@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Gift, Search, Plus } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import { BulkGiftCardUpload } from "./BulkGiftCardUpload";
 
 export const GiftCardsTab = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -122,19 +123,22 @@ export const GiftCardsTab = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <h2 className="text-xl font-semibold flex items-center gap-2">
           <Gift className="h-5 w-5" />
           Gift Cards Management
         </h2>
         
-        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="gap-2">
-              <Plus className="h-4 w-4" />
-              Create Gift Card
-            </Button>
-          </DialogTrigger>
+        <div className="flex gap-2">
+          <BulkGiftCardUpload />
+          
+          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="gap-2">
+                <Plus className="h-4 w-4" />
+                Create Single
+              </Button>
+            </DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Create Gift Card (Admin)</DialogTitle>
@@ -193,6 +197,7 @@ export const GiftCardsTab = () => {
             </div>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       <div className="flex gap-4">
