@@ -7,12 +7,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Gift, TreePine, Copy, CheckCircle, Heart, Shield, Leaf } from "lucide-react";
+import { Gift, TreePine, Copy, CheckCircle, Heart, Shield, Leaf, Share2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useGiftCardPayment } from "@/hooks/useGiftCardPayment";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 import { SEO } from "@/components/SEO";
+import { ShareButtons } from "@/components/ShareButtons";
 
 const PRESET_AMOUNTS = [500, 1000, 2500, 5000];
 
@@ -166,10 +167,44 @@ const GiftCards = () => {
                   ) : (
                     <>
                       <Copy className="h-4 w-4" />
-                      Copy Gift Card Code
+                      Copy Code
                     </>
                   )}
                 </Button>
+
+                {/* Share Buttons */}
+                <div className="space-y-2">
+                  <p className="text-sm text-center text-muted-foreground flex items-center justify-center gap-1">
+                    <Share2 className="h-3 w-3" /> Share this gift card
+                  </p>
+                  <ShareButtons
+                    title="🎁 Green Gift Card from Himsols"
+                    description={`I've got you a Green Gift Card worth ₹${purchasedCard.value} to plant trees! Use code: ${purchasedCard.code}`}
+                    url="/redeem-gift-card"
+                    variant="full"
+                    size="sm"
+                    className="justify-center"
+                    whatsappMessage={`🎁 *Green Gift Card from Himsols*
+
+Hi${recipientName ? ` ${recipientName}` : ''}!
+
+I've sent you a Green Gift Card worth *₹${purchasedCard.value}* to plant trees and make a difference! 🌳
+
+*Gift Card Code:* ${purchasedCard.code}
+${giftMessage ? `\n*Message:* ${giftMessage}\n` : ''}
+*How to redeem:*
+1. Go to ${window.location.origin}/redeem-gift-card
+2. Enter the code: ${purchasedCard.code}
+3. Choose a campaign to support
+4. Plant trees and make an impact! 🌍
+
+Valid till: ${new Date(purchasedCard.expires_at).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}
+
+Together, let's make Earth greener! 💚
+
+- Sent via Himsols`}
+                  />
+                </div>
 
                 {/* Impact Message */}
                 <div className="bg-muted/50 rounded-lg p-4 text-center">

@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { TreePine, ShoppingCart, Package, Search, Filter, Plus, SlidersHorizontal, X, ChevronDown, ArrowUpDown } from "lucide-react";
+import { TreePine, ShoppingCart, Package, Search, Filter, Plus, SlidersHorizontal, X, ChevronDown, ArrowUpDown, Share2 } from "lucide-react";
+import { ShareButtons } from "@/components/ShareButtons";
 import { useState, useEffect, useMemo } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -519,27 +520,60 @@ const Shop = () => {
                           )}
                         </div>
                       </CardContent>
-                      <CardFooter className="flex items-center justify-between p-3 sm:p-4 pt-0 border-t border-border mt-2">
-                        <div>
-                          <span className="text-xl sm:text-2xl font-bold text-primary">₹{tree.price}</span>
-                          <p className="text-xs text-muted-foreground">{tree.stock_quantity} {t("common.inStock")}</p>
+                      <CardFooter className="flex flex-col gap-2 p-3 sm:p-4 pt-0 border-t border-border mt-2">
+                        <div className="flex items-center justify-between w-full">
+                          <div>
+                            <span className="text-xl sm:text-2xl font-bold text-primary">₹{tree.price}</span>
+                            <p className="text-xs text-muted-foreground">{tree.stock_quantity} {t("common.inStock")}</p>
+                          </div>
+                          <Button
+                            onClick={() => handleAddToCart(tree)}
+                            disabled={tree.stock_quantity === 0}
+                            size="sm"
+                            className="text-xs sm:text-sm"
+                          >
+                            {tree.stock_quantity === 0 ? (
+                              t("shop.outOfStock")
+                            ) : (
+                              <>
+                                <Plus className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
+                                <span className="hidden sm:inline">{t("shop.addToCart")}</span>
+                                <span className="sm:hidden">Add</span>
+                              </>
+                            )}
+                          </Button>
                         </div>
-                        <Button
-                          onClick={() => handleAddToCart(tree)}
-                          disabled={tree.stock_quantity === 0}
-                          size="sm"
-                          className="text-xs sm:text-sm"
-                        >
-                          {tree.stock_quantity === 0 ? (
-                            t("shop.outOfStock")
-                          ) : (
-                            <>
-                              <Plus className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
-                              <span className="hidden sm:inline">{t("shop.addToCart")}</span>
-                              <span className="sm:hidden">Add</span>
-                            </>
-                          )}
-                        </Button>
+                        <div className="flex items-center justify-between w-full">
+                          <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Share2 className="h-3 w-3" /> Share
+                          </span>
+                          <ShareButtons
+                            title={`🌳 ${getTreeName(tree)} - CSR Tree Plantation`}
+                            description={`Plant ${getTreeName(tree)} trees for CSR & environmental impact! ₹${tree.price} per sapling. Support local farmers in Himachal Pradesh.`}
+                            url={`/shop?tree=${tree.id}`}
+                            image={tree.image_url}
+                            whatsappMessage={`🌳 *${getTreeName(tree)} - CSR Tree Plantation*
+
+Hey! Check out this amazing tree for plantation:
+
+🌱 *${getTreeName(tree)}*
+${tree.scientific_name ? `📚 Scientific: ${tree.scientific_name}` : ''}
+💰 Price: ₹${tree.price} per sapling
+📈 Growth Rate: ${tree.growth_rate || 'Moderate'}
+${tree.max_height ? `📏 Max Height: ${tree.max_height}` : ''}
+
+${getTreeDescription(tree).substring(0, 150)}...
+
+Perfect for CSR initiatives, corporate gifting, or personal contribution! 🏢🎁
+
+👉 Order now: ${window.location.origin}/shop
+
+Your contribution supports local farmers and Himachal's future! 💚
+
+- Himsols Green Initiative`}
+                            size="sm"
+                          />
+                        </div>
                       </CardFooter>
                     </Card>
                   ))}
