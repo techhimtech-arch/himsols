@@ -9,7 +9,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Pencil, Trash2, Plus, Save, X, GripVertical } from "lucide-react";
+import { Pencil, Trash2, Plus, Save, X, GripVertical, MessageSquare, Mail, Phone, Calendar } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { format } from "date-fns";
 import {
   Dialog,
   DialogContent,
@@ -83,6 +86,16 @@ interface CorporateSetting {
 }
 
 const ICONS = ["Globe", "Heart", "Award", "Users", "TrendingUp", "Shield", "Gift", "TreeDeciduous", "Calendar", "Sparkles", "Target", "Handshake"];
+
+interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  subject: string;
+  message: string;
+  created_at: string;
+}
 
 export const CorporateTab = () => {
   const { toast } = useToast();
@@ -172,12 +185,32 @@ export const CorporateTab = () => {
     },
   });
 
+  // Fetch corporate inquiries from contact_messages
+  const { data: inquiries = [] } = useQuery({
+    queryKey: ["corporate-inquiries-admin"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("contact_messages")
+        .select("*")
+        .or("subject.ilike.%bulk%,subject.ilike.%corporate%,subject.ilike.%gift%")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data as ContactMessage[];
+    },
+  });
+
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Corporate Page Management</h2>
       
-      <Tabs defaultValue="settings" className="w-full">
-        <TabsList className="grid grid-cols-4 lg:grid-cols-7 mb-4">
+      <Tabs defaultValue="inquiries" className="w-full">
+        <TabsList className="grid grid-cols-4 lg:grid-cols-8 mb-4">
+          <TabsTrigger value="inquiries" className="relative">
+            Inquiries
+            {inquiries.length > 0 && (
+              <Badge className="ml-1 h-5 w-5 p-0 text-xs absolute -top-1 -right-1 bg-destructive">{inquiries.length}</Badge>
+            )}
+          </TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
           <TabsTrigger value="stats">Stats</TabsTrigger>
           <TabsTrigger value="benefits">Benefits</TabsTrigger>
@@ -186,6 +219,10 @@ export const CorporateTab = () => {
           <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
           <TabsTrigger value="clients">Clients</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="inquiries">
+          <InquiriesSection inquiries={inquiries} />
+        </TabsContent>
 
         <TabsContent value="settings">
           <SettingsSection settings={settings} />
@@ -216,6 +253,95 @@ export const CorporateTab = () => {
         </TabsContent>
       </Tabs>
     </div>
+  );
+};
+
+// Inquiries Section - Corporate/Bulk Gift Card Inquiries
+const InquiriesSection = ({ inquiries }: { inquiries: ContactMessage[] }) => {
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  const getBadgeVariant = (subject: string) => {
+    if (subject.toLowerCase().includes("bulk gift")) return "destructive";
+    if (subject.toLowerCase().includes("corporate")) return "default";
+    return "secondary";
+  };
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle className="flex items-center gap-2">
+          <MessageSquare className="h-5 w-5" />
+          Corporate Inquiries ({inquiries.length})
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {inquiries.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">
+            No corporate inquiries yet
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Date</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Contact</TableHead>
+                <TableHead>Subject</TableHead>
+                <TableHead>Details</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {inquiries.map((inquiry) => (
+                <TableRow key={inquiry.id}>
+                  <TableCell className="text-sm whitespace-nowrap">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      {format(new Date(inquiry.created_at), "dd MMM yyyy")}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {format(new Date(inquiry.created_at), "hh:mm a")}
+                    </div>
+                  </TableCell>
+                  <TableCell className="font-medium">{inquiry.name}</TableCell>
+                  <TableCell>
+                    <div className="flex flex-col gap-1 text-sm">
+                      <a href={`mailto:${inquiry.email}`} className="flex items-center gap-1 text-primary hover:underline">
+                        <Mail className="h-3 w-3" /> {inquiry.email}
+                      </a>
+                      <a href={`tel:${inquiry.phone}`} className="flex items-center gap-1 text-muted-foreground hover:underline">
+                        <Phone className="h-3 w-3" /> {inquiry.phone}
+                      </a>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={getBadgeVariant(inquiry.subject)}>
+                      {inquiry.subject}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="max-w-xs">
+                    {expandedId === inquiry.id ? (
+                      <div className="space-y-2">
+                        <p className="text-sm whitespace-pre-wrap">{inquiry.message}</p>
+                        <Button size="sm" variant="ghost" onClick={() => setExpandedId(null)}>
+                          Show less
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="space-y-1">
+                        <p className="text-sm truncate">{inquiry.message.substring(0, 50)}...</p>
+                        <Button size="sm" variant="ghost" onClick={() => setExpandedId(inquiry.id)}>
+                          Show more
+                        </Button>
+                      </div>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 
