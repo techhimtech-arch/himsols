@@ -23,7 +23,7 @@ const B2BCorporate = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
-    companyName: "", contactPerson: "", email: "", phone: "", employees: "", interest: "", message: ""
+    companyName: "", contactPerson: "", email: "", phone: "", employees: "", interest: "", message: "", giftCardQuantity: "", giftCardValue: ""
   });
 
   // Fetch all data from database
@@ -89,14 +89,19 @@ const B2BCorporate = () => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
+      const giftCardInfo = formData.interest === "bulk-gift-cards" 
+        ? `\n\n🎁 BULK GIFT CARDS REQUEST:\nQuantity: ${formData.giftCardQuantity} cards\nValue per card: ₹${formData.giftCardValue}`
+        : "";
+      
       const { error } = await supabase.from("contact_messages").insert({
         name: `${formData.companyName} - ${formData.contactPerson}`,
-        email: formData.email, phone: formData.phone, subject: `B2B Inquiry: ${formData.interest}`,
-        message: `Company: ${formData.companyName}\nContact: ${formData.contactPerson}\nEmployees: ${formData.employees}\n\n${formData.message}`
+        email: formData.email, phone: formData.phone, 
+        subject: formData.interest === "bulk-gift-cards" ? `🎁 Bulk Gift Cards Inquiry: ${formData.giftCardQuantity} cards` : `B2B Inquiry: ${formData.interest}`,
+        message: `Company: ${formData.companyName}\nContact: ${formData.contactPerson}\nEmployees: ${formData.employees}${giftCardInfo}\n\n${formData.message}`
       });
       if (error) throw error;
       toast({ title: "Inquiry Submitted!", description: "Our team will contact you within 24 hours." });
-      setFormData({ companyName: "", contactPerson: "", email: "", phone: "", employees: "", interest: "", message: "" });
+      setFormData({ companyName: "", contactPerson: "", email: "", phone: "", employees: "", interest: "", message: "", giftCardQuantity: "", giftCardValue: "" });
     } catch {
       toast({ title: "Error", description: "Failed to submit inquiry.", variant: "destructive" });
     } finally {
@@ -347,10 +352,11 @@ const B2BCorporate = () => {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Interested In</Label>
-                      <Select value={formData.interest} onValueChange={(value) => setFormData({ ...formData, interest: value })}>
+                      <Label>Interested In *</Label>
+                      <Select value={formData.interest} onValueChange={(value) => setFormData({ ...formData, interest: value, giftCardQuantity: "", giftCardValue: "" })}>
                         <SelectTrigger><SelectValue placeholder="Select option" /></SelectTrigger>
                         <SelectContent>
+                          <SelectItem value="bulk-gift-cards">🎁 Bulk Gift Cards (B2B)</SelectItem>
                           <SelectItem value="plant-gifting">Corporate Plant Gifting</SelectItem>
                           <SelectItem value="tree-sponsorship">Tree Sponsorship / CSR</SelectItem>
                           <SelectItem value="plantation-events">Plantation Events</SelectItem>
@@ -359,6 +365,57 @@ const B2BCorporate = () => {
                       </Select>
                     </div>
                   </div>
+                  
+                  {/* Bulk Gift Cards Fields - Show only when selected */}
+                  {formData.interest === "bulk-gift-cards" && (
+                    <div className="p-4 bg-primary/5 rounded-lg border border-primary/20 space-y-4">
+                      <div className="flex items-center gap-2 text-primary font-medium">
+                        <Gift className="w-5 h-5" />
+                        Bulk Gift Card Details
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="giftCardQuantity">Number of Gift Cards *</Label>
+                          <Input 
+                            id="giftCardQuantity" 
+                            type="number" 
+                            min="10"
+                            placeholder="e.g., 100" 
+                            value={formData.giftCardQuantity} 
+                            onChange={(e) => setFormData({ ...formData, giftCardQuantity: e.target.value })} 
+                            required={formData.interest === "bulk-gift-cards"}
+                          />
+                          <p className="text-xs text-muted-foreground">Minimum 10 cards</p>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="giftCardValue">Value per Card (₹) *</Label>
+                          <Select value={formData.giftCardValue} onValueChange={(value) => setFormData({ ...formData, giftCardValue: value })}>
+                            <SelectTrigger><SelectValue placeholder="Select value" /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="500">₹500</SelectItem>
+                              <SelectItem value="1000">₹1,000</SelectItem>
+                              <SelectItem value="2500">₹2,500</SelectItem>
+                              <SelectItem value="5000">₹5,000</SelectItem>
+                              <SelectItem value="10000">₹10,000</SelectItem>
+                              <SelectItem value="custom">Custom Amount</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      {formData.giftCardQuantity && formData.giftCardValue && formData.giftCardValue !== "custom" && (
+                        <div className="text-sm bg-background p-3 rounded-md">
+                          <span className="text-muted-foreground">Estimated Total: </span>
+                          <span className="font-semibold text-primary">
+                            ₹{(parseInt(formData.giftCardQuantity) * parseInt(formData.giftCardValue)).toLocaleString("en-IN")}
+                          </span>
+                        </div>
+                      )}
+                      <p className="text-xs text-muted-foreground">
+                        💡 Our team will send you an invoice with bank transfer details. Gift cards will be generated after payment confirmation.
+                      </p>
+                    </div>
+                  )}
+                  
                   <div className="space-y-2">
                     <Label htmlFor="message">Tell us about your requirements</Label>
                     <Textarea id="message" value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} rows={4} />
