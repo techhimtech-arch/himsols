@@ -5,6 +5,8 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { CartSheet } from "@/components/CartSheet";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { Logo } from "@/components/Logo";
@@ -15,11 +17,40 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+interface NavItem {
+  id: string;
+  label: string;
+  label_hi: string | null;
+  path: string;
+  icon: string;
+  sort_order: number;
+  is_active: boolean;
+  is_visible_mobile: boolean;
+}
+
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
   const { isAdmin } = useIsAdmin();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+
+  // Fetch dynamic navigation items
+  const { data: navItems = [] } = useQuery({
+    queryKey: ["navigation-items"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("navigation_items")
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order");
+      if (error) throw error;
+      return data as NavItem[];
+    },
+  });
+
+  const getLabel = (item: NavItem) => {
+    return language === "hi" && item.label_hi ? item.label_hi : item.label;
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/60 backdrop-blur-2xl border-b border-white/30 shadow-soft">
@@ -29,36 +60,15 @@ export const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
-            <Link to="/" className="text-foreground hover:text-primary transition-all duration-300 font-medium hover:scale-110 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">
-              {t("nav.home")}
-            </Link>
-            <Link to="/services" className="text-foreground hover:text-primary transition-all duration-300 font-medium hover:scale-110 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">
-              {t("nav.services")}
-            </Link>
-            <Link to="/tree-plantation" className="text-foreground hover:text-primary transition-all duration-300 font-medium hover:scale-110 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">
-              {t("nav.treePlantation")}
-            </Link>
-            <Link to="/shop" className="text-foreground hover:text-primary transition-all duration-300 font-medium hover:scale-110 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">
-              {t("nav.shopTrees")}
-            </Link>
-            <Link to="/marketplace" className="text-foreground hover:text-primary transition-all duration-300 font-medium hover:scale-110 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">
-              Marketplace
-            </Link>
-            <Link to="/gallery" className="text-foreground hover:text-primary transition-all duration-300 font-medium hover:scale-110 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">
-              {t("nav.gallery")}
-            </Link>
-            <Link to="/contact" className="text-foreground hover:text-primary transition-all duration-300 font-medium hover:scale-110 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">
-              {t("nav.contact")}
-            </Link>
-            <Link to="/blog" className="text-foreground hover:text-primary transition-all duration-300 font-medium hover:scale-110 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">
-              Blog
-            </Link>
-            <Link to="/gift-cards" className="text-foreground hover:text-primary transition-all duration-300 font-medium hover:scale-110 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">
-              Gift Cards
-            </Link>
-            <Link to="/corporate" className="text-foreground hover:text-primary transition-all duration-300 font-medium hover:scale-110 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">
-              Corporate
-            </Link>
+            {navItems.map((item) => (
+              <Link
+                key={item.id}
+                to={item.path}
+                className="text-foreground hover:text-primary transition-all duration-300 font-medium hover:scale-110 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full"
+              >
+                {getLabel(item)}
+              </Link>
+            ))}
             {isAdmin && (
               <Link to="/admin" className="text-foreground hover:text-primary transition-all duration-300 font-medium hover:scale-110 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">
                 {t("nav.admin")}
@@ -112,76 +122,18 @@ export const Navbar = () => {
         {/* Mobile Menu */}
         {isMenuOpen && (
           <div className="md:hidden py-4 space-y-4 animate-fade-in">
-            <Link
-              to="/"
-              className="block text-foreground hover:text-primary transition-colors py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              {t("nav.home")}
-            </Link>
-            <Link
-              to="/services"
-              className="block text-foreground hover:text-primary transition-colors py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              {t("nav.services")}
-            </Link>
-            <Link
-              to="/tree-plantation"
-              className="block text-foreground hover:text-primary transition-colors py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              {t("nav.treePlantation")}
-            </Link>
-            <Link
-              to="/shop"
-              className="block text-foreground hover:text-primary transition-colors py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              {t("nav.shopTrees")}
-            </Link>
-            <Link
-              to="/marketplace"
-              className="block text-foreground hover:text-primary transition-colors py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Marketplace
-            </Link>
-            <Link
-              to="/gallery"
-              className="block text-foreground hover:text-primary transition-colors py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              {t("nav.gallery")}
-            </Link>
-            <Link
-              to="/contact"
-              className="block text-foreground hover:text-primary transition-colors py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              {t("nav.contact")}
-            </Link>
-            <Link
-              to="/blog"
-              className="block text-foreground hover:text-primary transition-colors py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Blog
-            </Link>
-            <Link
-              to="/gift-cards"
-              className="block text-foreground hover:text-primary transition-colors py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Gift Cards
-            </Link>
-            <Link
-              to="/corporate"
-              className="block text-foreground hover:text-primary transition-colors py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Corporate
-            </Link>
+            {navItems
+              .filter((item) => item.is_visible_mobile)
+              .map((item) => (
+                <Link
+                  key={item.id}
+                  to={item.path}
+                  className="block text-foreground hover:text-primary transition-colors py-2"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {getLabel(item)}
+                </Link>
+              ))}
             {isAdmin && (
               <Link
                 to="/admin"
