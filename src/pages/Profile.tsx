@@ -149,9 +149,9 @@ const Profile = () => {
                 <User className="h-4 w-4" />
                 <span className="hidden sm:inline">Profile</span>
               </TabsTrigger>
-              <TabsTrigger value="donations" className="gap-2">
+              <TabsTrigger value="transactions" className="gap-2">
                 <Heart className="h-4 w-4" />
-                <span className="hidden sm:inline">Donations</span>
+                <span className="hidden sm:inline">Transactions</span>
               </TabsTrigger>
               <TabsTrigger value="gift-cards" className="gap-2">
                 <Gift className="h-4 w-4" />
@@ -277,7 +277,7 @@ const Profile = () => {
               </Card>
             </TabsContent>
 
-            <TabsContent value="donations">
+            <TabsContent value="transactions">
               <DonationsHistory />
             </TabsContent>
 
