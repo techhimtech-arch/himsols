@@ -8,7 +8,7 @@ import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { compressImage, formatFileSize } from "@/lib/imageCompression";
-import { Phone, Mail, MessageCircle, Facebook, Instagram, Twitter, Save, Loader2, Upload, Image as ImageIcon } from "lucide-react";
+import { Phone, Mail, MessageCircle, Facebook, Instagram, Twitter, Save, Loader2, Upload, Image as ImageIcon, Gift, Users, Wallet } from "lucide-react";
 
 export const SettingsTab = () => {
   const { settings, isLoading, updateSetting } = useSiteSettings();
@@ -23,6 +23,10 @@ export const SettingsTab = () => {
     instagram_url: "",
     twitter_url: "",
     logo_url: "",
+    welcome_bonus_amount: "10",
+    referral_bonus_referrer: "25",
+    referral_bonus_referee: "15",
+    referral_enabled: true,
   });
   const [saving, setSaving] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
@@ -38,6 +42,10 @@ export const SettingsTab = () => {
         instagram_url: settings.instagram_url || "",
         twitter_url: settings.twitter_url || "",
         logo_url: settings.logo_url || "",
+        welcome_bonus_amount: settings.welcome_bonus_amount || "10",
+        referral_bonus_referrer: settings.referral_bonus_referrer || "25",
+        referral_bonus_referee: settings.referral_bonus_referee || "15",
+        referral_enabled: settings.referral_enabled === "true",
       });
     }
   }, [settings]);
@@ -112,6 +120,10 @@ export const SettingsTab = () => {
         updateSetting.mutateAsync({ key: "instagram_url", value: formData.instagram_url }),
         updateSetting.mutateAsync({ key: "twitter_url", value: formData.twitter_url }),
         updateSetting.mutateAsync({ key: "logo_url", value: formData.logo_url }),
+        updateSetting.mutateAsync({ key: "welcome_bonus_amount", value: formData.welcome_bonus_amount }),
+        updateSetting.mutateAsync({ key: "referral_bonus_referrer", value: formData.referral_bonus_referrer }),
+        updateSetting.mutateAsync({ key: "referral_bonus_referee", value: formData.referral_bonus_referee }),
+        updateSetting.mutateAsync({ key: "referral_enabled", value: formData.referral_enabled ? "true" : "false" }),
       ]);
 
       toast({
@@ -309,6 +321,89 @@ export const SettingsTab = () => {
               onChange={(e) => setFormData({ ...formData, twitter_url: e.target.value })}
               placeholder="https://twitter.com/himsols"
             />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Bonus & Referral Settings */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg md:text-xl flex items-center gap-2">
+            <Gift className="h-5 w-5 text-orange-500" />
+            Bonus & Referral Settings
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <Label htmlFor="referral_enabled" className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                Enable Referral Program
+              </Label>
+              <p className="text-sm text-muted-foreground">Allow users to refer friends and earn bonuses</p>
+            </div>
+            <Switch
+              id="referral_enabled"
+              checked={formData.referral_enabled}
+              onCheckedChange={(checked) => setFormData({ ...formData, referral_enabled: checked })}
+            />
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="space-y-2">
+              <Label htmlFor="welcome_bonus" className="flex items-center gap-2">
+                <Wallet className="h-4 w-4 text-green-500" />
+                Welcome Bonus (₹)
+              </Label>
+              <Input
+                id="welcome_bonus"
+                type="number"
+                min="0"
+                value={formData.welcome_bonus_amount}
+                onChange={(e) => setFormData({ ...formData, welcome_bonus_amount: e.target.value })}
+                placeholder="10"
+              />
+              <p className="text-xs text-muted-foreground">Amount credited on new signup</p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="referrer_bonus" className="flex items-center gap-2">
+                <Users className="h-4 w-4 text-blue-500" />
+                Referrer Bonus (₹)
+              </Label>
+              <Input
+                id="referrer_bonus"
+                type="number"
+                min="0"
+                value={formData.referral_bonus_referrer}
+                onChange={(e) => setFormData({ ...formData, referral_bonus_referrer: e.target.value })}
+                placeholder="25"
+              />
+              <p className="text-xs text-muted-foreground">Amount for the person who refers</p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="referee_bonus" className="flex items-center gap-2">
+                <Gift className="h-4 w-4 text-purple-500" />
+                Referee Bonus (₹)
+              </Label>
+              <Input
+                id="referee_bonus"
+                type="number"
+                min="0"
+                value={formData.referral_bonus_referee}
+                onChange={(e) => setFormData({ ...formData, referral_bonus_referee: e.target.value })}
+                placeholder="15"
+              />
+              <p className="text-xs text-muted-foreground">Extra amount for new user with referral</p>
+            </div>
+          </div>
+
+          <div className="bg-muted/50 rounded-lg p-4">
+            <h4 className="font-medium mb-2">How it works:</h4>
+            <ul className="text-sm text-muted-foreground space-y-1">
+              <li>• New user signs up → Gets ₹{formData.welcome_bonus_amount} welcome bonus</li>
+              <li>• New user signs up with referral code → Gets ₹{formData.welcome_bonus_amount} + ₹{formData.referral_bonus_referee} = ₹{parseInt(formData.welcome_bonus_amount || "0") + parseInt(formData.referral_bonus_referee || "0")}</li>
+              <li>• Referrer gets → ₹{formData.referral_bonus_referrer} for each successful referral</li>
+            </ul>
           </div>
         </CardContent>
       </Card>

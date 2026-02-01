@@ -1247,6 +1247,7 @@ export type Database = {
           full_name: string
           id: string
           phone: string | null
+          referral_code: string | null
           updated_at: string | null
         }
         Insert: {
@@ -1255,6 +1256,7 @@ export type Database = {
           full_name: string
           id: string
           phone?: string | null
+          referral_code?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -1263,9 +1265,55 @@ export type Database = {
           full_name?: string
           id?: string
           phone?: string | null
+          referral_code?: string | null
           updated_at?: string | null
         }
         Relationships: []
+      }
+      referrals: {
+        Row: {
+          created_at: string
+          id: string
+          referee_bonus: number
+          referee_id: string
+          referrer_bonus: number
+          referrer_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          referee_bonus?: number
+          referee_id: string
+          referrer_bonus?: number
+          referrer_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          referee_bonus?: number
+          referee_id?: string
+          referrer_bonus?: number
+          referrer_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referrals_referee_id_fkey"
+            columns: ["referee_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referrals_referrer_id_fkey"
+            columns: ["referrer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sellers: {
         Row: {
@@ -1659,6 +1707,7 @@ export type Database = {
     Functions: {
       generate_gift_card_code: { Args: never; Returns: string }
       generate_marketplace_order_number: { Args: never; Returns: string }
+      generate_referral_code: { Args: never; Returns: string }
       generate_tracking_id: { Args: never; Returns: string }
       generate_waste_tracking_id: { Args: never; Returns: string }
       has_role: {

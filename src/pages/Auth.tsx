@@ -7,11 +7,13 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Logo } from "@/components/Logo";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { Gift } from "lucide-react";
 
 const Auth = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user, signIn, signUp } = useAuth();
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [signupData, setSignupData] = useState({
@@ -20,7 +22,16 @@ const Auth = () => {
     phone: "",
     password: "",
     confirmPassword: "",
+    referralCode: "",
   });
+
+  // Read referral code from URL on mount
+  useEffect(() => {
+    const refCode = searchParams.get("ref");
+    if (refCode) {
+      setSignupData((prev) => ({ ...prev, referralCode: refCode.toUpperCase() }));
+    }
+  }, [searchParams]);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -49,7 +60,13 @@ const Auth = () => {
       return;
     }
 
-    const { error } = await signUp(signupData.email, signupData.password, signupData.name, signupData.phone);
+    const { error } = await signUp(
+      signupData.email,
+      signupData.password,
+      signupData.name,
+      signupData.phone,
+      signupData.referralCode
+    );
     if (!error) {
       navigate("/");
     }
@@ -164,6 +181,26 @@ const Auth = () => {
                         }
                         required
                       />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="referral-code" className="flex items-center gap-2">
+                        <Gift className="h-4 w-4 text-primary" />
+                        Referral Code (Optional)
+                      </Label>
+                      <Input
+                        id="referral-code"
+                        value={signupData.referralCode}
+                        onChange={(e) =>
+                          setSignupData({ ...signupData, referralCode: e.target.value.toUpperCase() })
+                        }
+                        placeholder="HIM-XXXX"
+                        className="uppercase"
+                      />
+                      {signupData.referralCode && (
+                        <p className="text-xs text-green-600 dark:text-green-400">
+                          🎉 You'll get ₹25 bonus on signup!
+                        </p>
+                      )}
                     </div>
                     <Button type="submit" className="w-full">
                       Create Account

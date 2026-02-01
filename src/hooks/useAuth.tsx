@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 interface AuthContextType {
   user: User | null;
   session: Session | null;
-  signUp: (email: string, password: string, fullName: string, phone: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, fullName: string, phone: string, referralCode?: string) => Promise<{ error: any }>;
   signIn: (identifier: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   loading: boolean;
@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, fullName: string, phone: string) => {
+  const signUp = async (email: string, password: string, fullName: string, phone: string, referralCode?: string) => {
     const redirectUrl = `${window.location.origin}/`;
     
     // Check if phone already exists - clean to last 10 digits
@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       authEmail = `${cleanPhone}@phone.himsols.local`;
     }
     
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email: authEmail,
       password,
       options: {
@@ -96,6 +96,38 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           .from("profiles")
           .update({ phone: cleanPhone })
           .eq("id", userData.user.id);
+      }
+
+      // Process signup bonuses via edge function
+      if (data?.user) {
+        try {
+          const response = await fetch(
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/process-signup-bonus`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+              },
+              body: JSON.stringify({
+                user_id: data.user.id,
+                referral_code: referralCode?.trim() || null,
+              }),
+            }
+          );
+
+          const result = await response.json();
+          
+          if (result.success && result.total_bonus > 0) {
+            toast({
+              title: "🎉 Welcome Bonus!",
+              description: `₹${result.total_bonus} has been credited to your wallet!`,
+            });
+          }
+        } catch (bonusError) {
+          console.error("Error processing signup bonus:", bonusError);
+          // Don't fail the signup if bonus processing fails
+        }
       }
     }
 
