@@ -10,6 +10,10 @@ export interface SiteSettings {
   instagram_url: string;
   twitter_url: string;
   logo_url: string;
+  welcome_bonus_amount: string;
+  referral_bonus_referrer: string;
+  referral_bonus_referee: string;
+  referral_enabled: string;
 }
 
 export const useSiteSettings = () => {
