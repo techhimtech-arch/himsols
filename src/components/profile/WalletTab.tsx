@@ -3,10 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Wallet, ArrowUpCircle, ArrowDownCircle, Gift, CreditCard, RefreshCw, Loader2 } from "lucide-react";
+import { Wallet, ArrowUpCircle, ArrowDownCircle, Gift, CreditCard, RefreshCw, Loader2, Plus, IndianRupee } from "lucide-react";
 import { useWallet, WalletTransaction } from "@/hooks/useWallet";
+import { useWalletTopup } from "@/hooks/useWalletTopup";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const sourceLabels: Record<string, string> = {
   RAZORPAY: "Online Payment",
@@ -26,12 +28,16 @@ const sourceIcons: Record<string, React.ReactNode> = {
   MARKETPLACE: <ArrowDownCircle className="h-4 w-4" />,
 };
 
+const TOPUP_AMOUNTS = [100, 250, 500, 1000, 2500];
+
 export const WalletTab = () => {
   const { language } = useLanguage();
-  const { balance, transactions, loading, transactionsLoading, topUpWithGiftCard, fetchWallet } = useWallet();
+  const { balance, transactions, loading, transactionsLoading, topUpWithGiftCard, fetchWallet, fetchTransactions } = useWallet();
+  const { topup, isLoading: isTopupLoading } = useWalletTopup();
   const [giftCardCode, setGiftCardCode] = useState("");
   const [isRedeeming, setIsRedeeming] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [customAmount, setCustomAmount] = useState("");
 
   const handleGiftCardRedeem = async () => {
     if (!giftCardCode.trim()) return;
@@ -44,6 +50,18 @@ export const WalletTab = () => {
       setGiftCardCode("");
       setDialogOpen(false);
     }
+  };
+
+  const handleTopup = async (amount: number) => {
+    await topup({
+      amount,
+      onSuccess: async (newBalance) => {
+        await fetchWallet();
+        await fetchTransactions();
+        setDialogOpen(false);
+        setCustomAmount("");
+      },
+    });
   };
 
   const formatDate = (dateString: string) => {
@@ -87,55 +105,112 @@ export const WalletTab = () => {
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
                 <Button className="flex-1 gap-2">
-                  <Gift className="h-4 w-4" />
-                  {language === "en" ? "Add Gift Card" : "गिफ्ट कार्ड जोड़ें"}
+                  <Plus className="h-4 w-4" />
+                  {language === "en" ? "Add Money" : "पैसे जोड़ें"}
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="max-w-md">
                 <DialogHeader>
                   <DialogTitle className="flex items-center gap-2">
-                    <Gift className="h-5 w-5 text-primary" />
-                    {language === "en" ? "Redeem Gift Card to Wallet" : "गिफ्ट कार्ड वॉलेट में जोड़ें"}
+                    <Wallet className="h-5 w-5 text-primary" />
+                    {language === "en" ? "Add Money to Wallet" : "वॉलेट में पैसे जोड़ें"}
                   </DialogTitle>
                 </DialogHeader>
-                <div className="space-y-4 pt-4">
-                  <div>
-                    <Input
-                      placeholder="GC-XXXX-XXXX"
-                      value={giftCardCode}
-                      onChange={(e) => setGiftCardCode(e.target.value.toUpperCase())}
-                      className="text-center text-lg tracking-widest"
-                    />
-                    <p className="text-xs text-muted-foreground mt-2 text-center">
-                      {language === "en" 
-                        ? "Enter your gift card code to add balance to wallet" 
-                        : "अपना गिफ्ट कार्ड कोड डालें"}
-                    </p>
-                  </div>
-                  <Button 
-                    onClick={handleGiftCardRedeem}
-                    disabled={!giftCardCode.trim() || isRedeeming}
-                    className="w-full"
-                  >
-                    {isRedeeming ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        {language === "en" ? "Adding..." : "जोड़ रहे हैं..."}
-                      </>
-                    ) : (
-                      <>
-                        <ArrowUpCircle className="h-4 w-4 mr-2" />
-                        {language === "en" ? "Add to Wallet" : "वॉलेट में जोड़ें"}
-                      </>
-                    )}
-                  </Button>
-                </div>
+                
+                <Tabs defaultValue="razorpay" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="razorpay" className="gap-2">
+                      <CreditCard className="h-4 w-4" />
+                      {language === "en" ? "Pay Online" : "ऑनलाइन भुगतान"}
+                    </TabsTrigger>
+                    <TabsTrigger value="giftcard" className="gap-2">
+                      <Gift className="h-4 w-4" />
+                      {language === "en" ? "Gift Card" : "गिफ्ट कार्ड"}
+                    </TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="razorpay" className="space-y-4 pt-4">
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        {language === "en" ? "Select amount to add" : "जोड़ने के लिए राशि चुनें"}
+                      </p>
+                      <div className="grid grid-cols-3 gap-2">
+                        {TOPUP_AMOUNTS.map((amt) => (
+                          <Button
+                            key={amt}
+                            variant="outline"
+                            onClick={() => handleTopup(amt)}
+                            disabled={isTopupLoading}
+                            className="h-12"
+                          >
+                            ₹{amt}
+                          </Button>
+                        ))}
+                        <div className="col-span-3 flex gap-2 mt-2">
+                          <div className="relative flex-1">
+                            <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input
+                              type="number"
+                              placeholder="Custom"
+                              value={customAmount}
+                              onChange={(e) => setCustomAmount(e.target.value)}
+                              className="pl-9"
+                              min={1}
+                            />
+                          </div>
+                          <Button
+                            onClick={() => customAmount && handleTopup(Number(customAmount))}
+                            disabled={!customAmount || Number(customAmount) < 1 || isTopupLoading}
+                          >
+                            {isTopupLoading ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              language === "en" ? "Add" : "जोड़ें"
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="giftcard" className="space-y-4 pt-4">
+                    <div>
+                      <Input
+                        placeholder="GC-XXXX-XXXX"
+                        value={giftCardCode}
+                        onChange={(e) => setGiftCardCode(e.target.value.toUpperCase())}
+                        className="text-center text-lg tracking-widest"
+                      />
+                      <p className="text-xs text-muted-foreground mt-2 text-center">
+                        {language === "en" 
+                          ? "Enter your gift card code to add balance" 
+                          : "अपना गिफ्ट कार्ड कोड डालें"}
+                      </p>
+                    </div>
+                    <Button 
+                      onClick={handleGiftCardRedeem}
+                      disabled={!giftCardCode.trim() || isRedeeming}
+                      className="w-full"
+                    >
+                      {isRedeeming ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          {language === "en" ? "Adding..." : "जोड़ रहे हैं..."}
+                        </>
+                      ) : (
+                        <>
+                          <ArrowUpCircle className="h-4 w-4 mr-2" />
+                          {language === "en" ? "Redeem to Wallet" : "वॉलेट में जोड़ें"}
+                        </>
+                      )}
+                    </Button>
+                  </TabsContent>
+                </Tabs>
               </DialogContent>
             </Dialog>
             
             <Button variant="outline" onClick={() => fetchWallet()} className="gap-2">
               <RefreshCw className="h-4 w-4" />
-              {language === "en" ? "Refresh" : "रिफ्रेश"}
             </Button>
           </div>
         </CardContent>
