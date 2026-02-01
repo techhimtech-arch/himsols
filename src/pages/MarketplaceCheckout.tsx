@@ -6,19 +6,23 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMarketplaceCart } from "@/hooks/useMarketplaceCart";
 import { useAuth } from "@/hooks/useAuth";
+import { useWallet } from "@/hooks/useWallet";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowLeft, ShoppingCart, CheckCircle2, Loader2, Store } from "lucide-react";
+import { ArrowLeft, ShoppingCart, CheckCircle2, Loader2, Store, Wallet, Banknote } from "lucide-react";
 
 const MarketplaceCheckout = () => {
   const navigate = useNavigate();
   const { items, totalPrice, clearCart } = useMarketplaceCart();
   const { user } = useAuth();
+  const { balance, fetchWallet } = useWallet();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderNumber, setOrderNumber] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<"cod" | "wallet">("cod");
 
   const [formData, setFormData] = useState({
     delivery_address: "",
@@ -27,25 +31,54 @@ const MarketplaceCheckout = () => {
     notes: "",
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!user) {
-      toast.error("Please login to place an order");
-      navigate("/auth");
+  const handleWalletPayment = async () => {
+    if (balance < totalPrice) {
+      toast.error(`Insufficient wallet balance. You need ₹${(totalPrice - balance).toFixed(2)} more.`);
       return;
     }
 
-    if (items.length === 0) {
-      toast.error("Your cart is empty");
-      return;
-    }
+    setIsSubmitting(true);
 
-    if (!formData.delivery_address || !formData.district || !formData.state) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
+    try {
+      const orderItems = items.map((item) => ({
+        product_id: item.id,
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+        unit: item.unit,
+        seller_name: item.seller_name,
+      }));
 
+      const { data, error } = await supabase.functions.invoke("marketplace-wallet-payment", {
+        body: {
+          user_id: user!.id,
+          items: orderItems,
+          total_price: totalPrice,
+          delivery_address: formData.delivery_address,
+          district: formData.district,
+          state: formData.state,
+          notes: formData.notes || null,
+        },
+      });
+
+      if (error || !data?.success) {
+        throw new Error(data?.error || "Payment failed");
+      }
+
+      setOrderNumber(data.order_number);
+      setOrderSuccess(true);
+      clearCart();
+      fetchWallet(); // Refresh wallet balance
+      toast.success("Order placed successfully! Paid via wallet.");
+    } catch (error: any) {
+      console.error("Wallet payment error:", error);
+      toast.error(error.message || "Failed to place order");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCODPayment = async () => {
     setIsSubmitting(true);
 
     try {
@@ -67,7 +100,7 @@ const MarketplaceCheckout = () => {
 
       const { error: orderError } = await supabase.from("marketplace_orders").insert({
         order_number: orderNum,
-        user_id: user.id,
+        user_id: user!.id,
         items: orderItems,
         total_price: totalPrice,
         delivery_address: formData.delivery_address,
@@ -87,6 +120,32 @@ const MarketplaceCheckout = () => {
       toast.error(error.message || "Failed to place order");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!user) {
+      toast.error("Please login to place an order");
+      navigate("/auth");
+      return;
+    }
+
+    if (items.length === 0) {
+      toast.error("Your cart is empty");
+      return;
+    }
+
+    if (!formData.delivery_address || !formData.district || !formData.state) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    if (paymentMethod === "wallet") {
+      return handleWalletPayment();
+    } else {
+      return handleCODPayment();
     }
   };
 
@@ -270,25 +329,66 @@ const MarketplaceCheckout = () => {
                   />
                 </div>
 
+                {/* Payment Method Selection */}
+                {user && (
+                  <div className="space-y-2">
+                    <Label>Payment Method</Label>
+                    <Tabs value={paymentMethod} onValueChange={(v) => setPaymentMethod(v as "cod" | "wallet")} className="w-full">
+                      <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="cod" className="flex items-center gap-2">
+                          <Banknote className="h-4 w-4" />
+                          Cash on Delivery
+                        </TabsTrigger>
+                        <TabsTrigger value="wallet" className="flex items-center gap-2">
+                          <Wallet className="h-4 w-4" />
+                          Wallet
+                        </TabsTrigger>
+                      </TabsList>
+                      <TabsContent value="wallet" className="mt-3">
+                        <div className="bg-muted/50 rounded-lg p-3 text-center">
+                          <p className="text-sm text-muted-foreground">Wallet Balance</p>
+                          <p className="text-xl font-bold text-primary">₹{balance.toLocaleString()}</p>
+                          {balance < totalPrice && (
+                            <p className="text-xs text-destructive mt-1">
+                              Insufficient balance. Need ₹{(totalPrice - balance).toFixed(2)} more.
+                            </p>
+                          )}
+                        </div>
+                      </TabsContent>
+                      <TabsContent value="cod" className="mt-3">
+                        <div className="bg-muted/50 rounded-lg p-3 text-center">
+                          <p className="text-sm text-muted-foreground">Pay when you receive</p>
+                          <p className="font-medium">Cash / UPI on Delivery</p>
+                        </div>
+                      </TabsContent>
+                    </Tabs>
+                  </div>
+                )}
+
                 <Button
                   type="submit"
                   className="w-full"
                   size="lg"
-                  disabled={isSubmitting || !user}
+                  disabled={isSubmitting || !user || (paymentMethod === "wallet" && balance < totalPrice)}
                 >
                   {isSubmitting ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                       Placing Order...
                     </>
+                  ) : paymentMethod === "wallet" ? (
+                    `💳 Pay with Wallet - ₹${totalPrice.toFixed(2)}`
                   ) : (
-                    `Place Order - ₹${totalPrice.toFixed(2)}`
+                    `🛒 Place Order - ₹${totalPrice.toFixed(2)}`
                   )}
                 </Button>
 
                 <p className="text-xs text-muted-foreground text-center">
                   By placing this order, you agree to our terms and conditions.
-                  Payment is Cash on Delivery.
+                  {paymentMethod === "wallet" 
+                    ? " Payment will be deducted from your wallet."
+                    : " Payment is Cash on Delivery."
+                  }
                 </p>
               </form>
             </div>
