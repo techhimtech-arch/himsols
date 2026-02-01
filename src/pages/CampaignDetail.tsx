@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useRazorpay } from "@/hooks/useRazorpay";
+import { useWallet } from "@/hooks/useWallet";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
@@ -13,8 +14,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { TreePine, Target, Users, Heart, CheckCircle, ArrowLeft } from "lucide-react";
+import { TreePine, Target, Users, Heart, CheckCircle, ArrowLeft, Wallet, CreditCard } from "lucide-react";
 
 interface Campaign {
   id: string;
@@ -39,10 +41,13 @@ const CampaignDetail = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { initiatePayment, isLoading: isPaymentLoading } = useRazorpay();
+  const { balance, fetchWallet, loading: walletLoading } = useWallet();
   
   const [selectedAmount, setSelectedAmount] = useState<number | null>(499);
   const [customAmount, setCustomAmount] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<"online" | "wallet">("online");
+  const [isWalletPaymentLoading, setIsWalletPaymentLoading] = useState(false);
 
   const { data: campaign, isLoading } = useQuery({
     queryKey: ["campaign", id],
@@ -73,7 +78,73 @@ const CampaignDetail = () => {
     enabled: !!id,
   });
 
+  const handleWalletPayment = async () => {
+    const amount = selectedAmount || parseFloat(customAmount);
+    if (!amount || amount < 1) {
+      toast({ title: "Invalid Amount", description: "Please enter a valid amount", variant: "destructive" });
+      return;
+    }
+
+    if (!user) {
+      toast({ title: "Login Required", description: "Please login to contribute", variant: "destructive" });
+      navigate("/auth");
+      return;
+    }
+
+    if (!campaign) return;
+
+    if (balance < amount) {
+      toast({ 
+        title: "Insufficient Balance", 
+        description: `Your wallet balance is ₹${balance}. Please top up or use online payment.`, 
+        variant: "destructive" 
+      });
+      return;
+    }
+
+    setIsWalletPaymentLoading(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke("donate-with-wallet", {
+        body: {
+          user_id: user.id,
+          campaign_id: id,
+          amount,
+          donor_name: user.user_metadata?.full_name || "Anonymous",
+          donor_email: user.email || "",
+          donor_phone: user.user_metadata?.phone,
+        },
+      });
+
+      if (error || !data?.success) {
+        throw new Error(data?.error || "Payment failed");
+      }
+
+      queryClient.invalidateQueries({ queryKey: ["campaign", id] });
+      queryClient.invalidateQueries({ queryKey: ["campaign-donors", id] });
+      fetchWallet(); // Refresh wallet balance
+      setShowSuccess(true);
+
+      toast({
+        title: "Donation Successful! 🎉",
+        description: `₹${amount} contributed from your wallet`,
+      });
+    } catch (err: any) {
+      toast({
+        title: "Payment Failed",
+        description: err.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsWalletPaymentLoading(false);
+    }
+  };
+
   const handleContribute = async () => {
+    if (paymentMethod === "wallet") {
+      return handleWalletPayment();
+    }
+
     const amount = selectedAmount || parseFloat(customAmount);
     if (!amount || amount < 1) {
       toast({ title: "Invalid Amount", description: "Please enter a valid amount", variant: "destructive" });
@@ -310,6 +381,39 @@ const CampaignDetail = () => {
                     </div>
                   )}
 
+                  {/* Payment Method Selection */}
+                  {user && (
+                    <Tabs value={paymentMethod} onValueChange={(v) => setPaymentMethod(v as "online" | "wallet")} className="w-full">
+                      <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="online" className="flex items-center gap-2">
+                          <CreditCard className="h-4 w-4" />
+                          Online Pay
+                        </TabsTrigger>
+                        <TabsTrigger value="wallet" className="flex items-center gap-2">
+                          <Wallet className="h-4 w-4" />
+                          Wallet
+                        </TabsTrigger>
+                      </TabsList>
+                      <TabsContent value="wallet" className="mt-3">
+                        <div className="bg-muted/50 rounded-lg p-3 text-center">
+                          <p className="text-sm text-muted-foreground">Wallet Balance</p>
+                          <p className="text-xl font-bold text-primary">₹{balance.toLocaleString()}</p>
+                          {balance < finalAmount && finalAmount > 0 && (
+                            <p className="text-xs text-destructive mt-1">
+                              Insufficient balance. Need ₹{(finalAmount - balance).toLocaleString()} more.
+                            </p>
+                          )}
+                        </div>
+                      </TabsContent>
+                      <TabsContent value="online" className="mt-3">
+                        <div className="bg-muted/50 rounded-lg p-3 text-center">
+                          <p className="text-sm text-muted-foreground">Pay securely via</p>
+                          <p className="font-medium">UPI / Cards / Net Banking</p>
+                        </div>
+                      </TabsContent>
+                    </Tabs>
+                  )}
+
                   {/* Emotional Line */}
                   <p className="text-sm text-muted-foreground text-center italic border-t pt-3">
                     Your contribution supports local farmers and Himachal's future.
@@ -319,13 +423,21 @@ const CampaignDetail = () => {
                   <Button 
                     className="w-full h-12 text-lg" 
                     onClick={handleContribute}
-                    disabled={isPaymentLoading || finalAmount < 1}
+                    disabled={isPaymentLoading || isWalletPaymentLoading || finalAmount < 1 || (paymentMethod === "wallet" && balance < finalAmount)}
                   >
-                    {isPaymentLoading ? "Processing..." : `🌱 Plant a Tree Now - ₹${finalAmount.toLocaleString()}`}
+                    {isPaymentLoading || isWalletPaymentLoading 
+                      ? "Processing..." 
+                      : paymentMethod === "wallet"
+                        ? `💳 Pay with Wallet - ₹${finalAmount.toLocaleString()}`
+                        : `🌱 Plant a Tree Now - ₹${finalAmount.toLocaleString()}`
+                    }
                   </Button>
 
                   <p className="text-xs text-muted-foreground text-center">
-                    Secure payment • Get acknowledgement receipt
+                    {paymentMethod === "wallet" 
+                      ? "Instant payment • Get acknowledgement receipt"
+                      : "Secure payment • Get acknowledgement receipt"
+                    }
                   </p>
                 </CardContent>
               </Card>
