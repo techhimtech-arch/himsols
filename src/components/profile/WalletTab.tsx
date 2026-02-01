@@ -17,6 +17,7 @@ const sourceLabels: Record<string, string> = {
   REFERRAL: "Referral Bonus",
   DONATION: "Campaign Donation",
   MARKETPLACE: "Marketplace Purchase",
+  WELCOME_BONUS: "Welcome Bonus",
 };
 
 const sourceIcons: Record<string, React.ReactNode> = {
@@ -26,6 +27,7 @@ const sourceIcons: Record<string, React.ReactNode> = {
   REFERRAL: <ArrowUpCircle className="h-4 w-4" />,
   DONATION: <ArrowDownCircle className="h-4 w-4" />,
   MARKETPLACE: <ArrowDownCircle className="h-4 w-4" />,
+  WELCOME_BONUS: <Gift className="h-4 w-4" />,
 };
 
 const TOPUP_AMOUNTS = [100, 250, 500, 1000, 2500];
