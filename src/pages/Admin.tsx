@@ -23,7 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Users, TreePine, TrendingUp, Loader2, Package, Settings, FileText, Image, Quote, Activity, Handshake, Store, Globe, BarChart3, Heart, Flower2, Gift, MessageSquare, Menu, Link2 } from "lucide-react";
+import { Shield, Users, TreePine, TrendingUp, Loader2, Package, Settings, FileText, Image, Quote, Activity, Handshake, Store, Globe, BarChart3, Heart, Flower2, Gift, MessageSquare, Menu, Link2, Wallet } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlantsTab } from "@/components/admin/PlantsTab";
 import { OrdersTab } from "@/components/admin/OrdersTab";
@@ -80,6 +80,11 @@ interface UserRole {
   district: string | null;
 }
 
+interface UserWallet {
+  user_id: string;
+  balance: number;
+}
+
 const Admin = () => {
   const { user } = useAuth();
   const { isAdmin, loading: adminLoading } = useIsAdmin();
@@ -90,6 +95,7 @@ const Admin = () => {
   const [scrapRequests, setScrapRequests] = useState<any[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [userRoles, setUserRoles] = useState<UserRole[]>([]);
+  const [userWallets, setUserWallets] = useState<UserWallet[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [trees, setTrees] = useState<any[]>([]);
   const [plants, setPlants] = useState<any[]>([]);
@@ -184,10 +190,18 @@ const Admin = () => {
 
       if (scrapError) throw scrapError;
 
+      // Load user wallets
+      const { data: walletsData, error: walletsError } = await supabase
+        .from("wallets")
+        .select("user_id, balance");
+
+      if (walletsError) throw walletsError;
+
       setRequests(requestsData || []);
       setScrapRequests(scrapData || []);
       setProfiles(profilesData || []);
       setUserRoles(rolesData || []);
+      setUserWallets(walletsData || []);
       setOrders(ordersData || []);
       setTrees(treesData || []);
       setPlants(plantsData || []);
@@ -213,6 +227,11 @@ const Admin = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const getUserWalletBalance = (userId: string): number => {
+    const wallet = userWallets.find(w => w.user_id === userId);
+    return wallet?.balance || 0;
   };
 
   const updateRequestStatus = async (requestId: string, newStatus: string) => {
@@ -768,6 +787,15 @@ const Admin = () => {
                           </div>
                           <MobileCardRow label="Email" value={<span className="text-xs break-all">{profile.email}</span>} />
                           <MobileCardRow label="Phone" value={profile.phone || '-'} />
+                          <MobileCardRow 
+                            label="Wallet" 
+                            value={
+                              <span className="inline-flex items-center gap-1 text-primary font-medium">
+                                <Wallet className="h-3 w-3" />
+                                ₹{getUserWalletBalance(profile.id).toLocaleString('en-IN')}
+                              </span>
+                            } 
+                          />
                           <MobileCardRow label="Joined" value={new Date(profile.created_at).toLocaleDateString()} />
                           <div className="pt-3 border-t border-border space-y-2">
                             <Select
@@ -827,6 +855,7 @@ const Admin = () => {
                           <TableHead>Name</TableHead>
                           <TableHead>Email</TableHead>
                           <TableHead>Phone</TableHead>
+                          <TableHead>Wallet Balance</TableHead>
                           <TableHead>Role</TableHead>
                           <TableHead>State</TableHead>
                           <TableHead>District</TableHead>
@@ -839,6 +868,12 @@ const Admin = () => {
                             <TableCell className="font-medium">{profile.full_name}</TableCell>
                             <TableCell>{profile.email}</TableCell>
                             <TableCell>{profile.phone || '-'}</TableCell>
+                            <TableCell>
+                              <span className="inline-flex items-center gap-1 text-primary font-medium">
+                                <Wallet className="h-4 w-4" />
+                                ₹{getUserWalletBalance(profile.id).toLocaleString('en-IN')}
+                              </span>
+                            </TableCell>
                             <TableCell>
                               <Select
                                 value={getUserRole(profile.id)}
