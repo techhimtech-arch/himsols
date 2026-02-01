@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { User, Mail, Phone, Calendar, Save, LogOut, Heart, Gift } from "lucide-react";
+import { User, Mail, Phone, Calendar, Save, LogOut, Heart, Gift, Wallet } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { DonationsHistory } from "@/components/profile/DonationsHistory";
 import { GiftCardsHistory } from "@/components/profile/GiftCardsHistory";
+import { WalletTab } from "@/components/profile/WalletTab";
 
 interface ProfileData {
   full_name: string;
@@ -143,21 +144,29 @@ const Profile = () => {
             </p>
           </div>
 
-          <Tabs defaultValue="profile" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-6">
+          <Tabs defaultValue="wallet" className="w-full">
+            <TabsList className="grid w-full grid-cols-4 mb-6">
+              <TabsTrigger value="wallet" className="gap-2">
+                <Wallet className="h-4 w-4" />
+                <span className="hidden sm:inline">Wallet</span>
+              </TabsTrigger>
               <TabsTrigger value="profile" className="gap-2">
                 <User className="h-4 w-4" />
                 <span className="hidden sm:inline">Profile</span>
               </TabsTrigger>
               <TabsTrigger value="transactions" className="gap-2">
                 <Heart className="h-4 w-4" />
-                <span className="hidden sm:inline">Transactions</span>
+                <span className="hidden sm:inline">History</span>
               </TabsTrigger>
               <TabsTrigger value="gift-cards" className="gap-2">
                 <Gift className="h-4 w-4" />
                 <span className="hidden sm:inline">Gift Cards</span>
               </TabsTrigger>
             </TabsList>
+
+            <TabsContent value="wallet">
+              <WalletTab />
+            </TabsContent>
 
             <TabsContent value="profile" className="space-y-6">
               <Card>
