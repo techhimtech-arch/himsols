@@ -9,12 +9,12 @@ import { Logo } from "@/components/Logo";
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { Gift } from "lucide-react";
+import { Gift, Mail, Loader2 } from "lucide-react";
 
 const Auth = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { user, signIn, signUp } = useAuth();
+  const { user, signIn, signUp, resendVerificationEmail } = useAuth();
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [signupData, setSignupData] = useState({
     name: "",
@@ -24,6 +24,9 @@ const Auth = () => {
     confirmPassword: "",
     referralCode: "",
   });
+  const [needsVerification, setNeedsVerification] = useState(false);
+  const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
+  const [isResending, setIsResending] = useState(false);
 
   // Read referral code from URL on mount
   useEffect(() => {
@@ -42,10 +45,25 @@ const Auth = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { error } = await signIn(loginData.email, loginData.password);
-    if (!error) {
+    setNeedsVerification(false);
+    setUnverifiedEmail(null);
+    
+    const result = await signIn(loginData.email, loginData.password);
+    
+    if (result.needsVerification && result.email) {
+      setNeedsVerification(true);
+      setUnverifiedEmail(result.email);
+    } else if (!result.error) {
       navigate("/");
     }
+  };
+
+  const handleResendVerification = async () => {
+    if (!unverifiedEmail) return;
+    
+    setIsResending(true);
+    await resendVerificationEmail(unverifiedEmail);
+    setIsResending(false);
   };
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -122,6 +140,42 @@ const Auth = () => {
                     <Button type="submit" className="w-full">
                       Login
                     </Button>
+                    
+                    {needsVerification && unverifiedEmail && (
+                      <div className="mt-4 p-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg">
+                        <div className="flex items-start gap-3">
+                          <Mail className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                              Email Not Verified
+                            </p>
+                            <p className="text-xs text-amber-700 dark:text-amber-300 mt-1">
+                              Please verify your email ({unverifiedEmail}) to login.
+                            </p>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="mt-3 border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/50"
+                              onClick={handleResendVerification}
+                              disabled={isResending}
+                            >
+                              {isResending ? (
+                                <>
+                                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                  Sending...
+                                </>
+                              ) : (
+                                <>
+                                  <Mail className="h-4 w-4 mr-2" />
+                                  Resend Verification Email
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </form>
                 </TabsContent>
 

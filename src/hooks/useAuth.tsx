@@ -7,8 +7,9 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   signUp: (email: string, password: string, fullName: string, phone: string, referralCode?: string) => Promise<{ error: any }>;
-  signIn: (identifier: string, password: string) => Promise<{ error: any }>;
+  signIn: (identifier: string, password: string) => Promise<{ error: any; needsVerification: boolean; email: string | null }>;
   signOut: () => Promise<void>;
+  resendVerificationEmail: (email: string) => Promise<{ success: boolean; error?: any }>;
   loading: boolean;
 }
 
@@ -197,7 +198,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           description: "No account found with this phone number",
           variant: "destructive",
         });
-        return { error: { message: "No account found with this phone number" } };
+        return { error: { message: "No account found with this phone number" }, needsVerification: false, email: null };
       }
     }
 
@@ -207,14 +208,69 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
 
     if (error) {
+      // Check if it's an email not confirmed error
+      const isEmailNotConfirmed = error.message.toLowerCase().includes("email not confirmed");
+      
       toast({
         title: "Login Error",
-        description: error.message,
+        description: isEmailNotConfirmed 
+          ? "Email not verified. Please check your inbox or resend verification email."
+          : error.message,
         variant: "destructive",
       });
+
+      return { error, needsVerification: isEmailNotConfirmed, email: isEmailNotConfirmed ? email : null };
     }
 
-    return { error };
+    return { error, needsVerification: false, email: null };
+  };
+
+  const resendVerificationEmail = async (email: string) => {
+    try {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("email", email)
+        .maybeSingle();
+
+      const confirmationUrl = `${window.location.origin}/auth?confirm=true`;
+      
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-verification-email`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            email: email,
+            userName: profile?.full_name || "User",
+            verificationUrl: confirmationUrl,
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast({
+          title: "✅ Email Sent!",
+          description: "Verification email has been sent. Please check your inbox.",
+        });
+        return { success: true };
+      } else {
+        throw new Error(result.error || "Failed to send email");
+      }
+    } catch (error: any) {
+      console.error("Error resending verification email:", error);
+      toast({
+        title: "Error",
+        description: "Failed to send verification email. Please try again.",
+        variant: "destructive",
+      });
+      return { success: false, error };
+    }
   };
 
   const signOut = async () => {
@@ -226,7 +282,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, signUp, signIn, signOut, loading }}>
+    <AuthContext.Provider value={{ user, session, signUp, signIn, signOut, resendVerificationEmail, loading }}>
       {children}
     </AuthContext.Provider>
   );
