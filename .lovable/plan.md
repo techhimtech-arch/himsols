@@ -1,215 +1,162 @@
 
-# Welcome Bonus + Referral Program Implementation Plan
+
+# Resend.com Custom Email Setup Plan for Himsols
 
 ## Overview
-Is plan mein hum dono user incentive systems implement karenge:
-1. **Welcome Bonus**: Signup pe instant ₹10 wallet credit
-2. **Referral Program**: Unique referral code, refer karo aur dono ko bonus
+Himsols ke liye branded emails setup karenge (`noreply@himsols.com` se) using Resend.com. Isse verification emails professional lagenge aur users ko trust milega.
 
 ---
 
-## Part 1: Welcome Bonus System
+## Step 1: Resend Account Setup (Aapko karna hai)
 
-### How It Works
-- Jab bhi koi naya user signup karta hai, uske wallet mein automatically ₹10 credit ho jayega
-- Ye database trigger level pe hoga (already wallet create ho raha hai, usme bonus add karenge)
+### 1.1 Account Create Karein
+1. Go to **https://resend.com** 
+2. "Get Started" click karein
+3. Email se signup karein (Google/GitHub bhi use kar sakte ho)
 
-### Database Changes
-1. **Site Settings mein new keys add karenge:**
-   - `welcome_bonus_amount`: ₹10 (admin configurable)
-   - `referral_bonus_referrer`: ₹25 (jo refer kare usko)
-   - `referral_bonus_referee`: ₹15 (jo signup kare usko)
+### 1.2 Domain Verify Karein
+1. Resend dashboard mein **Domains** section mein jaayein
+2. **"Add Domain"** click karein
+3. `himsols.com` enter karein
+4. Resend aapko **3 DNS records** dega add karne ke liye:
+   - **SPF Record** (TXT)
+   - **DKIM Record** (TXT) 
+   - **DMARC Record** (TXT - optional but recommended)
 
-2. **`create_wallet_for_user()` function update:**
-   - Wallet create karne ke baad, welcome bonus transaction insert karna
+5. Apne domain registrar (GoDaddy/Hostinger/Namecheap etc.) mein jaake ye records add karein
+6. Records add karne ke baad Resend mein **"Verify"** click karein
+7. Verification mein 5 minutes se 24 hours lag sakte hain
 
----
-
-## Part 2: Referral Program System
-
-### How It Works
-```text
-+------------------+                    +------------------+
-|   User A         |                    |   User B         |
-|   (Referrer)     |   Shares Link      |   (New User)     |
-+------------------+  ------------->    +------------------+
-        |                                       |
-        |  ?ref=ABC123                          |  Signs up with
-        |                                       |  referral code
-        v                                       v
-+------------------+                    +------------------+
-|  Gets ₹25        |   <-------------   |  Gets ₹15        |
-|  Wallet Credit   |   After signup     |  + Welcome ₹10   |
-+------------------+                    +------------------+
-```
-
-### Database Schema
-**New Table: `referrals`**
-| Column | Type | Description |
-|--------|------|-------------|
-| id | UUID | Primary key |
-| referrer_id | UUID | Jo user ne refer kiya |
-| referee_id | UUID | Jo naya signup hua |
-| referrer_bonus | NUMERIC | Referrer ko mila (₹25) |
-| referee_bonus | NUMERIC | New user ko mila (₹15) |
-| status | TEXT | pending/completed |
-| created_at | TIMESTAMPTZ | Timestamp |
-
-**Profile Table Update:**
-- Add `referral_code` column: Unique 8-character code (e.g., "HIM-ABCD")
-- Auto-generate on profile creation
-
-### URL Flow
-1. Existing user shares: `https://himsols.com/auth?ref=HIM-ABCD`
-2. New user lands on Auth page with referral code in URL
-3. Referral code shown in signup form (optional field, can also paste manually)
-4. On successful signup, both users get credited
+### 1.3 API Key Generate Karein
+1. Resend dashboard mein **API Keys** section jaayein
+2. **"Create API Key"** click karein
+3. Name dein: `himsols-production`
+4. Permission: **Full Access** select karein
+5. API Key copy karein (ye sirf ek baar dikhega!)
 
 ---
 
-## Implementation Steps
+## Step 2: Lovable Cloud Configuration (Main karunga)
 
-### Step 1: Database Migration
-```sql
--- Add referral_code to profiles
-ALTER TABLE public.profiles 
-ADD COLUMN referral_code TEXT UNIQUE;
+### 2.1 Secret Add Karna
+- **RESEND_API_KEY** secret add karunga Lovable Cloud mein
+- Aapko ek input box dikhega jahan API key paste karni hogi
 
--- Create referrals table
-CREATE TABLE public.referrals (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  referrer_id UUID NOT NULL,
-  referee_id UUID NOT NULL,
-  referrer_bonus NUMERIC NOT NULL DEFAULT 25,
-  referee_bonus NUMERIC NOT NULL DEFAULT 15,
-  status TEXT NOT NULL DEFAULT 'completed',
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
--- Add site settings for bonus amounts
-INSERT INTO site_settings (key, value) VALUES 
-  ('welcome_bonus_amount', '10'),
-  ('referral_bonus_referrer', '25'),
-  ('referral_bonus_referee', '15'),
-  ('referral_enabled', 'true');
-```
-
-### Step 2: Generate Referral Code Function
-```sql
--- Function to generate unique referral code
-CREATE OR REPLACE FUNCTION generate_referral_code()
-RETURNS TEXT AS $$
-DECLARE
-  new_code TEXT;
-  chars TEXT := 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-BEGIN
-  LOOP
-    new_code := 'HIM-';
-    FOR i IN 1..4 LOOP
-      new_code := new_code || substr(chars, floor(random() * length(chars) + 1)::integer, 1);
-    END LOOP;
-    EXIT WHEN NOT EXISTS(SELECT 1 FROM profiles WHERE referral_code = new_code);
-  END LOOP;
-  RETURN new_code;
-END;
-$$ LANGUAGE plpgsql;
-```
-
-### Step 3: Edge Function - `process-signup-bonus`
-New edge function jo signup ke baad call hoga:
-- Welcome bonus credit kare
-- Agar referral code hai, toh referral bonuses process kare
-- Wallet transactions create kare
+### 2.2 Email Edge Function Create Karna
+Naya edge function banaunga: `send-verification-email`
 
 ```text
-Input: { user_id, referral_code? }
-Output: { welcome_bonus, referral_bonus }
+File: supabase/functions/send-verification-email/index.ts
+
+Features:
+- Resend API se email bhejega
+- Himsols branding ke saath template
+- noreply@himsols.com se jaayegi
 ```
 
-### Step 4: Update Auth Flow
-**`src/pages/Auth.tsx`:**
-- URL se `?ref=CODE` param read karo
-- Signup form mein referral code field add karo (pre-filled from URL)
-- Signup success ke baad edge function call karo
+---
 
-**`src/hooks/useAuth.tsx`:**
-- `signUp` function mein referral_code parameter add karo
+## Step 3: Email Template Design
 
-### Step 5: Referral Sharing UI
-**`src/components/profile/ReferralTab.tsx` (New):**
-- User ka unique referral code display
-- Share buttons (WhatsApp, Copy Link)
-- Referral statistics (kitne log refer kiye, total earnings)
-
-**Profile page mein new tab add karo**
-
-### Step 6: Admin Settings
-**`src/components/admin/SettingsTab.tsx`:**
-- Welcome bonus amount input
-- Referral bonus amounts inputs
-- Enable/disable referral program toggle
+### Welcome/Verification Email Template
+```text
++------------------------------------------+
+|         🌱 HIMSOLS LOGO                  |
++------------------------------------------+
+|                                          |
+|   Namaste [User Name]!                   |
+|                                          |
+|   Himsols mein aapka swagat hai!         |
+|   Apna account verify karne ke liye      |
+|   neeche button par click karein.        |
+|                                          |
+|   [✓ Verify My Email]                    |
+|                                          |
+|   Ya ye link copy karein:                |
+|   https://himsols.com/verify?token=...   |
+|                                          |
++------------------------------------------+
+|   🌳 Together, let's plant a greener     |
+|      future!                             |
+|                                          |
+|   © 2025 Himsols | Privacy Policy        |
++------------------------------------------+
+```
 
 ---
 
-## Files to Create/Modify
+## Step 4: Auth Hook Integration
 
-### New Files
-| File | Purpose |
-|------|---------|
-| `supabase/functions/process-signup-bonus/index.ts` | Edge function for bonus processing |
-| `src/components/profile/ReferralTab.tsx` | Referral sharing UI |
+### Supabase Auth Webhook Setup
+Jab bhi naya user signup kare, automatically email bhejne ke liye:
 
-### Modified Files
-| File | Changes |
-|------|---------|
-| `src/pages/Auth.tsx` | Add referral code field, read URL param |
-| `src/hooks/useAuth.tsx` | Add referral_code to signUp function |
-| `src/pages/Profile.tsx` | Add Referral tab |
-| `src/components/admin/SettingsTab.tsx` | Add bonus configuration |
-| `src/hooks/useSiteSettings.tsx` | Add bonus-related settings |
+```text
+Signup Flow:
+1. User signs up
+2. Supabase creates user (unverified)
+3. Edge function triggered
+4. Resend sends branded verification email
+5. User clicks link → verified!
+```
 
 ---
 
-## User Journey
+## Technical Implementation Details
 
-### New User with Referral
-1. Friend shares link: `himsols.com/auth?ref=HIM-ABCD`
-2. User lands on signup page, sees referral code pre-filled
-3. User signs up
-4. System credits:
-   - ₹10 Welcome Bonus to new user
-   - ₹15 Referral Bonus to new user
-   - ₹25 Referral Bonus to referrer
-5. New user sees ₹25 in wallet (10+15)
+### Files to Create/Modify:
 
-### New User without Referral
-1. User signs up normally
-2. System credits ₹10 Welcome Bonus
-3. User sees ₹10 in wallet
+| File | Action | Purpose |
+|------|--------|---------|
+| `supabase/functions/send-verification-email/index.ts` | Create | Resend API integration |
+| `src/hooks/useAuth.tsx` | Modify | Call email function after signup |
 
-### Existing User Sharing
-1. User goes to Profile → Referrals tab
-2. Sees unique code: "HIM-ABCD"
-3. Clicks "Share on WhatsApp" or "Copy Link"
-4. Shares with friends
-5. Sees referral count and total earnings
+### Edge Function Code Structure:
+```text
+send-verification-email/
+├── index.ts          # Main handler
+└── templates/
+    └── verification.ts  # HTML email template
+```
 
----
-
-## Security Considerations
-- Referral codes validated server-side
-- Self-referral blocked (same email/phone check)
-- One referral per new user
-- Bonus amounts configurable only by admin
+### Security Considerations:
+- API Key stored as encrypted secret
+- Rate limiting on email sending
+- Email validation before sending
+- Proper error handling
 
 ---
 
-## Technical Summary
+## Cost Estimate
 
-| Component | Technology |
-|-----------|------------|
-| Bonus Processing | Edge Function (atomic transactions) |
-| Referral Code Generation | PostgreSQL Function |
-| URL Parameter Handling | React Router (useSearchParams) |
-| Sharing | WhatsApp API, Clipboard API |
-| Admin Control | Site Settings table |
+| Usage Level | Emails/Month | Cost |
+|------------|--------------|------|
+| Free Tier | 0-3,000 | ₹0 |
+| Startup | 3,001-50,000 | ~₹1,600/month |
+| Growth | 50,001-100,000 | ~₹6,500/month |
+
+*Himsols ke liye shuru mein Free tier kaafi hoga!*
+
+---
+
+## Timeline
+
+| Step | Time Required |
+|------|---------------|
+| Resend account + Domain verify | 15-30 min (+ DNS propagation) |
+| API Key setup in Lovable | 2 min |
+| Edge function deployment | 5 min |
+| Testing | 10 min |
+
+**Total: ~30-45 minutes** (excluding DNS propagation wait)
+
+---
+
+## Next Steps After Approval
+
+1. **Aap karein**: Resend pe account banayein aur domain verify karein
+2. **Main karunga**: 
+   - RESEND_API_KEY secret add karne ka prompt dunga
+   - Edge function create karunga
+   - Auth hook update karunga
+3. **Testing**: Test email bhej ke verify karenge
+
