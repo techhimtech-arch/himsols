@@ -3,11 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Gift, Users, Sparkles, ArrowRight } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthSafe } from "@/hooks/useAuth";
 
 export const ReferralBannerSection = memo(() => {
   const { settings, isLoading } = useSiteSettings();
-  const { user } = useAuth();
+  const { user } = useAuthSafe();
 
   // Don't show if disabled or loading
   if (isLoading) return null;
