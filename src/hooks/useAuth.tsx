@@ -295,3 +295,9 @@ export const useAuth = () => {
   }
   return context;
 };
+
+// Safe version that returns null values when used outside AuthProvider
+export const useAuthSafe = () => {
+  const context = useContext(AuthContext);
+  return context ?? { user: null, session: null, loading: true, signUp: async () => ({ error: null }), signIn: async () => ({ error: null, needsVerification: false, email: null }), signOut: async () => {}, resendVerificationEmail: async () => ({ success: false }) };
+};
