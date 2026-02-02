@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { HeroSection } from "@/components/home/HeroSection";
+import { ReferralBannerSection } from "@/components/home/ReferralBannerSection";
 import { ActionableServicesSection } from "@/components/home/ActionableServicesSection";
 import { FeaturedProductsSection } from "@/components/home/FeaturedProductsSection";
 import { FeaturedTreesSection } from "@/components/home/FeaturedTreesSection";
@@ -28,6 +29,9 @@ const Index = () => {
 
       {/* Hero Section - Action-focused with 3 CTAs */}
       <HeroSection />
+
+      {/* Referral Banner - Signup bonus and referral rewards */}
+      <ReferralBannerSection />
 
       {/* Actionable Services - Cards with Request buttons */}
       {/* <ActionableServicesSection /> */}

@@ -14,6 +14,7 @@ export interface SiteSettings {
   referral_bonus_referrer: string;
   referral_bonus_referee: string;
   referral_enabled: string;
+  show_referral_banner: string;
 }
 
 export const useSiteSettings = () => {

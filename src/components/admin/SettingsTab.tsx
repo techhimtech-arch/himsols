@@ -27,6 +27,7 @@ export const SettingsTab = () => {
     referral_bonus_referrer: "25",
     referral_bonus_referee: "15",
     referral_enabled: true,
+    show_referral_banner: true,
   });
   const [saving, setSaving] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
@@ -46,6 +47,7 @@ export const SettingsTab = () => {
         referral_bonus_referrer: settings.referral_bonus_referrer || "25",
         referral_bonus_referee: settings.referral_bonus_referee || "15",
         referral_enabled: settings.referral_enabled === "true",
+        show_referral_banner: settings.show_referral_banner !== "false",
       });
     }
   }, [settings]);
@@ -124,6 +126,7 @@ export const SettingsTab = () => {
         updateSetting.mutateAsync({ key: "referral_bonus_referrer", value: formData.referral_bonus_referrer }),
         updateSetting.mutateAsync({ key: "referral_bonus_referee", value: formData.referral_bonus_referee }),
         updateSetting.mutateAsync({ key: "referral_enabled", value: formData.referral_enabled ? "true" : "false" }),
+        updateSetting.mutateAsync({ key: "show_referral_banner", value: formData.show_referral_banner ? "true" : "false" }),
       ]);
 
       toast({
@@ -346,6 +349,21 @@ export const SettingsTab = () => {
               id="referral_enabled"
               checked={formData.referral_enabled}
               onCheckedChange={(checked) => setFormData({ ...formData, referral_enabled: checked })}
+            />
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div>
+              <Label htmlFor="show_referral_banner" className="flex items-center gap-2">
+                <Gift className="h-4 w-4" />
+                Show Referral Banner on Homepage
+              </Label>
+              <p className="text-sm text-muted-foreground">Display the "Sign Up & Earn" promotional banner on homepage</p>
+            </div>
+            <Switch
+              id="show_referral_banner"
+              checked={formData.show_referral_banner}
+              onCheckedChange={(checked) => setFormData({ ...formData, show_referral_banner: checked })}
             />
           </div>
 
