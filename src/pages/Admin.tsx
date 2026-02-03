@@ -45,6 +45,7 @@ import { LiveStatsTab } from "@/components/admin/LiveStatsTab";
 import { CampaignsTab } from "@/components/admin/CampaignsTab";
 import { DonationsTab } from "@/components/admin/DonationsTab";
 import { GiftCardsTab } from "@/components/admin/GiftCardsTab";
+import { GiftCardContentTab } from "@/components/admin/GiftCardContentTab";
 import { ContactMessagesTab } from "@/components/admin/ContactMessagesTab";
 import { NavigationTab } from "@/components/admin/NavigationTab";
 import { FooterLinksTab } from "@/components/admin/FooterLinksTab";
@@ -627,6 +628,9 @@ const Admin = () => {
                   <Gift className="h-3 w-3 md:h-4 md:w-4 mr-1" />
                   Gift Cards
                 </TabsTrigger>
+                <TabsTrigger value="gift-card-content" className="text-xs md:text-sm">
+                  GC Content
+                </TabsTrigger>
                 <TabsTrigger value="users" className="text-xs md:text-sm">Users</TabsTrigger>
                 <TabsTrigger value="corporate" className="text-xs md:text-sm">Corporate</TabsTrigger>
                 <TabsTrigger value="marketplace" className="text-xs md:text-sm">
@@ -669,6 +673,11 @@ const Admin = () => {
             {/* Gift Cards Tab */}
             <TabsContent value="gift-cards">
               <GiftCardsTab />
+            </TabsContent>
+
+            {/* Gift Card Page Content Tab */}
+            <TabsContent value="gift-card-content">
+              <GiftCardContentTab />
             </TabsContent>
 
             {/* Requests Tab */}

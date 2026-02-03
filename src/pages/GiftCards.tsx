@@ -7,9 +7,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Gift, TreePine, Copy, CheckCircle, Heart, Shield, Leaf, Share2, Wallet } from "lucide-react";
+import { Gift, TreePine, Copy, CheckCircle, Heart, Share2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useGiftCardPayment } from "@/hooks/useGiftCardPayment";
+import { GiftCardUsageSection } from "@/components/giftcards/GiftCardUsageSection";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 import { SEO } from "@/components/SEO";
@@ -40,7 +41,6 @@ const GiftCards = () => {
   const [copied, setCopied] = useState(false);
 
   const finalAmount = selectedAmount || (customAmount ? parseInt(customAmount) : 0);
-  const treesEquivalent = Math.floor(finalAmount / 499);
 
   const handleAmountSelect = (amount: number) => {
     setSelectedAmount(amount);
@@ -206,12 +206,6 @@ Together, let's make Earth greener! 💚
                   />
                 </div>
 
-                {/* Impact Message */}
-                <div className="bg-muted/50 rounded-lg p-4 text-center">
-                  <p className="text-sm text-muted-foreground">
-                    This gift card can plant up to <strong className="text-primary">{treesEquivalent} trees</strong> 🌱
-                  </p>
-                </div>
 
                 {/* Actions */}
                 <div className="flex flex-col gap-3">
@@ -350,12 +344,6 @@ Together, let's make Earth greener! 💚
                 {isLoading ? "Processing..." : `🎁 Buy Gift Card - ₹${finalAmount.toLocaleString()}`}
               </Button>
 
-              {/* Impact Preview */}
-              {finalAmount >= 1 && (
-                <p className="text-sm text-center text-muted-foreground">
-                  This gift card can plant up to <strong className="text-primary">{treesEquivalent} trees</strong>
-                </p>
-              )}
             </CardContent>
           </Card>
 
@@ -383,88 +371,8 @@ Together, let's make Earth greener! 💚
               </div>
             </div>
 
-            {/* How to Use Gift Cards */}
-            <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-green-500/5">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Gift className="h-5 w-5 text-primary" />
-                  Gift Card कहाँ Use करें?
-                </CardTitle>
-                <CardDescription>
-                  Himsols Green Gift Cards के 2 तरीके हैं redeem करने के
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-start gap-3 p-3 bg-background rounded-lg border">
-                  <div className="p-2 bg-primary/10 rounded-full shrink-0">
-                    <TreePine className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-primary">1. Campaigns में Donate करें</h4>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Active tree plantation campaigns में directly redeem करें। आपके नाम पर पेड़ लगेंगे और certificate भी मिलेगा!
-                    </p>
-                    <Link to="/campaigns" className="text-xs text-primary hover:underline mt-1 inline-block">
-                      → Active Campaigns देखें
-                    </Link>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 p-3 bg-background rounded-lg border">
-                  <div className="p-2 bg-blue-500/10 rounded-full shrink-0">
-                    <Wallet className="h-5 w-5 text-blue-500" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-blue-600">2. Wallet में Add करें</h4>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      अपने Himsols Wallet में balance add करें। Wallet से Marketplace orders और future campaigns में use करें।
-                    </p>
-                    <Link to="/profile" className="text-xs text-blue-500 hover:underline mt-1 inline-block">
-                      → My Wallet देखें
-                    </Link>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Trust Points */}
-            <Card>
-              <CardContent className="pt-6 space-y-4">
-                <h4 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">Why Choose Green Gift Cards?</h4>
-                <div className="flex items-start gap-3">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <Shield className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium">100% Transparent</h4>
-                    <p className="text-sm text-muted-foreground">
-                      हर transaction का record मिलता है। देखें आपका पैसा कहाँ गया।
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <Leaf className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium">Verified Impact</h4>
-                    <p className="text-sm text-muted-foreground">
-                      हर पेड़ का photo और GPS location के साथ proof मिलता है।
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <Heart className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium">1 Year Validity</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Gift card 1 साल तक valid रहता है। कभी भी redeem करें।
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            {/* How to Use Gift Cards - Admin Controllable */}
+            <GiftCardUsageSection />
 
             {/* Already have a card? */}
             <Card className="bg-muted/50">
