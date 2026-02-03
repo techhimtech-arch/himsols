@@ -44,22 +44,36 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signUp = async (email: string, password: string, fullName: string, phone: string, referralCode?: string) => {
     const redirectUrl = `${window.location.origin}/`;
     
-    // Check if phone already exists - clean to last 10 digits
+    // Check if phone already exists via secure edge function
     if (phone) {
       const cleanPhone = phone.replace(/[\s\-+]/g, '').slice(-10);
-      const { data: existingProfile } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("phone", cleanPhone)
-        .maybeSingle();
       
-      if (existingProfile) {
-        toast({
-          title: "Signup Error",
-          description: "This phone number is already registered",
-          variant: "destructive",
-        });
-        return { error: { message: "Phone number already registered" } };
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/phone-lookup`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            },
+            body: JSON.stringify({ phone: cleanPhone }),
+          }
+        );
+        
+        const result = await response.json();
+        
+        if (result.found) {
+          toast({
+            title: "Signup Error",
+            description: "This phone number is already registered",
+            variant: "destructive",
+          });
+          return { error: { message: "Phone number already registered" } };
+        }
+      } catch (error) {
+        console.error("Phone lookup error:", error);
+        // Continue with signup if lookup fails
       }
     }
 
@@ -176,29 +190,43 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signIn = async (identifier: string, password: string) => {
     let email = identifier.trim();
     
-    // If it's a 10-digit phone number, look up the email from profiles
+    // If it's a 10-digit phone number, look up the email via secure edge function
     const cleanedIdentifier = identifier.replace(/\D/g, '');
     
     if (cleanedIdentifier.length === 10) {
-      const { data: profile, error: lookupError } = await supabase
-        .from("profiles")
-        .select("email")
-        .eq("phone", cleanedIdentifier)
-        .maybeSingle();
-      
-      if (lookupError) {
-        console.error("Phone lookup error:", lookupError);
-      }
-      
-      if (profile?.email) {
-        email = profile.email;
-      } else {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/phone-lookup`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            },
+            body: JSON.stringify({ phone: cleanedIdentifier }),
+          }
+        );
+        
+        const result = await response.json();
+        
+        if (result.found && result.email) {
+          email = result.email;
+        } else {
+          toast({
+            title: "Login Error",
+            description: "No account found with this phone number",
+            variant: "destructive",
+          });
+          return { error: { message: "No account found with this phone number" }, needsVerification: false, email: null };
+        }
+      } catch (error) {
+        console.error("Phone lookup error:", error);
         toast({
           title: "Login Error",
-          description: "No account found with this phone number",
+          description: "Unable to verify phone number. Please try again.",
           variant: "destructive",
         });
-        return { error: { message: "No account found with this phone number" }, needsVerification: false, email: null };
+        return { error: { message: "Phone lookup failed" }, needsVerification: false, email: null };
       }
     }
 
@@ -227,12 +255,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const resendVerificationEmail = async (email: string) => {
     try {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("full_name")
-        .eq("email", email)
-        .maybeSingle();
-
+      // Use edge function to get user name securely
       const confirmationUrl = `${window.location.origin}/auth?confirm=true`;
       
       const response = await fetch(
@@ -245,7 +268,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           },
           body: JSON.stringify({
             email: email,
-            userName: profile?.full_name || "User",
+            userName: "User",
             verificationUrl: confirmationUrl,
           }),
         }

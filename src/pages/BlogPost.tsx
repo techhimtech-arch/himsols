@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, Calendar, Clock, User, Eye, Share2, Link2, MessageCircle, Facebook, Twitter, Linkedin } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import DOMPurify from "dompurify";
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -61,6 +62,23 @@ const BlogPost = () => {
     },
   };
 
+  const t = translations[language];
+
+  // Compute content values after post is loaded
+  const title = post ? (language === "hi" && post.title_hi ? post.title_hi : post.title) : "";
+  const rawContent = post ? (language === "hi" && post.content_hi ? post.content_hi : post.content) : "";
+  const excerpt = post ? (language === "hi" && post.excerpt_hi ? post.excerpt_hi : post.excerpt) : "";
+  const readTime = Math.ceil((rawContent?.length || 0) / 1000);
+
+  // Sanitize HTML content to prevent XSS attacks
+  const sanitizedContent = useMemo(() => {
+    return DOMPurify.sanitize(rawContent || "", {
+      ALLOWED_TAGS: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'strong', 'em', 'u', 'a', 'img', 'ul', 'ol', 'li', 'blockquote', 'code', 'pre', 'br', 'span', 'div', 'table', 'thead', 'tbody', 'tr', 'th', 'td'],
+      ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'target', 'rel', 'style'],
+      ALLOW_DATA_ATTR: false,
+    });
+  }, [rawContent]);
+
   // Share functions
   const shareWhatsApp = () => {
     const url = `https://wa.me/?text=${encodeURIComponent(title + ' - ' + window.location.href)}`;
@@ -96,8 +114,6 @@ const BlogPost = () => {
       });
     }
   };
-
-  const t = translations[language];
 
   if (isLoading) {
     return (
@@ -136,11 +152,6 @@ const BlogPost = () => {
       </div>
     );
   }
-
-  const title = language === "hi" && post.title_hi ? post.title_hi : post.title;
-  const content = language === "hi" && post.content_hi ? post.content_hi : post.content;
-  const excerpt = language === "hi" && post.excerpt_hi ? post.excerpt_hi : post.excerpt;
-  const readTime = Math.ceil((content?.length || 0) / 1000);
 
   return (
     <div className="min-h-screen bg-background">
@@ -239,10 +250,10 @@ const BlogPost = () => {
             </div>
           )}
 
-          {/* Content */}
+          {/* Content - sanitized to prevent XSS */}
           <div 
             className="max-w-4xl mx-auto prose prose-lg dark:prose-invert prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-a:text-primary prose-blockquote:border-l-primary prose-blockquote:text-muted-foreground prose-li:text-muted-foreground prose-img:rounded-lg prose-img:shadow-lg prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-pre:bg-muted prose-pre:text-foreground"
-            dangerouslySetInnerHTML={{ __html: content }} 
+            dangerouslySetInnerHTML={{ __html: sanitizedContent }} 
           />
         </div>
       </article>
