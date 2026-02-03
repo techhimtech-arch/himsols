@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Gift, TreePine, Copy, CheckCircle, Heart, Shield, Leaf, Share2 } from "lucide-react";
+import { Gift, TreePine, Copy, CheckCircle, Heart, Shield, Leaf, Share2, Wallet } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useGiftCardPayment } from "@/hooks/useGiftCardPayment";
 import { useToast } from "@/hooks/use-toast";
@@ -383,17 +383,61 @@ Together, let's make Earth greener! 💚
               </div>
             </div>
 
+            {/* How to Use Gift Cards */}
+            <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-green-500/5">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Gift className="h-5 w-5 text-primary" />
+                  Gift Card कहाँ Use करें?
+                </CardTitle>
+                <CardDescription>
+                  Himsols Green Gift Cards के 2 तरीके हैं redeem करने के
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-start gap-3 p-3 bg-background rounded-lg border">
+                  <div className="p-2 bg-primary/10 rounded-full shrink-0">
+                    <TreePine className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-primary">1. Campaigns में Donate करें</h4>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Active tree plantation campaigns में directly redeem करें। आपके नाम पर पेड़ लगेंगे और certificate भी मिलेगा!
+                    </p>
+                    <Link to="/campaigns" className="text-xs text-primary hover:underline mt-1 inline-block">
+                      → Active Campaigns देखें
+                    </Link>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-background rounded-lg border">
+                  <div className="p-2 bg-blue-500/10 rounded-full shrink-0">
+                    <Wallet className="h-5 w-5 text-blue-500" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-blue-600">2. Wallet में Add करें</h4>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      अपने Himsols Wallet में balance add करें। Wallet से Marketplace orders और future campaigns में use करें।
+                    </p>
+                    <Link to="/profile" className="text-xs text-blue-500 hover:underline mt-1 inline-block">
+                      → My Wallet देखें
+                    </Link>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Trust Points */}
             <Card>
               <CardContent className="pt-6 space-y-4">
+                <h4 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">Why Choose Green Gift Cards?</h4>
                 <div className="flex items-start gap-3">
                   <div className="p-2 bg-primary/10 rounded-lg">
                     <Shield className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <h4 className="font-medium">Verified Campaigns Only</h4>
+                    <h4 className="font-medium">100% Transparent</h4>
                     <p className="text-sm text-muted-foreground">
-                      Redeemable only for verified Himsols green campaigns
+                      हर transaction का record मिलता है। देखें आपका पैसा कहाँ गया।
                     </p>
                   </div>
                 </div>
@@ -402,9 +446,9 @@ Together, let's make Earth greener! 💚
                     <Leaf className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <h4 className="font-medium">Real Impact</h4>
+                    <h4 className="font-medium">Verified Impact</h4>
                     <p className="text-sm text-muted-foreground">
-                      Every rupee goes directly to tree plantation efforts
+                      हर पेड़ का photo और GPS location के साथ proof मिलता है।
                     </p>
                   </div>
                 </div>
@@ -413,9 +457,9 @@ Together, let's make Earth greener! 💚
                     <Heart className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <h4 className="font-medium">Supports Local Farmers</h4>
+                    <h4 className="font-medium">1 Year Validity</h4>
                     <p className="text-sm text-muted-foreground">
-                      Your contribution supports local farmers and Himachal's future
+                      Gift card 1 साल तक valid रहता है। कभी भी redeem करें।
                     </p>
                   </div>
                 </div>
