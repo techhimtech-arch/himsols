@@ -574,6 +574,57 @@ export type Database = {
         }
         Relationships: []
       }
+      gift_card_page_content: {
+        Row: {
+          created_at: string | null
+          description_en: string | null
+          description_hi: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          link_text_en: string | null
+          link_text_hi: string | null
+          link_url: string | null
+          section_key: string
+          sort_order: number | null
+          title_en: string | null
+          title_hi: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description_en?: string | null
+          description_hi?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          link_text_en?: string | null
+          link_text_hi?: string | null
+          link_url?: string | null
+          section_key: string
+          sort_order?: number | null
+          title_en?: string | null
+          title_hi?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description_en?: string | null
+          description_hi?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          link_text_en?: string | null
+          link_text_hi?: string | null
+          link_url?: string | null
+          section_key?: string
+          sort_order?: number | null
+          title_en?: string | null
+          title_hi?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       gift_card_redemptions: {
         Row: {
           amount: number
