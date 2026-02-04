@@ -26,36 +26,35 @@ export const FinalCTASection = memo(() => {
 
         {/* Heading */}
         <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white drop-shadow-lg leading-tight">
-          Ready to Make an Impact?
+          Start Small. Create Real Impact.
         </h2>
         
         {/* Subheading */}
         <p className="text-lg md:text-xl max-w-2xl mx-auto mb-10 text-white/90 leading-relaxed">
-          Join 120+ community members who are already building a greener Himachal. 
-          Start with a single tree or schedule a scrap pickup today.
+          Every tree you plant supports local farmers and helps heal the Himalayas. 
+          Begin your green journey today.
         </p>
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-          <Link to="/tree-plantation">
+          <Link to="/shop">
             <Button 
               size="lg" 
               className="bg-white text-primary hover:bg-white/90 shadow-2xl gap-2 text-base px-8 w-full sm:w-auto"
             >
-              Start Planting Trees
+              🌱 Plant a Tree
               <ArrowRight className="h-5 w-5" />
             </Button>
           </Link>
-          <a href={`https://wa.me/${whatsappNumber}?text=Hi! I want to know more about Himsols services.`} target="_blank" rel="noopener noreferrer">
+          <Link to="/gift-cards">
             <Button 
               size="lg" 
               variant="outline" 
               className="border-2 border-white text-white hover:bg-white/20 gap-2 text-base px-8 w-full sm:w-auto"
             >
-              <MessageCircle className="h-5 w-5" />
-              Chat on WhatsApp
+              🎁 Send a Green Gift
             </Button>
-          </a>
+          </Link>
         </div>
 
         {/* Contact Info */}

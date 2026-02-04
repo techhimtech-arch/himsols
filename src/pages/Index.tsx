@@ -1,17 +1,13 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { HeroSection } from "@/components/home/HeroSection";
-import { ReferralBannerSection } from "@/components/home/ReferralBannerSection";
-import { ActionableServicesSection } from "@/components/home/ActionableServicesSection";
+import { HowItWorksSection } from "@/components/home/HowItWorksSection";
+import { KeyOffersSection } from "@/components/home/KeyOffersSection";
 import { FeaturedProductsSection } from "@/components/home/FeaturedProductsSection";
-import { FeaturedTreesSection } from "@/components/home/FeaturedTreesSection";
-import { FeaturedPlantsSection } from "@/components/home/FeaturedPlantsSection";
-import { FeaturedCampaignsSection } from "@/components/home/FeaturedCampaignsSection";
 import { LiveStatsSection } from "@/components/home/LiveStatsSection";
+import { WhyTrustSection } from "@/components/home/WhyTrustSection";
 import { TrustSection } from "@/components/home/TrustSection";
-import { RecentActivitiesSection } from "@/components/home/RecentActivitiesSection";
 import { FinalCTASection } from "@/components/home/FinalCTASection";
-import { MoreFromHimsolsSection } from "@/components/home/MoreFromHimsolsSection";
 import { MobileStickyCTA } from "@/components/home/MobileStickyCTA";
 import { SEO, SEOSchemas } from "@/components/SEO";
 
@@ -19,48 +15,36 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <SEO
-        title="Himsols - Tree Plantation & Waste Management | Himachal Pradesh"
-        description="Book tree plantation, schedule scrap pickup, and shop eco-friendly products from rural Himachal Pradesh. पेड़ लगाओ, कबाड़ बेचो, पर्यावरण बचाओ।"
-        keywords="tree plantation Himachal, scrap pickup HP, waste management, eco products, farmer marketplace, पेड़ लगाओ, कबाड़"
+        title="Himsols - Plant Trees, Support Farmers, Heal the Himalayas"
+        description="Plant real trees with local farmers in Himachal Pradesh. Track impact, receive certificates, and create a greener future. ₹499 per tree with photo proof."
+        keywords="plant trees Himachal, tree plantation India, support farmers, CSR plantation, green gifts, eco-friendly, sustainability"
         url="https://himsols-web-companion.lovable.app"
       />
       <SEOSchemas includeServices={true} />
       <Navbar />
 
-      {/* Hero Section - Action-focused with 3 CTAs */}
+      {/* 1. Hero Section - Main CTA */}
       <HeroSection />
 
-      {/* Referral Banner - Signup bonus and referral rewards */}
-      <ReferralBannerSection />
+      {/* 2. How It Works - 3 Steps */}
+      <HowItWorksSection />
 
-      {/* Actionable Services - Cards with Request buttons */}
-      {/* <ActionableServicesSection /> */}
+      {/* 3. Key Offers - Revenue Drivers */}
+      <KeyOffersSection />
 
-      {/* Featured Products - Marketplace products with Add to Cart */}
-      <FeaturedProductsSection />
-
-      {/* Featured Trees - Tree plants with Add to Cart */}
-      <FeaturedTreesSection />
-
-      {/* Featured Plants - Ornamental plants with image gallery */}
-      <FeaturedPlantsSection />
-
-      {/* Featured Campaigns - Active campaigns with show_on_homepage=true */}
-      <FeaturedCampaignsSection />
-
-      {/* Live Stats - Animated counters */}
+      {/* 4. Live Stats - Impact Numbers */}
       <LiveStatsSection />
 
-      {/* Trust Section - Photos, Testimonials, Partner logos */}
+      {/* 5. Featured Eco Products */}
+      <FeaturedProductsSection />
+
+      {/* 6. Why Trust Himsols */}
+      <WhyTrustSection />
+
+      {/* 7. Social Proof / Testimonials */}
       <TrustSection />
 
-      {/* Recent Activities - Live updates feed */}
-      <RecentActivitiesSection />
-
-      {/* More from Himsols - External apps */}
-      <MoreFromHimsolsSection />
-
-      {/* Final CTA - Strong call to action */}
+      {/* 8. Final CTA */}
       <FinalCTASection />
 
       <Footer />

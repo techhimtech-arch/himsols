@@ -78,6 +78,11 @@ export const Navbar = () => {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-3">
+            <Link to="/shop">
+              <Button size="sm" className="gap-2">
+                🌱 Plant Now
+              </Button>
+            </Link>
             <LanguageToggle />
             <CartSheet />
             {user ? (
@@ -101,7 +106,7 @@ export const Navbar = () => {
               </DropdownMenu>
             ) : (
               <Link to="/auth">
-                <Button>{t("nav.login")}</Button>
+                <Button variant="outline">{t("nav.login")}</Button>
               </Link>
             )}
           </div>
