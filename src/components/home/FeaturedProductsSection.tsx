@@ -48,13 +48,13 @@ export const FeaturedProductsSection = memo(() => {
         <div className="text-center mb-12 md:mb-16 animate-slide-up">
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
             <ShoppingBag className="h-4 w-4" />
-            Featured Products
+            Eco Products
           </span>
           <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-            Fresh From Local Farmers
+            From the Himalayas — Direct from Farmers
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Support local farmers by purchasing fresh produce, handmade goods, and sustainable products directly from the source.
+            Pure, authentic products sourced directly from rural Himachal Pradesh. Every purchase supports local farming communities.
           </p>
         </div>
 
@@ -69,7 +69,7 @@ export const FeaturedProductsSection = memo(() => {
         <div className="text-center">
           <Link to="/marketplace">
             <Button size="lg" className="gap-2 group">
-              Explore More Products
+              Visit Shop
               <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Button>
           </Link>

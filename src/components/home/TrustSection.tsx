@@ -169,7 +169,7 @@ export const TrustSection = memo(() => {
             Real Impact on the Ground
           </span>
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-            See Our Work in Action
+            People & Partners Who Trust Us
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto">
             Real stories from communities we've worked with across Himachal Pradesh
