@@ -1,16 +1,37 @@
 import { memo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { TreePine, Gift, Building2, Check, ArrowRight } from "lucide-react";
 
-const offers = [
+const useTreePricing = () => {
+  return useQuery({
+    queryKey: ["tree-min-price"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("trees")
+        .select("price")
+        .eq("is_active", true)
+        .gt("price", 0)
+        .order("price", { ascending: true })
+        .limit(1);
+      
+      if (error) throw error;
+      return data?.[0]?.price || 299;
+    },
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+  });
+};
+
+const getOffers = (minTreePrice: number) => [
   {
     icon: TreePine,
     title: "Plant a Tree",
     tagline: "Plant trees in your name or for someone special.",
-    price: "₹499",
-    priceLabel: "/ tree",
+    price: `₹${minTreePrice}`,
+    priceLabel: " onwards",
     features: ["Certificate included", "Photo updates", "GPS location"],
     buttonText: "Plant Now",
     buttonLink: "/shop",
@@ -21,7 +42,7 @@ const offers = [
     icon: Gift,
     title: "Green Gift Cards",
     tagline: "A meaningful gift for birthdays, anniversaries & festivals.",
-    price: "₹499+",
+    price: `₹${minTreePrice}+`,
     priceLabel: "",
     features: ["Redeemable for tree plantation", "Valid for 12 months", "Digital delivery"],
     buttonText: "Buy Gift Card",
@@ -44,6 +65,9 @@ const offers = [
 ];
 
 export const KeyOffersSection = memo(() => {
+  const { data: minTreePrice = 299 } = useTreePricing();
+  const offers = getOffers(minTreePrice);
+
   return (
     <section className="py-16 md:py-24 px-4 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-muted/30 via-background to-background" />
