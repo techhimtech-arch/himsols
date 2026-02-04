@@ -1,162 +1,214 @@
 
 
-# Resend.com Custom Email Setup Plan for Himsols
+# HIMSOLS Homepage Conversion-Ready Redesign Plan
 
 ## Overview
-Himsols ke liye branded emails setup karenge (`noreply@himsols.com` se) using Resend.com. Isse verification emails professional lagenge aur users ko trust milega.
+A complete homepage redesign focused on driving tree plantation conversions with a clear hierarchy of CTAs, simplified navigation, and improved trust signals.
 
 ---
 
-## Step 1: Resend Account Setup (Aapko karna hai)
+## Part 1: Navigation Structure Update
 
-### 1.1 Account Create Karein
-1. Go to **https://resend.com** 
-2. "Get Started" click karein
-3. Email se signup karein (Google/GitHub bhi use kar sakte ho)
+### Current State
+- Navigation is database-driven via `navigation_items` table
+- Contains 10+ items (some disabled)
+- Footer links managed via `footer_links` table
 
-### 1.2 Domain Verify Karein
-1. Resend dashboard mein **Domains** section mein jaayein
-2. **"Add Domain"** click karein
-3. `himsols.com` enter karein
-4. Resend aapko **3 DNS records** dega add karne ke liye:
-   - **SPF Record** (TXT)
-   - **DKIM Record** (TXT) 
-   - **DMARC Record** (TXT - optional but recommended)
+### Changes Required
 
-5. Apne domain registrar (GoDaddy/Hostinger/Namecheap etc.) mein jaake ye records add karein
-6. Records add karne ke baad Resend mein **"Verify"** click karein
-7. Verification mein 5 minutes se 24 hours lag sakte hain
+**Admin Panel Update** (via database)
+Update navigation items to this simplified structure:
 
-### 1.3 API Key Generate Karein
-1. Resend dashboard mein **API Keys** section jaayein
-2. **"Create API Key"** click karein
-3. Name dein: `himsols-production`
-4. Permission: **Full Access** select karein
-5. API Key copy karein (ye sirf ek baar dikhega!)
+| Label | Label (Hindi) | Path | Sort Order |
+|-------|---------------|------|------------|
+| Home | होम | / | 1 |
+| Plant a Tree 🌱 | पेड़ लगाओ 🌱 | /tree-plantation | 2 |
+| Green Gifts 🎁 | ग्रीन गिफ्ट्स 🎁 | /gift-cards | 3 |
+| Shop | दुकान | /marketplace | 4 |
+| CSR / Corporate | CSR / कॉर्पोरेट | /corporate | 5 |
+| Our Impact | हमारा प्रभाव | /campaigns | 6 |
+| Contact | संपर्क | /contact | 7 |
+
+**Navbar Component Changes**
+- Add primary CTA button "Plant Now" in navbar (always visible)
+- Keep login/user menu and cart
 
 ---
 
-## Step 2: Lovable Cloud Configuration (Main karunga)
+## Part 2: Homepage Sections Redesign
 
-### 2.1 Secret Add Karna
-- **RESEND_API_KEY** secret add karunga Lovable Cloud mein
-- Aapko ek input box dikhega jahan API key paste karni hogi
-
-### 2.2 Email Edge Function Create Karna
-Naya edge function banaunga: `send-verification-email`
+### Section Order (Top to Bottom)
 
 ```text
-File: supabase/functions/send-verification-email/index.ts
-
-Features:
-- Resend API se email bhejega
-- Himsols branding ke saath template
-- noreply@himsols.com se jaayegi
+1. Hero Section (NEW DESIGN)
+2. How It Works (NEW - 3 Steps)
+3. Key Offers Section (NEW - 3 Cards)
+4. Live Stats Section (EXISTS - minor text update)
+5. Featured Eco Products (EXISTS - heading update)
+6. Why Trust Himsols (NEW)
+7. Social Proof / Testimonials (EXISTS - use TrustSection)
+8. Final CTA Section (EXISTS - update text)
 ```
 
----
+### Section Details
 
-## Step 3: Email Template Design
+#### 1. Hero Section (Complete Redesign)
 
-### Welcome/Verification Email Template
-```text
-+------------------------------------------+
-|         🌱 HIMSOLS LOGO                  |
-+------------------------------------------+
-|                                          |
-|   Namaste [User Name]!                   |
-|                                          |
-|   Himsols mein aapka swagat hai!         |
-|   Apna account verify karne ke liye      |
-|   neeche button par click karein.        |
-|                                          |
-|   [✓ Verify My Email]                    |
-|                                          |
-|   Ya ye link copy karein:                |
-|   https://himsols.com/verify?token=...   |
-|                                          |
-+------------------------------------------+
-|   🌳 Together, let's plant a greener     |
-|      future!                             |
-|                                          |
-|   © 2025 Himsols | Privacy Policy        |
-+------------------------------------------+
-```
+**New Headline:**
+> "Plant a Tree. Support Farmers. Heal the Himalayas."
 
----
+**New Sub-headline:**
+> "Himsols helps you plant real trees with local farmers in Himachal Pradesh — track impact, receive certificates, and create a greener future."
 
-## Step 4: Auth Hook Integration
+**CTAs:**
+- Primary: "Plant a Tree Now" → `/shop`
+- Secondary: "See How It Works" → scrolls to How It Works section
 
-### Supabase Auth Webhook Setup
-Jab bhi naya user signup kare, automatically email bhejne ke liye:
+**Trust Line:**
+> 🌱 Trusted by individuals, farmers & institutions
+> 📍 Real plantations · 📸 Photo proof · 📜 Certificate included
 
-```text
-Signup Flow:
-1. User signs up
-2. Supabase creates user (unverified)
-3. Edge function triggered
-4. Resend sends branded verification email
-5. User clicks link → verified!
-```
+**Visual:**
+- Keep hero image
+- Update floating stats card with dynamic data
 
----
+#### 2. How It Works Section (NEW)
 
-## Technical Implementation Details
+3-step visual flow:
 
-### Files to Create/Modify:
+| Step | Title | Description |
+|------|-------|-------------|
+| 1 | Choose Your Green Action | Tree plantation · Green gift · CSR campaign |
+| 2 | We Plant with Local Farmers | Trees are planted and cared for by rural communities |
+| 3 | Track Your Impact | Get photos, location & a digital certificate |
 
-| File | Action | Purpose |
-|------|--------|---------|
-| `supabase/functions/send-verification-email/index.ts` | Create | Resend API integration |
-| `src/hooks/useAuth.tsx` | Modify | Call email function after signup |
+**CTA:** "Start Your Green Journey →" → `/shop`
 
-### Edge Function Code Structure:
-```text
-send-verification-email/
-├── index.ts          # Main handler
-└── templates/
-    └── verification.ts  # HTML email template
-```
+#### 3. Key Offers Section (NEW - Revenue Drivers)
 
-### Security Considerations:
-- API Key stored as encrypted secret
-- Rate limiting on email sending
-- Email validation before sending
-- Proper error handling
+Three cards side by side:
 
----
+**Card 1: Plant a Tree**
+- Icon: 🌱
+- Price: ₹499 / tree
+- Features: Certificate included, Photo updates
+- Button: "Plant Now" → `/shop`
 
-## Cost Estimate
+**Card 2: Green Gift Cards**
+- Icon: 🎁
+- Tagline: A meaningful gift for birthdays, anniversaries & festivals
+- Features: Redeemable for tree plantation, Valid for 12 months
+- Button: "Buy Gift Card" → `/gift-cards`
 
-| Usage Level | Emails/Month | Cost |
-|------------|--------------|------|
-| Free Tier | 0-3,000 | ₹0 |
-| Startup | 3,001-50,000 | ~₹1,600/month |
-| Growth | 50,001-100,000 | ~₹6,500/month |
+**Card 3: CSR & Corporate**
+- Icon: 🏢
+- Tagline: Verified green projects for CSR & sustainability goals
+- Features: Plantation drives, Reports & documentation, Custom campaigns
+- Button: "Partner with Us" → `/corporate`
 
-*Himsols ke liye shuru mein Free tier kaafi hoga!*
+#### 4. Live Stats Section (EXISTS)
+- Minor heading update: "Impact Numbers" or keep current
+- Already admin-controlled ✓
 
----
+#### 5. Featured Products Section (EXISTS)
+- Update heading: "From the Himalayas — Direct from Farmers"
+- Limit to 4-6 products (already doing this)
+- Button: "Visit Shop" → `/marketplace`
 
-## Timeline
+#### 6. Why Trust Himsols Section (NEW)
 
-| Step | Time Required |
-|------|---------------|
-| Resend account + Domain verify | 15-30 min (+ DNS propagation) |
-| API Key setup in Lovable | 2 min |
-| Edge function deployment | 5 min |
-| Testing | 10 min |
+4 trust points:
+- ✔ Real farmers, real plantations
+- ✔ No middlemen exploitation
+- ✔ Transparent impact reports
+- ✔ Eco-friendly & ethical
 
-**Total: ~30-45 minutes** (excluding DNS propagation wait)
+**Quote:** "When you plant with Himsols, you don't just buy — you contribute."
+
+#### 7. Social Proof Section (EXISTS - TrustSection)
+- Already has testimonials, photos, partner logos
+- Update heading to: "People & Partners Who Trust Us"
+
+#### 8. Final CTA Section (UPDATE)
+
+**New Heading:** "Start Small. Create Real Impact."
+
+**Two Buttons:**
+- "🌱 Plant a Tree" → `/shop`
+- "🎁 Send a Green Gift" → `/gift-cards`
 
 ---
 
-## Next Steps After Approval
+## Part 3: Sections to Remove/Hide
 
-1. **Aap karein**: Resend pe account banayein aur domain verify karein
-2. **Main karunga**: 
-   - RESEND_API_KEY secret add karne ka prompt dunga
-   - Edge function create karunga
-   - Auth hook update karunga
-3. **Testing**: Test email bhej ke verify karenge
+The following sections will be removed from the homepage:
+
+1. **ReferralBannerSection** - Move to profile page only
+2. **FeaturedTreesSection** - Consolidate with main tree offering
+3. **FeaturedPlantsSection** - Keep plants in separate page
+4. **FeaturedCampaignsSection** - Campaigns link in nav is enough
+5. **RecentActivitiesSection** - Adds clutter
+6. **MoreFromHimsolsSection** - External apps not priority
+7. **MobileStickyCTA** - Update to single "Plant Now" CTA
+
+---
+
+## Part 4: Footer Update
+
+Admin-controlled via `footer_links` table. Recommended structure:
+
+**Column 1:** About Himsols, Our Mission, Our Impact  
+**Column 2:** Shop, Green Gifts, CSR  
+**Column 3:** Contact, Privacy, Refund, Terms  
+**Tagline:** "© Himsols | Growing a Greener Tomorrow 🌱"
+
+---
+
+## Part 5: Files to Create/Modify
+
+### New Components
+1. `src/components/home/HowItWorksSection.tsx` - 3-step process
+2. `src/components/home/KeyOffersSection.tsx` - 3 revenue cards
+3. `src/components/home/WhyTrustSection.tsx` - Trust points
+
+### Modified Components
+1. `src/components/home/HeroSection.tsx` - Complete content update
+2. `src/components/home/FeaturedProductsSection.tsx` - Heading update
+3. `src/components/home/FinalCTASection.tsx` - Text update
+4. `src/components/home/TrustSection.tsx` - Heading update
+5. `src/components/Navbar.tsx` - Add "Plant Now" CTA button
+6. `src/pages/Index.tsx` - Reorder and remove sections
+
+### Database Updates
+- Update `navigation_items` via SQL migration for new menu structure
+- Footer updates via `footer_links` table (optional, admin can do manually)
+
+---
+
+## Technical Notes
+
+### Component Architecture
+- All new sections will follow existing patterns (memo, Tailwind, Lucide icons)
+- Responsive design with mobile-first approach
+- Consistent use of existing UI components (Button, Card, Badge)
+
+### Performance
+- Lazy load below-fold sections where possible
+- Keep hero section lightweight for fast initial paint
+
+### Bilingual Support
+- All new content will support Hindi via `useLanguage` hook
+- Translations can be added to existing translation system
+
+---
+
+## Implementation Order
+
+1. Create new components (HowItWorks, KeyOffers, WhyTrust)
+2. Update HeroSection with new copy and design
+3. Update Navbar with "Plant Now" CTA
+4. Update Index.tsx to reorder sections
+5. Update FinalCTASection with new text
+6. Update navigation items in database
+7. Test responsive behavior on all devices
 
