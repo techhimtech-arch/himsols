@@ -104,7 +104,7 @@ export const HeroSection = memo(() => {
                     <TreePine className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-foreground">₹499</div>
+                    <div className="text-2xl font-bold text-foreground">From ₹99</div>
                     <div className="text-sm text-muted-foreground">per tree planted</div>
                   </div>
                 </div>
