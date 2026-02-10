@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Gift, Search, Plus } from "lucide-react";
+import { Gift, Search, Plus, MessageCircle } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { BulkGiftCardUpload } from "./BulkGiftCardUpload";
@@ -258,7 +258,7 @@ export const GiftCardsTab = () => {
       <Card>
         <CardContent className="p-0">
           <Table>
-            <TableHeader>
+             <TableHeader>
               <TableRow>
                 <TableHead>Code</TableHead>
                 <TableHead>Value</TableHead>
@@ -268,17 +268,18 @@ export const GiftCardsTab = () => {
                 <TableHead>Recipient</TableHead>
                 <TableHead>Created</TableHead>
                 <TableHead>Expires</TableHead>
+                <TableHead>Share</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={8} className="text-center py-8">Loading...</TableCell>
-                </TableRow>
+                 <TableRow>
+                   <TableCell colSpan={9} className="text-center py-8">Loading...</TableCell>
+                 </TableRow>
               ) : filteredCards.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                    No gift cards found
+                 <TableRow>
+                   <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
+                     No gift cards found
                   </TableCell>
                 </TableRow>
               ) : (
@@ -290,10 +291,25 @@ export const GiftCardsTab = () => {
                     <TableCell>{getStatusBadge(card.status)}</TableCell>
                     <TableCell className="text-sm">{card.purchaser_email || "-"}</TableCell>
                     <TableCell className="text-sm">{card.recipient_name || "-"}</TableCell>
-                    <TableCell className="text-sm">{format(new Date(card.created_at), "dd MMM yyyy")}</TableCell>
-                    <TableCell className="text-sm">{format(new Date(card.expires_at), "dd MMM yyyy")}</TableCell>
-                  </TableRow>
+                     <TableCell className="text-sm">{format(new Date(card.created_at), "dd MMM yyyy")}</TableCell>
+                     <TableCell className="text-sm">{format(new Date(card.expires_at), "dd MMM yyyy")}</TableCell>
+                     <TableCell>
+                       <Button
+                         variant="ghost"
+                         size="icon"
+                         className="h-8 w-8 text-green-600 hover:bg-green-100 hover:text-green-700"
+                         title="Share on WhatsApp"
+                         onClick={() => {
+                           const msg = `🎁 *Green Gift Card from Himsols!*\n\nCode: *${card.code}*\nValue: ₹${card.value.toLocaleString()}\n${card.recipient_name ? `For: ${card.recipient_name}\n` : ""}${card.gift_message ? `\n💌 ${card.gift_message}\n` : ""}\n🌿 Redeem at: ${window.location.origin}/redeem-gift-card`;
+                           window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
+                         }}
+                       >
+                         <MessageCircle className="h-4 w-4" />
+                       </Button>
+                     </TableCell>
+                   </TableRow>
                 ))
+
               )}
             </TableBody>
           </Table>
