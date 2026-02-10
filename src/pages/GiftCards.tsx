@@ -18,6 +18,13 @@ import { ShareButtons } from "@/components/ShareButtons";
 
 const PRESET_AMOUNTS = [500, 1000, 2500, 5000];
 
+const OCCASIONS = [
+  { id: "birthday", label: "Birthday 🎂", emoji: "🎂", message: "Wishing you a green birthday! May your year bloom like trees 🌳" },
+  { id: "wedding", label: "Wedding 💒", emoji: "💒", message: "Congratulations on your new journey! Here's a forest growing with your love 💚" },
+  { id: "valentine", label: "Valentine ❤️", emoji: "❤️", message: "My love for you grows like these trees! Happy Valentine's Day 🌹" },
+  { id: "festival", label: "Festival 🪔", emoji: "🪔", message: "Celebrating with nature! Wishing you a green and joyful festival 🌿" },
+] as const;
+
 interface PurchasedGiftCard {
   code: string;
   value: number;
@@ -36,6 +43,7 @@ const GiftCards = () => {
   const [giftMessage, setGiftMessage] = useState("");
   const [purchaserName, setPurchaserName] = useState("");
   const [purchaserEmail, setPurchaserEmail] = useState(user?.email || "");
+  const [selectedOccasion, setSelectedOccasion] = useState<string | null>(null);
   
   const [purchasedCard, setPurchasedCard] = useState<PurchasedGiftCard | null>(null);
   const [copied, setCopied] = useState(false);
@@ -52,22 +60,25 @@ const GiftCards = () => {
     setSelectedAmount(null);
   };
 
-  const handlePurchase = async () => {
-    if (!finalAmount || finalAmount < 1) {
-      toast({
-        title: "Invalid Amount",
-        description: "Minimum gift card amount is ₹1",
-        variant: "destructive",
-      });
+  const handleOccasionSelect = (occasionId: string) => {
+    if (selectedOccasion === occasionId) {
+      setSelectedOccasion(null);
       return;
     }
+    setSelectedOccasion(occasionId);
+    const occasion = OCCASIONS.find(o => o.id === occasionId);
+    if (occasion && !giftMessage) {
+      setGiftMessage(occasion.message);
+    }
+  };
 
+  const handlePurchase = async () => {
+    if (!finalAmount || finalAmount < 1) {
+      toast({ title: "Invalid Amount", description: "Minimum gift card amount is ₹1", variant: "destructive" });
+      return;
+    }
     if (!purchaserName || !purchaserEmail) {
-      toast({
-        title: "Missing Information",
-        description: "Please enter your name and email",
-        variant: "destructive",
-      });
+      toast({ title: "Missing Information", description: "Please enter your name and email", variant: "destructive" });
       return;
     }
 
@@ -81,6 +92,12 @@ const GiftCards = () => {
       userId: user?.id,
       onSuccess: (giftCard) => {
         setPurchasedCard(giftCard);
+        // Store occasion in the gift card record
+        if (selectedOccasion) {
+          import("@/integrations/supabase/client").then(({ supabase }) => {
+            supabase.from("gift_cards").update({ occasion: selectedOccasion }).eq("code", giftCard.code).then(() => {});
+          });
+        }
       },
     });
   };
@@ -90,10 +107,7 @@ const GiftCards = () => {
       await navigator.clipboard.writeText(purchasedCard.code);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-      toast({
-        title: "Copied!",
-        description: "Gift card code copied to clipboard",
-      });
+      toast({ title: "Copied!", description: "Gift card code copied to clipboard" });
     }
   };
 
@@ -104,17 +118,16 @@ const GiftCards = () => {
     setRecipientName("");
     setRecipientEmail("");
     setGiftMessage("");
+    setSelectedOccasion(null);
     setCopied(false);
   };
 
   // Success Screen
   if (purchasedCard) {
+    const occasion = OCCASIONS.find(o => o.id === selectedOccasion);
     return (
       <div className="min-h-screen bg-gradient-to-b from-primary/5 to-background">
-        <SEO
-          title="Gift Card Purchased - Himsols Green Gift Cards"
-          description="Your green gift card has been successfully purchased."
-        />
+        <SEO title="Gift Card Purchased - Himsols Green Gift Cards" description="Your green gift card has been successfully purchased." />
         <Navbar />
         <main className="container mx-auto px-4 py-24">
           <div className="max-w-lg mx-auto">
@@ -124,55 +137,31 @@ const GiftCards = () => {
                   <CheckCircle className="h-8 w-8 text-primary" />
                 </div>
                 <CardTitle className="text-2xl text-primary">Purchase Successful! 🎉</CardTitle>
-                <CardDescription>
-                  Your Green Gift Card is ready
-                </CardDescription>
+                <CardDescription>Your Green Gift Card is ready</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6 pt-6">
-                {/* Gift Card Display */}
                 <div className="relative bg-gradient-to-br from-primary to-green-600 text-white rounded-xl p-6 shadow-lg">
                   <div className="absolute top-3 right-3">
-                    <Gift className="h-8 w-8 opacity-30" />
+                    {occasion ? <span className="text-3xl opacity-50">{occasion.emoji}</span> : <Gift className="h-8 w-8 opacity-30" />}
                   </div>
                   <div className="space-y-4">
                     <div className="flex items-center gap-2">
                       <TreePine className="h-5 w-5" />
                       <span className="font-medium">Himsols Green Gift Card</span>
                     </div>
+                    {occasion && <Badge className="bg-white/20 text-white border-white/30 text-xs">{occasion.label}</Badge>}
                     <div className="text-3xl font-bold">₹{purchasedCard.value.toLocaleString()}</div>
-                    <div className="font-mono text-xl tracking-wider bg-white/20 rounded-lg px-4 py-2 text-center">
-                      {purchasedCard.code}
-                    </div>
+                    <div className="font-mono text-xl tracking-wider bg-white/20 rounded-lg px-4 py-2 text-center">{purchasedCard.code}</div>
                     <div className="text-sm opacity-80">
-                      Valid until: {new Date(purchasedCard.expires_at).toLocaleDateString('en-IN', { 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                      })}
+                      Valid until: {new Date(purchasedCard.expires_at).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}
                     </div>
                   </div>
                 </div>
 
-                {/* Copy Button */}
-                <Button 
-                  onClick={copyToClipboard} 
-                  variant="outline" 
-                  className="w-full gap-2"
-                >
-                  {copied ? (
-                    <>
-                      <CheckCircle className="h-4 w-4 text-primary" />
-                      Copied!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="h-4 w-4" />
-                      Copy Code
-                    </>
-                  )}
+                <Button onClick={copyToClipboard} variant="outline" className="w-full gap-2">
+                  {copied ? (<><CheckCircle className="h-4 w-4 text-primary" /> Copied!</>) : (<><Copy className="h-4 w-4" /> Copy Code</>)}
                 </Button>
 
-                {/* Share Buttons */}
                 <div className="space-y-2">
                   <p className="text-sm text-center text-muted-foreground flex items-center justify-center gap-1">
                     <Share2 className="h-3 w-3" /> Share this gift card
@@ -188,7 +177,7 @@ const GiftCards = () => {
 
 Hi${recipientName ? ` ${recipientName}` : ''}!
 
-I've sent you a Green Gift Card worth *₹${purchasedCard.value}* to plant trees and make a difference! 🌳
+I've sent you a Green Gift Card worth *₹${purchasedCard.value}*${occasion ? ` for ${occasion.label}` : ''} 🌳
 
 *Gift Card Code:* ${purchasedCard.code}
 ${giftMessage ? `\n*Message:* ${giftMessage}\n` : ''}
@@ -196,7 +185,7 @@ ${giftMessage ? `\n*Message:* ${giftMessage}\n` : ''}
 1. Go to ${window.location.origin}/redeem-gift-card
 2. Enter the code: ${purchasedCard.code}
 3. Choose a campaign to support
-4. Plant trees and make an impact! 🌍
+4. Make an impact! 🌍
 
 Valid till: ${new Date(purchasedCard.expires_at).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}
 
@@ -206,17 +195,11 @@ Together, let's make Earth greener! 💚
                   />
                 </div>
 
-
-                {/* Actions */}
                 <div className="flex flex-col gap-3">
                   <Link to="/redeem-gift-card" className="w-full">
-                    <Button variant="default" className="w-full">
-                      Redeem Now
-                    </Button>
+                    <Button variant="default" className="w-full">Redeem Now</Button>
                   </Link>
-                  <Button variant="outline" onClick={resetForm} className="w-full">
-                    Buy Another Gift Card
-                  </Button>
+                  <Button variant="outline" onClick={resetForm} className="w-full">Buy Another Gift Card</Button>
                 </div>
               </CardContent>
             </Card>
@@ -237,15 +220,11 @@ Together, let's make Earth greener! 💚
       <Navbar />
       
       <main className="container mx-auto px-4 py-24">
-        {/* Hero Section */}
         <div className="text-center max-w-3xl mx-auto mb-12">
           <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
-            <Gift className="h-3 w-3 mr-1" />
-            Eco-Friendly Gifting
+            <Gift className="h-3 w-3 mr-1" /> Eco-Friendly Gifting
           </Badge>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Green Gift Cards 🌱
-          </h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Green Gift Cards 🌱</h1>
           <p className="text-lg text-muted-foreground">
             Give the gift of trees. Perfect for birthdays, anniversaries, or any occasion. 
             Redeemable for verified green campaigns in Himachal Pradesh.
@@ -253,16 +232,12 @@ Together, let's make Earth greener! 💚
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          {/* Left: Purchase Form */}
           <Card className="border-primary/20">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Gift className="h-5 w-5 text-primary" />
-                Buy Gift Card
+                <Gift className="h-5 w-5 text-primary" /> Buy Gift Card
               </CardTitle>
-              <CardDescription>
-                Select an amount and personalize your gift
-              </CardDescription>
+              <CardDescription>Select an amount and personalize your gift</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Amount Selection */}
@@ -294,39 +269,38 @@ Together, let's make Earth greener! 💚
                 </div>
               </div>
 
+              {/* Occasion Selection */}
+              <div className="space-y-3">
+                <Label className="flex items-center gap-2">🎉 Select Occasion (Optional)</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {OCCASIONS.map((occasion) => (
+                    <Button
+                      key={occasion.id}
+                      variant={selectedOccasion === occasion.id ? "default" : "outline"}
+                      onClick={() => handleOccasionSelect(occasion.id)}
+                      className="h-auto py-3 text-sm"
+                      size="sm"
+                    >
+                      {occasion.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
               {/* Purchaser Info */}
               <div className="space-y-3">
                 <Label>Your Details</Label>
-                <Input
-                  placeholder="Your Name *"
-                  value={purchaserName}
-                  onChange={(e) => setPurchaserName(e.target.value)}
-                />
-                <Input
-                  type="email"
-                  placeholder="Your Email *"
-                  value={purchaserEmail}
-                  onChange={(e) => setPurchaserEmail(e.target.value)}
-                />
+                <Input placeholder="Your Name *" value={purchaserName} onChange={(e) => setPurchaserName(e.target.value)} />
+                <Input type="email" placeholder="Your Email *" value={purchaserEmail} onChange={(e) => setPurchaserEmail(e.target.value)} />
               </div>
 
-              {/* Recipient Info (Optional) */}
+              {/* Recipient Info */}
               <div className="space-y-3">
                 <Label className="flex items-center gap-2">
-                  <Heart className="h-4 w-4 text-pink-500" />
-                  Gift To (Optional)
+                  <Heart className="h-4 w-4 text-pink-500" /> Gift To (Optional)
                 </Label>
-                <Input
-                  placeholder="Recipient Name"
-                  value={recipientName}
-                  onChange={(e) => setRecipientName(e.target.value)}
-                />
-                <Input
-                  type="email"
-                  placeholder="Recipient Email"
-                  value={recipientEmail}
-                  onChange={(e) => setRecipientEmail(e.target.value)}
-                />
+                <Input placeholder="Recipient Name" value={recipientName} onChange={(e) => setRecipientName(e.target.value)} />
+                <Input type="email" placeholder="Recipient Email" value={recipientEmail} onChange={(e) => setRecipientEmail(e.target.value)} />
                 <Textarea
                   placeholder="Add a personal message..."
                   value={giftMessage}
@@ -335,7 +309,6 @@ Together, let's make Earth greener! 💚
                 />
               </div>
 
-              {/* Purchase Button */}
               <Button 
                 className="w-full h-12 text-lg" 
                 onClick={handlePurchase}
@@ -343,47 +316,43 @@ Together, let's make Earth greener! 💚
               >
                 {isLoading ? "Processing..." : `🎁 Buy Gift Card - ₹${finalAmount.toLocaleString()}`}
               </Button>
-
             </CardContent>
           </Card>
 
           {/* Right: Benefits & Info */}
           <div className="space-y-6">
-            {/* Preview Card */}
             <div className="relative bg-gradient-to-br from-primary to-green-600 text-white rounded-xl p-6 shadow-lg">
               <div className="absolute top-3 right-3">
-                <Gift className="h-8 w-8 opacity-30" />
+                {selectedOccasion ? (
+                  <span className="text-3xl opacity-50">{OCCASIONS.find(o => o.id === selectedOccasion)?.emoji}</span>
+                ) : (
+                  <Gift className="h-8 w-8 opacity-30" />
+                )}
               </div>
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <TreePine className="h-5 w-5" />
                   <span className="font-medium">Himsols Green Gift Card</span>
                 </div>
-                <div className="text-3xl font-bold">
-                  ₹{finalAmount ? finalAmount.toLocaleString() : "---"}
-                </div>
-                <div className="font-mono text-xl tracking-wider bg-white/20 rounded-lg px-4 py-2 text-center">
-                  GC-XXXX-XXXX
-                </div>
-                {recipientName && (
-                  <p className="text-sm opacity-80">For: {recipientName}</p>
+                {selectedOccasion && (
+                  <Badge className="bg-white/20 text-white border-white/30 text-xs">
+                    {OCCASIONS.find(o => o.id === selectedOccasion)?.label}
+                  </Badge>
                 )}
+                <div className="text-3xl font-bold">₹{finalAmount ? finalAmount.toLocaleString() : "---"}</div>
+                <div className="font-mono text-xl tracking-wider bg-white/20 rounded-lg px-4 py-2 text-center">GC-XXXX-XXXX</div>
+                {recipientName && <p className="text-sm opacity-80">For: {recipientName}</p>}
               </div>
             </div>
 
-            {/* How to Use Gift Cards - Admin Controllable */}
             <GiftCardUsageSection />
 
-            {/* Already have a card? */}
             <Card className="bg-muted/50">
               <CardContent className="pt-6 text-center">
-                <p className="text-sm text-muted-foreground mb-3">
-                  Already have a gift card?
-                </p>
+                <p className="text-sm text-muted-foreground mb-3">Already have a gift card?</p>
                 <Link to="/redeem-gift-card">
                   <Button variant="outline" className="gap-2">
-                    <TreePine className="h-4 w-4" />
-                    Redeem Gift Card
+                    <TreePine className="h-4 w-4" /> Redeem Gift Card
                   </Button>
                 </Link>
               </CardContent>

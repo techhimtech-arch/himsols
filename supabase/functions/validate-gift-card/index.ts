@@ -28,26 +28,19 @@ serve(async (req) => {
       throw new Error("Gift card code is required");
     }
 
-    // Normalize code (uppercase, trim)
     const normalizedCode = code.trim().toUpperCase();
 
-    // Fetch gift card
+    // Fetch gift card with message, occasion, and purchaser info
     const { data: giftCard, error } = await supabase
       .from("gift_cards")
-      .select("id, code, value, balance, status, recipient_name, expires_at, created_at")
+      .select("id, code, value, balance, status, recipient_name, expires_at, created_at, gift_message, purchaser_name, occasion")
       .eq("code", normalizedCode)
       .single();
 
     if (error || !giftCard) {
       return new Response(
-        JSON.stringify({ 
-          valid: false, 
-          error: "Gift card not found" 
-        }),
-        {
-          status: 200,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
+        JSON.stringify({ valid: false, error: "Gift card not found" }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -56,61 +49,35 @@ serve(async (req) => {
     const expiresAt = new Date(giftCard.expires_at);
     
     if (expiresAt < now) {
-      // Update status to expired
       await supabase
         .from("gift_cards")
         .update({ status: "expired" })
         .eq("id", giftCard.id);
 
       return new Response(
-        JSON.stringify({ 
-          valid: false, 
-          error: "Gift card has expired" 
-        }),
-        {
-          status: 200,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
+        JSON.stringify({ valid: false, error: "Gift card has expired" }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Check status
     if (giftCard.status === "redeemed") {
       return new Response(
-        JSON.stringify({ 
-          valid: false, 
-          error: "Gift card has been fully redeemed" 
-        }),
-        {
-          status: 200,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
+        JSON.stringify({ valid: false, error: "Gift card has been fully redeemed" }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
     if (giftCard.status === "cancelled") {
       return new Response(
-        JSON.stringify({ 
-          valid: false, 
-          error: "Gift card has been cancelled" 
-        }),
-        {
-          status: 200,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
+        JSON.stringify({ valid: false, error: "Gift card has been cancelled" }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
     if (giftCard.balance <= 0) {
       return new Response(
-        JSON.stringify({ 
-          valid: false, 
-          error: "Gift card has no remaining balance" 
-        }),
-        {
-          status: 200,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
+        JSON.stringify({ valid: false, error: "Gift card has no remaining balance" }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -124,21 +91,18 @@ serve(async (req) => {
           balance: giftCard.balance,
           recipient_name: giftCard.recipient_name,
           expires_at: giftCard.expires_at,
+          gift_message: giftCard.gift_message,
+          purchaser_name: giftCard.purchaser_name,
+          occasion: giftCard.occasion,
         },
       }),
-      {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error: any) {
     console.error("Error validating gift card:", error);
     return new Response(
       JSON.stringify({ valid: false, error: error.message }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });
