@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -11,7 +12,8 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
-import { Heart, TreePine, ArrowRight, Wallet } from "lucide-react";
+import { Heart, TreePine, ArrowRight, Wallet, Download, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MobileCard } from "@/components/admin/MobileCard";
 
@@ -32,6 +34,34 @@ const MyContributions = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { toast } = useToast();
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+
+  const handleDownloadCertificate = async (donationId: string) => {
+    setDownloadingId(donationId);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const response = await supabase.functions.invoke("generate-donation-certificate", {
+        body: { donationId },
+      });
+      
+      if (response.error) throw new Error(response.error.message);
+      
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `HIMSOLS-Donation-Certificate.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      toast({ title: "Certificate Downloaded! 🎉" });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    } finally {
+      setDownloadingId(null);
+    }
+  };
 
   const { data: donations = [], isLoading } = useQuery({
     queryKey: ["my-contributions", user?.id],
@@ -206,11 +236,25 @@ const MyContributions = () => {
                   </div>
                   {getStatusBadge(donation.payment_status)}
                 </div>
-                <div className="flex justify-between items-center mt-2">
-                  <span className="text-xs text-muted-foreground">{donation.payment_mode}</span>
-                  <span className="font-bold text-primary">₹{Number(donation.amount).toLocaleString()}</span>
-                </div>
-              </MobileCard>
+                 <div className="flex justify-between items-center mt-2">
+                   <span className="text-xs text-muted-foreground">{donation.payment_mode}</span>
+                   <div className="flex items-center gap-2">
+                     {donation.payment_status === 'SUCCESS' && (
+                       <Button
+                         size="sm"
+                         variant="outline"
+                         className="h-7 text-xs gap-1"
+                         disabled={downloadingId === donation.id}
+                         onClick={() => handleDownloadCertificate(donation.id)}
+                       >
+                         {downloadingId === donation.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Download className="h-3 w-3" />}
+                         Certificate
+                       </Button>
+                     )}
+                     <span className="font-bold text-primary">₹{Number(donation.amount).toLocaleString()}</span>
+                   </div>
+                 </div>
+               </MobileCard>
             ))}
           </div>
         ) : (
@@ -219,12 +263,13 @@ const MyContributions = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Campaign</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Trees</TableHead>
-                    <TableHead>Mode</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Date</TableHead>
+                     <TableHead>Campaign</TableHead>
+                     <TableHead>Amount</TableHead>
+                     <TableHead>Trees</TableHead>
+                     <TableHead>Mode</TableHead>
+                     <TableHead>Status</TableHead>
+                     <TableHead>Date</TableHead>
+                     <TableHead>Certificate</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -247,10 +292,26 @@ const MyContributions = () => {
                         </TableCell>
                         <TableCell>{donation.payment_mode}</TableCell>
                         <TableCell>{getStatusBadge(donation.payment_status)}</TableCell>
-                        <TableCell>
-                          {format(new Date(donation.created_at), "dd MMM yyyy")}
-                        </TableCell>
-                      </TableRow>
+                         <TableCell>
+                           {format(new Date(donation.created_at), "dd MMM yyyy")}
+                         </TableCell>
+                         <TableCell>
+                           {donation.payment_status === 'SUCCESS' ? (
+                             <Button
+                               size="sm"
+                               variant="outline"
+                               className="h-8 gap-1"
+                               disabled={downloadingId === donation.id}
+                               onClick={() => handleDownloadCertificate(donation.id)}
+                             >
+                               {downloadingId === donation.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Download className="h-3 w-3" />}
+                               Download
+                             </Button>
+                           ) : (
+                             <span className="text-muted-foreground text-sm">—</span>
+                           )}
+                         </TableCell>
+                       </TableRow>
                     );
                   })}
                 </TableBody>
