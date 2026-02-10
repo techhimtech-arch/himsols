@@ -688,6 +688,7 @@ export type Database = {
           expires_at: string
           gift_message: string | null
           id: string
+          occasion: string | null
           payment_gateway: string | null
           payment_id: string | null
           purchaser_email: string | null
@@ -706,6 +707,7 @@ export type Database = {
           expires_at?: string
           gift_message?: string | null
           id?: string
+          occasion?: string | null
           payment_gateway?: string | null
           payment_id?: string | null
           purchaser_email?: string | null
@@ -724,6 +726,7 @@ export type Database = {
           expires_at?: string
           gift_message?: string | null
           id?: string
+          occasion?: string | null
           payment_gateway?: string | null
           payment_id?: string | null
           purchaser_email?: string | null
