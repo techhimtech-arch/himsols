@@ -63,11 +63,12 @@ const GiftCards = () => {
   const handleOccasionSelect = (occasionId: string) => {
     if (selectedOccasion === occasionId) {
       setSelectedOccasion(null);
+      setGiftMessage("");
       return;
     }
     setSelectedOccasion(occasionId);
     const occasion = OCCASIONS.find(o => o.id === occasionId);
-    if (occasion && !giftMessage) {
+    if (occasion) {
       setGiftMessage(occasion.message);
     }
   };
