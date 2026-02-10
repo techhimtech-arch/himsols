@@ -25,7 +25,15 @@ export const GiftCardsTab = () => {
     recipientName: "",
     recipientEmail: "",
     giftMessage: "",
+    occasion: "",
   });
+
+  const OCCASIONS = [
+    { id: "birthday", label: "🎂 Birthday", message: "Wishing you a very Happy Birthday! 🎉 May this green gift bring joy to you and our planet." },
+    { id: "wedding", label: "💒 Wedding", message: "Congratulations on your wedding! 💐 May your new journey together be as evergreen as the trees planted in your name." },
+    { id: "valentine", label: "❤️ Valentine", message: "Happy Valentine's Day! 🌹 A gift of love for you and for Mother Earth." },
+    { id: "festival", label: "🪔 Festival", message: "Wishing you a joyous festival season! 🎊 Celebrate with a gift that gives back to nature." },
+  ];
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -84,6 +92,7 @@ export const GiftCardsTab = () => {
           recipient_name: newCard.recipientName || null,
           recipient_email: newCard.recipientEmail || null,
           gift_message: newCard.giftMessage || null,
+          occasion: newCard.occasion || null,
           purchaser_name: "Admin",
           purchaser_email: "admin@himsols.com",
           payment_gateway: "admin_created",
@@ -97,7 +106,7 @@ export const GiftCardsTab = () => {
         description: `Code: ${codeData} - Value: ₹${amount.toLocaleString()}`,
       });
 
-      setNewCard({ value: "", recipientName: "", recipientEmail: "", giftMessage: "" });
+      setNewCard({ value: "", recipientName: "", recipientEmail: "", giftMessage: "", occasion: "" });
       setIsCreateDialogOpen(false);
       queryClient.invalidateQueries({ queryKey: ["admin-gift-cards"] });
     } catch (err: any) {
@@ -154,6 +163,28 @@ export const GiftCardsTab = () => {
                   onChange={(e) => setNewCard({ ...newCard, value: e.target.value })}
                   min={1}
                 />
+              </div>
+              <div className="space-y-2">
+                <Label>Occasion (Optional)</Label>
+                <div className="flex flex-wrap gap-2">
+                  {OCCASIONS.map((occ) => (
+                    <Button
+                      key={occ.id}
+                      type="button"
+                      size="sm"
+                      variant={newCard.occasion === occ.id ? "default" : "outline"}
+                      onClick={() => {
+                        if (newCard.occasion === occ.id) {
+                          setNewCard({ ...newCard, occasion: "", giftMessage: "" });
+                        } else {
+                          setNewCard({ ...newCard, occasion: occ.id, giftMessage: occ.message });
+                        }
+                      }}
+                    >
+                      {occ.label}
+                    </Button>
+                  ))}
+                </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="recipientName">Recipient Name (Optional)</Label>
