@@ -37,6 +37,9 @@ import Plants from "./pages/Plants";
 import PlantDetail from "./pages/PlantDetail";
 import GiftCards from "./pages/GiftCards";
 import RedeemGiftCard from "./pages/RedeemGiftCard";
+import TermsOfService from "./pages/TermsOfService";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import RefundPolicy from "./pages/RefundPolicy";
 
 const queryClient = new QueryClient();
 
@@ -84,6 +87,9 @@ const App = () => (
                     <Route path="/waste-management" element={<WasteManagement />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/corporate" element={<B2BCorporate />} />
+                    <Route path="/terms" element={<TermsOfService />} />
+                    <Route path="/privacy" element={<PrivacyPolicy />} />
+                    <Route path="/refund-policy" element={<RefundPolicy />} />
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>

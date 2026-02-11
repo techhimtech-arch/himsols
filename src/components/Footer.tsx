@@ -198,8 +198,21 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-border mt-6 md:mt-8 pt-6 md:pt-8 text-center">
-          <p className="text-muted-foreground text-xs md:text-sm">
+        <div className="border-t border-border mt-6 md:mt-8 pt-6 md:pt-8">
+          <div className="flex flex-wrap justify-center gap-3 md:gap-4 mb-3">
+            <Link to="/terms" className="text-muted-foreground hover:text-primary transition-colors text-xs">
+              Terms of Service
+            </Link>
+            <span className="text-muted-foreground/30">|</span>
+            <Link to="/privacy" className="text-muted-foreground hover:text-primary transition-colors text-xs">
+              Privacy Policy
+            </Link>
+            <span className="text-muted-foreground/30">|</span>
+            <Link to="/refund-policy" className="text-muted-foreground hover:text-primary transition-colors text-xs">
+              Refund Policy
+            </Link>
+          </div>
+          <p className="text-muted-foreground text-xs md:text-sm text-center">
             © {new Date().getFullYear()} Himsols. {t("footer.rights")}
           </p>
         </div>
