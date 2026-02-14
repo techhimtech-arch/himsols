@@ -308,14 +308,14 @@ export const MarketplaceProductsTab = () => {
                 <div className="space-y-2">
                   <Label>Seller</Label>
                   <Select
-                    value={formData.seller_id}
-                    onValueChange={(value) => setFormData({ ...formData, seller_id: value })}
+                    value={formData.seller_id || "none"}
+                    onValueChange={(value) => setFormData({ ...formData, seller_id: value === "none" ? "" : value })}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select seller" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">No seller</SelectItem>
+                      <SelectItem value="none">No seller</SelectItem>
                       {sellers?.map((seller) => (
                         <SelectItem key={seller.id} value={seller.id}>
                           {seller.name}

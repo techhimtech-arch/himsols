@@ -190,12 +190,12 @@ export const FooterLinksTab = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Icon</Label>
-                  <Select value={formData.icon} onValueChange={(val) => setFormData({ ...formData, icon: val })}>
+                  <Select value={formData.icon || "none"} onValueChange={(val) => setFormData({ ...formData, icon: val === "none" ? "" : val })}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select icon" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">None</SelectItem>
+                      <SelectItem value="none">None</SelectItem>
                       {ICONS.map((icon) => (
                         <SelectItem key={icon} value={icon}>{icon}</SelectItem>
                       ))}
