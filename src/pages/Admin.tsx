@@ -23,7 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Users, TreePine, TrendingUp, Loader2, Package, Settings, FileText, Image, Quote, Activity, Handshake, Store, Globe, BarChart3, Heart, Flower2, Gift, MessageSquare, Menu, Link2, Wallet } from "lucide-react";
+import { Shield, Users, TreePine, TrendingUp, Loader2, Package, Settings, FileText, Image, Quote, Activity, Handshake, Store, Globe, BarChart3, Heart, Flower2, Gift, MessageSquare, Menu, Link2, Wallet, Info } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlantsTab } from "@/components/admin/PlantsTab";
 import { OrdersTab } from "@/components/admin/OrdersTab";
@@ -49,6 +49,7 @@ import { GiftCardContentTab } from "@/components/admin/GiftCardContentTab";
 import { ContactMessagesTab } from "@/components/admin/ContactMessagesTab";
 import { NavigationTab } from "@/components/admin/NavigationTab";
 import { FooterLinksTab } from "@/components/admin/FooterLinksTab";
+import { AboutPageTab } from "@/components/admin/AboutPageTab";
 import { INDIAN_STATES, getDistrictsForState, IndianState } from "@/lib/constants";
 import { MobileCard, MobileCardRow, StatusBadge } from "@/components/admin/MobileCard";
 
@@ -653,6 +654,10 @@ const Admin = () => {
                   <Link2 className="h-3 w-3 md:h-4 md:w-4 mr-1" />
                   Footer
                 </TabsTrigger>
+                <TabsTrigger value="about-page" className="text-xs md:text-sm">
+                  <Info className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  About
+                </TabsTrigger>
                 <TabsTrigger value="settings" className="text-xs md:text-sm">
                   <Settings className="h-3 w-3 md:h-4 md:w-4 mr-1" />
                   Settings
@@ -981,6 +986,11 @@ const Admin = () => {
             {/* Footer Links Tab */}
             <TabsContent value="footer">
               <FooterLinksTab />
+            </TabsContent>
+
+            {/* About Page Tab */}
+            <TabsContent value="about-page">
+              <AboutPageTab />
             </TabsContent>
 
             {/* Settings Tab */}
