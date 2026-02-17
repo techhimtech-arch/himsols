@@ -10,39 +10,54 @@ import { LanguageProvider } from "@/hooks/useLanguage";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { useAnalytics } from "@/hooks/useAnalytics";
-import Index from "./pages/Index";
-import Services from "./pages/Services";
-import TreePlantation from "./pages/TreePlantation";
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogPost";
+import { lazy, Suspense } from "react";
 
-import Contact from "./pages/Contact";
-import Auth from "./pages/Auth";
-import Admin from "./pages/Admin";
-import Shop from "./pages/Shop";
-import Gallery from "./pages/Gallery";
-import OrderHistory from "./pages/OrderHistory";
-import Cart from "./pages/Cart";
-import WasteManagement from "./pages/WasteManagement";
-import Profile from "./pages/Profile";
-import NotFound from "./pages/NotFound";
-import B2BCorporate from "./pages/B2BCorporate";
-import Marketplace from "./pages/Marketplace";
-import MarketplaceProduct from "./pages/MarketplaceProduct";
-import MarketplaceCheckout from "./pages/MarketplaceCheckout";
-import Campaigns from "./pages/Campaigns";
-import CampaignDetail from "./pages/CampaignDetail";
-import MyContributions from "./pages/MyContributions";
-import Plants from "./pages/Plants";
-import PlantDetail from "./pages/PlantDetail";
-import GiftCards from "./pages/GiftCards";
-import RedeemGiftCard from "./pages/RedeemGiftCard";
-import TermsOfService from "./pages/TermsOfService";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import RefundPolicy from "./pages/RefundPolicy";
-import AboutUs from "./pages/AboutUs";
+// Eagerly load homepage for fast initial paint
+import Index from "./pages/Index";
+
+// Lazy load all other routes
+const Services = lazy(() => import("./pages/Services"));
+const TreePlantation = lazy(() => import("./pages/TreePlantation"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Auth = lazy(() => import("./pages/Auth"));
+const Admin = lazy(() => import("./pages/Admin"));
+const Shop = lazy(() => import("./pages/Shop"));
+const Gallery = lazy(() => import("./pages/Gallery"));
+const OrderHistory = lazy(() => import("./pages/OrderHistory"));
+const Cart = lazy(() => import("./pages/Cart"));
+const WasteManagement = lazy(() => import("./pages/WasteManagement"));
+const Profile = lazy(() => import("./pages/Profile"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const B2BCorporate = lazy(() => import("./pages/B2BCorporate"));
+const Marketplace = lazy(() => import("./pages/Marketplace"));
+const MarketplaceProduct = lazy(() => import("./pages/MarketplaceProduct"));
+const MarketplaceCheckout = lazy(() => import("./pages/MarketplaceCheckout"));
+const Campaigns = lazy(() => import("./pages/Campaigns"));
+const CampaignDetail = lazy(() => import("./pages/CampaignDetail"));
+const MyContributions = lazy(() => import("./pages/MyContributions"));
+const Plants = lazy(() => import("./pages/Plants"));
+const PlantDetail = lazy(() => import("./pages/PlantDetail"));
+const GiftCards = lazy(() => import("./pages/GiftCards"));
+const RedeemGiftCard = lazy(() => import("./pages/RedeemGiftCard"));
+const TermsOfService = lazy(() => import("./pages/TermsOfService"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const RefundPolicy = lazy(() => import("./pages/RefundPolicy"));
+const AboutUs = lazy(() => import("./pages/AboutUs"));
 
 const queryClient = new QueryClient();
+
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="animate-pulse flex flex-col items-center gap-3">
+      <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+        <span className="text-xl">🌱</span>
+      </div>
+      <p className="text-sm text-muted-foreground">Loading...</p>
+    </div>
+  </div>
+);
 
 const AnalyticsWrapper = ({ children }: { children: React.ReactNode }) => {
   useAnalytics();
@@ -62,39 +77,41 @@ const App = () => (
               <WhatsAppButton />
               <BrowserRouter>
                 <AnalyticsWrapper>
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/services" element={<Services />} />
-                    <Route path="/tree-plantation" element={<TreePlantation />} />
-                    <Route path="/blog" element={<Blog />} />
-                    <Route path="/blog/:slug" element={<BlogPost />} />
-                    <Route path="/marketplace" element={<Marketplace />} />
-                    <Route path="/marketplace/:id" element={<MarketplaceProduct />} />
-                    <Route path="/marketplace/checkout" element={<MarketplaceCheckout />} />
-                    <Route path="/plants" element={<Plants />} />
-                    <Route path="/plants/:id" element={<PlantDetail />} />
-                    <Route path="/campaigns" element={<Campaigns />} />
-                    <Route path="/campaign/:id" element={<CampaignDetail />} />
-                    <Route path="/my-contributions" element={<MyContributions />} />
-                    <Route path="/gift-cards" element={<GiftCards />} />
-                    <Route path="/redeem-gift-card" element={<RedeemGiftCard />} />
-                    <Route path="/contact" element={<Contact />} />
-                    <Route path="/auth" element={<Auth />} />
-                    <Route path="/admin" element={<Admin />} />
-                    <Route path="/shop" element={<Shop />} />
-                    <Route path="/gallery" element={<Gallery />} />
-                    <Route path="/order-history" element={<OrderHistory />} />
-                    <Route path="/cart" element={<Cart />} />
-                    <Route path="/waste-management" element={<WasteManagement />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/corporate" element={<B2BCorporate />} />
-                    <Route path="/terms" element={<TermsOfService />} />
-                    <Route path="/privacy" element={<PrivacyPolicy />} />
-                    <Route path="/refund-policy" element={<RefundPolicy />} />
-                    <Route path="/about" element={<AboutUs />} />
-                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
+                  <Suspense fallback={<PageLoader />}>
+                    <Routes>
+                      <Route path="/" element={<Index />} />
+                      <Route path="/services" element={<Services />} />
+                      <Route path="/tree-plantation" element={<TreePlantation />} />
+                      <Route path="/blog" element={<Blog />} />
+                      <Route path="/blog/:slug" element={<BlogPost />} />
+                      <Route path="/marketplace" element={<Marketplace />} />
+                      <Route path="/marketplace/:id" element={<MarketplaceProduct />} />
+                      <Route path="/marketplace/checkout" element={<MarketplaceCheckout />} />
+                      <Route path="/plants" element={<Plants />} />
+                      <Route path="/plants/:id" element={<PlantDetail />} />
+                      <Route path="/campaigns" element={<Campaigns />} />
+                      <Route path="/campaign/:id" element={<CampaignDetail />} />
+                      <Route path="/my-contributions" element={<MyContributions />} />
+                      <Route path="/gift-cards" element={<GiftCards />} />
+                      <Route path="/redeem-gift-card" element={<RedeemGiftCard />} />
+                      <Route path="/contact" element={<Contact />} />
+                      <Route path="/auth" element={<Auth />} />
+                      <Route path="/admin" element={<Admin />} />
+                      <Route path="/shop" element={<Shop />} />
+                      <Route path="/gallery" element={<Gallery />} />
+                      <Route path="/order-history" element={<OrderHistory />} />
+                      <Route path="/cart" element={<Cart />} />
+                      <Route path="/waste-management" element={<WasteManagement />} />
+                      <Route path="/profile" element={<Profile />} />
+                      <Route path="/corporate" element={<B2BCorporate />} />
+                      <Route path="/terms" element={<TermsOfService />} />
+                      <Route path="/privacy" element={<PrivacyPolicy />} />
+                      <Route path="/refund-policy" element={<RefundPolicy />} />
+                      <Route path="/about" element={<AboutUs />} />
+                      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </Suspense>
                 </AnalyticsWrapper>
               </BrowserRouter>
             </TooltipProvider>

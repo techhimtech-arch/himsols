@@ -148,7 +148,12 @@ export const Navbar = () => {
                 {t("nav.admin")}
               </Link>
             )}
-            <div className="flex flex-col gap-4 pt-4">
+            <div className="pt-4 space-y-3">
+              <Link to="/shop" onClick={() => setIsMenuOpen(false)}>
+                <Button className="w-full gap-2">
+                  🌱 Plant Now
+                </Button>
+              </Link>
               <CartSheet />
               {user ? (
                 <>
