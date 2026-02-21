@@ -66,6 +66,12 @@ const translations: Record<Language, Record<string, string>> = {
     "services.feature.cleanupCampaigns": "Cleanup campaigns",
     "services.feature.eduWorkshops": "Educational workshops",
     "services.feature.networking": "Community networking",
+    "services.villageGreening": "Village Greening Programs",
+    "services.villageGreeningDesc": "Structured village-level greening campaigns connecting CSR partners, local nurseries, and farmers. We enable long-term environmental programs with digital tracking and survival monitoring.",
+    "services.feature.villageCampaigns": "Village-level campaign registration",
+    "services.feature.nurseryPartners": "Verified local nursery partnerships",
+    "services.feature.survivalTracking": "Post-plantation survival tracking",
+    "services.feature.impactDashboard": "Digital impact dashboards for CSR",
     
     // Stats Section
     "stats.treesPlanted": "Trees Planted",
@@ -275,6 +281,12 @@ const translations: Record<Language, Record<string, string>> = {
     "services.feature.cleanupCampaigns": "सफाई अभियान",
     "services.feature.eduWorkshops": "शैक्षिक कार्यशालाएं",
     "services.feature.networking": "सामुदायिक नेटवर्किंग",
+    "services.villageGreening": "ग्राम हरियाली कार्यक्रम",
+    "services.villageGreeningDesc": "CSR भागीदारों, स्थानीय नर्सरी और किसानों को जोड़ने वाले संरचित गांव-स्तरीय हरियाली अभियान। डिजिटल ट्रैकिंग और जीवित रहने की निगरानी के साथ दीर्घकालिक पर्यावरण कार्यक्रम।",
+    "services.feature.villageCampaigns": "गांव-स्तरीय अभियान पंजीकरण",
+    "services.feature.nurseryPartners": "सत्यापित स्थानीय नर्सरी साझेदारी",
+    "services.feature.survivalTracking": "वृक्षारोपण के बाद जीवित रहने की ट्रैकिंग",
+    "services.feature.impactDashboard": "CSR के लिए डिजिटल प्रभाव डैशबोर्ड",
     
     // Stats Section
     "stats.treesPlanted": "पेड़ लगाए गए",

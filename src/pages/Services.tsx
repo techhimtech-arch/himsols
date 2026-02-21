@@ -2,7 +2,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { TreePine, Recycle, BookOpen, Calendar, CheckCircle } from "lucide-react";
+import { TreePine, Recycle, BookOpen, Calendar, CheckCircle, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/hooks/useLanguage";
 
@@ -61,6 +61,19 @@ const Services = () => {
       ],
       color: "hsl(280, 60%, 50%)",
       link: "/contact",
+    },
+    {
+      icon: <MapPin className="h-12 w-12" />,
+      titleKey: "services.villageGreening",
+      descKey: "services.villageGreeningDesc",
+      features: [
+        "services.feature.villageCampaigns",
+        "services.feature.nurseryPartners",
+        "services.feature.survivalTracking",
+        "services.feature.impactDashboard",
+      ],
+      color: "hsl(160, 50%, 40%)",
+      link: "/campaigns",
     },
   ];
 

@@ -3,20 +3,20 @@ import { Check, Quote } from "lucide-react";
 
 const trustPoints = [
   {
-    text: "Real farmers, real plantations",
-    description: "Every tree is planted by local farmers in rural Himachal Pradesh",
+    text: "Focus on survival, not just planting",
+    description: "We track every tree post-plantation to ensure long-term survival — not just photo uploads",
   },
   {
     text: "No middlemen exploitation",
     description: "Direct support to farming communities without intermediaries",
   },
   {
-    text: "Transparent impact reports",
-    description: "Photo proof, GPS location, and digital certificates for every tree",
+    text: "Rural employment generation",
+    description: "Creating green livelihood opportunities for rural youth and farmers",
   },
   {
-    text: "Eco-friendly & ethical",
-    description: "Sustainable practices that benefit both nature and communities",
+    text: "Village-level structured programs",
+    description: "Organized greening campaigns at the village level with digital tracking and reporting",
   },
 ];
 
