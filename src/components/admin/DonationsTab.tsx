@@ -5,10 +5,12 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { MobileCard } from "./MobileCard";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { IndianRupee, CreditCard, Gift } from "lucide-react";
+import { IndianRupee, CreditCard, Gift, Download, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 type PaymentStatus = 'PENDING' | 'SUCCESS' | 'FAILED' | 'REFUNDED';
 type PaymentMode = 'DIRECT' | 'GIFT_CARD';
@@ -30,12 +32,32 @@ interface Donation {
   profiles?: { full_name: string; email: string } | null;
 }
 
+interface Campaign {
+  id: string;
+  title: string;
+}
+
 export const DonationsTab = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [campaignFilter, setCampaignFilter] = useState<string>("all");
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const isMobile = useIsMobile();
+  const { toast } = useToast();
+
+  const { data: campaigns = [] } = useQuery({
+    queryKey: ["admin-campaigns-list"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("campaigns")
+        .select("id, title")
+        .order("title");
+      if (error) throw error;
+      return data as Campaign[];
+    },
+  });
 
   const { data: donations = [], isLoading } = useQuery({
-    queryKey: ["admin-donations", statusFilter],
+    queryKey: ["admin-donations", statusFilter, campaignFilter],
     queryFn: async () => {
       let query = supabase
         .from("donations")
@@ -47,7 +69,10 @@ export const DonationsTab = () => {
         .order("created_at", { ascending: false });
 
       if (statusFilter !== "all") {
-        query = query.eq("payment_status", statusFilter as 'PENDING' | 'SUCCESS' | 'FAILED' | 'REFUNDED');
+        query = query.eq("payment_status", statusFilter as PaymentStatus);
+      }
+      if (campaignFilter !== "all") {
+        query = query.eq("campaign_id", campaignFilter);
       }
 
       const { data, error } = await query;
@@ -55,6 +80,31 @@ export const DonationsTab = () => {
       return data as unknown as Donation[];
     },
   });
+
+  const handleDownloadCertificate = async (donationId: string) => {
+    setDownloadingId(donationId);
+    try {
+      const response = await supabase.functions.invoke("generate-donation-certificate", {
+        body: { donationId },
+      });
+      
+      if (response.error) throw new Error(response.error.message);
+      
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `HIMSOLS-Donation-Certificate.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      toast({ title: "Certificate Downloaded! 🎉" });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    } finally {
+      setDownloadingId(null);
+    }
+  };
 
   const getStatusBadge = (status: PaymentStatus) => {
     const config: Record<PaymentStatus, { variant: "default" | "secondary" | "destructive" | "outline"; label: string }> = {
@@ -89,20 +139,34 @@ export const DonationsTab = () => {
           <h2 className="text-xl font-semibold">Donations</h2>
           <p className="text-sm text-muted-foreground">
             Total Collected: <span className="font-semibold text-primary">₹{totalAmount.toLocaleString()}</span>
+            {" · "}{donations.filter(d => d.payment_status === 'SUCCESS').length} successful
           </p>
         </div>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-40">
-            <SelectValue placeholder="Filter by status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="SUCCESS">Success</SelectItem>
-            <SelectItem value="PENDING">Pending</SelectItem>
-            <SelectItem value="FAILED">Failed</SelectItem>
-            <SelectItem value="REFUNDED">Refunded</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex gap-2 flex-wrap">
+          <Select value={campaignFilter} onValueChange={setCampaignFilter}>
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Filter by campaign" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Campaigns</SelectItem>
+              {campaigns.map((c) => (
+                <SelectItem key={c.id} value={c.id}>{c.title}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="SUCCESS">Success</SelectItem>
+              <SelectItem value="PENDING">Pending</SelectItem>
+              <SelectItem value="FAILED">Failed</SelectItem>
+              <SelectItem value="REFUNDED">Refunded</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {isMobile ? (
@@ -125,7 +189,20 @@ export const DonationsTab = () => {
                   {getPaymentModeIcon(donation.payment_mode)}
                   <span className="text-xs">{donation.payment_mode}</span>
                 </div>
-                <span className="font-semibold text-primary">₹{Number(donation.amount).toLocaleString()}</span>
+                <div className="flex items-center gap-2">
+                  {donation.payment_status === 'SUCCESS' && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-7 text-xs gap-1"
+                      disabled={downloadingId === donation.id}
+                      onClick={() => handleDownloadCertificate(donation.id)}
+                    >
+                      {downloadingId === donation.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Download className="h-3 w-3" />}
+                    </Button>
+                  )}
+                  <span className="font-semibold text-primary">₹{Number(donation.amount).toLocaleString()}</span>
+                </div>
               </div>
               <div className="text-xs text-muted-foreground">
                 {format(new Date(donation.created_at), "dd MMM yyyy, hh:mm a")}
@@ -145,6 +222,7 @@ export const DonationsTab = () => {
                   <TableHead>Mode</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Date</TableHead>
+                  <TableHead>Certificate</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -174,11 +252,27 @@ export const DonationsTab = () => {
                     <TableCell className="text-sm">
                       {format(new Date(donation.created_at), "dd MMM yyyy")}
                     </TableCell>
+                    <TableCell>
+                      {donation.payment_status === 'SUCCESS' ? (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-8 gap-1"
+                          disabled={downloadingId === donation.id}
+                          onClick={() => handleDownloadCertificate(donation.id)}
+                        >
+                          {downloadingId === donation.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Download className="h-3 w-3" />}
+                          PDF
+                        </Button>
+                      ) : (
+                        <span className="text-muted-foreground text-sm">—</span>
+                      )}
+                    </TableCell>
                   </TableRow>
                 ))}
                 {donations.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                       No donations yet.
                     </TableCell>
                   </TableRow>
