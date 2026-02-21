@@ -1,64 +1,98 @@
 
 
-# Himsols Website x Pitch Alignment Plan
+# Sab Features Ek Saath - Complete Green Infrastructure System
 
-## Goal
-Update the website to reflect the pitch narrative so that when jury/investors visit the site, they see the same story. Focus on content alignment and adding missing narrative sections.
+## Kya Banana Hai
 
-## Changes Overview
+Website pe jo bhi claim kiya hai pitch mein - Village Onboarding, CSR Partner Onboarding, Survival Tracking, Nursery Partnerships - sab ko real working features banana hai. Abhi sirf content hai, functionality nahi hai.
 
-### 1. About Us Page Overhaul
-Replace current generic About Us content with the pitch's powerful narrative structure:
-- **Problem Statement section**: "India plants millions of trees but most don't survive"
-- **Solution section**: The 4-pillar Himsols model (farmers + CSR + tracking + employment)
-- **How It Works**: Village campaign registration flow (4 steps from pitch)
-- **Impact Numbers section**: Use milestone items from database but add pitch framing
-- **Vision section**: "Every village should have a digital green identity"
+## 4 Major Systems Banenge
 
-This will use the existing `homepage_sections` and `homepage_items` database tables with new section keys.
+### 1. Village Onboarding System
+- Ek naya "villages" table banega database mein
+- Public form jahan village/panchayat register kar sake (village name, district, state, contact person, phone, trees needed)
+- Admin panel mein "Villages" tab add hoga jahan admin approve/reject/manage kare
+- Village ka status track hoga: registered -> approved -> active -> campaign_linked
 
-### 2. Homepage Hero & Trust Section Updates
-- Update `HeroSection.tsx` tagline to include "plant survival" language from pitch
-- Update `WhyTrustSection.tsx` trust points to match pitch claims:
-  - "No middlemen" stays
-  - Add "Focus on survival, not just planting"
-  - Add "Rural employment generation"
-  - Add "Village-level structured programs"
+### 2. CSR Partner Onboarding System  
+- "csr_partners" table banega
+- Public "/partner-with-us" page banega jahan companies/NGOs sign up kare (company name, type, contact person, email, phone, CSR budget range, interest area)
+- Admin mein "CSR Partners" tab add hoga
+- Partner status: inquiry -> contacted -> onboarded -> active
 
-### 3. New "Impact Dashboard" Section on Homepage
-Create a public-facing impact summary section showing:
-- Trees planted (from live_stats table)
-- Villages covered
-- Farmers supported  
-- Survival rate percentage
-This data already exists in the `live_stats` table - just needs better presentation matching the pitch.
+### 3. Tree Survival Tracking System
+- "survival_updates" table banega jo existing plantation_photos + tree_plantation_requests se link hoga
+- Admin panel mein jab order fulfill ho, toh uske baad periodic survival updates add kar sake (photo, health status: healthy/weak/dead, height, notes)
+- Public "Track Your Tree" page pe survival history dikhe with photos
+- Automatic survival rate calculation based on updates
 
-### 4. Services Page Update
-Add "Village Greening Programs" as a new service card in `Services.tsx` to match the pitch's core offering of structured village campaigns.
+### 4. Nursery Partnership Management
+- "nurseries" table banega (name, location, contact, specialization, verified status)
+- Admin mein "Nurseries" tab add hoga
+- Villages aur campaigns ko nurseries se link kar sake
+
+## New Pages (Public)
+1. **`/partner-with-us`** - CSR/NGO/Institution onboarding form
+2. **`/village-register`** - Village/Panchayat registration form  
+3. Update existing **`/track`** page to show survival updates
+
+## Admin Panel New Tabs
+1. **Villages Tab** - Manage registered villages
+2. **CSR Partners Tab** - Manage partner inquiries
+3. **Nurseries Tab** - Manage nursery partnerships
+4. **Survival Updates** - Add tree health updates to fulfilled orders
+
+## Live Stats Auto-Update
+- About page aur homepage pe stats database se automatically calculate honge (total villages, total partners, survival rate %)
 
 ---
 
 ## Technical Details
 
+### Database Tables (New)
+
+**villages**
+- id, name, district, state, block, contact_person, phone, email
+- population (approx), current_tree_count, trees_requested
+- status (registered/approved/active/inactive)
+- registered_at, approved_at, notes
+- RLS: Anyone can INSERT (register), admins can SELECT/UPDATE/DELETE
+
+**csr_partners**
+- id, company_name, company_type (CSR/NGO/Educational/Panchayat/Other)
+- contact_person, email, phone, website
+- interest_area, budget_range, message
+- status (inquiry/contacted/onboarded/active)
+- RLS: Anyone can INSERT (register), admins can SELECT/UPDATE/DELETE
+
+**nurseries**
+- id, name, location, district, state
+- contact_person, phone, specialization
+- is_verified, is_active
+- RLS: Admins only for all operations, public SELECT for active ones
+
+**survival_updates**
+- id, order_id (links to orders table), request_id (links to tree_plantation_requests)
+- photo_url, health_status (healthy/weak/dead), height_cm
+- notes, update_date, uploaded_by
+- RLS: Admins can manage, users can view their own order's updates, public can view by tracking_id
+
+### Files to Create
+1. `src/pages/PartnerWithUs.tsx` - CSR partner registration form
+2. `src/pages/VillageRegister.tsx` - Village registration form
+3. `src/components/admin/VillagesTab.tsx` - Admin village management
+4. `src/components/admin/CSRPartnersTab.tsx` - Admin CSR partner management
+5. `src/components/admin/NurseriesTab.tsx` - Admin nursery management
+
 ### Files to Modify
-1. **`src/pages/AboutUs.tsx`** - Major rewrite with pitch narrative sections (Problem, Solution, How It Works, Market, Impact, Vision). Will still fetch from `homepage_sections` table but add hardcoded pitch content as fallback.
-
-2. **`src/components/home/HeroSection.tsx`** - Minor text updates:
-   - Subtitle: Add "with verified survival tracking" 
-   - Trust line: "Focused on tree survival, not just plantation"
-
-3. **`src/components/home/WhyTrustSection.tsx`** - Update trust points array to match pitch claims
-
-4. **`src/pages/Services.tsx`** - Add 5th service card for "Village Greening Programs"
-
-5. **`src/components/home/LiveStatsSection.tsx`** - Add "Survival Rate" and "Villages Covered" if available in live_stats
-
-### Database Changes
-- No schema changes needed - existing `homepage_sections`, `homepage_items`, and `live_stats` tables can support all content
-- New section_key values may need to be inserted via admin panel for About Us sections
+1. `src/App.tsx` - Add new routes (/partner-with-us, /village-register)
+2. `src/pages/Admin.tsx` - Add new admin tabs (Villages, CSR Partners, Nurseries)
+3. `src/pages/TrackRequest.tsx` - Add survival update history display
+4. `src/components/admin/OrdersTab.tsx` - Add "Add Survival Update" button on fulfilled orders
 
 ### No Breaking Changes
-- All updates are content/text changes
-- Existing functionality remains untouched
-- Admin panel can still manage all dynamic content
+- All existing functionality stays as is
+- New tables with proper RLS
+- New pages are additive
+- Existing admin tabs remain unchanged
 
