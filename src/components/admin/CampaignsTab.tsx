@@ -112,6 +112,22 @@ export const CampaignsTab = () => {
     },
   });
 
+  const { data: campaignDonors = [] } = useQuery({
+    queryKey: ["campaign-donors", selectedCampaign?.id],
+    enabled: !!selectedCampaign,
+    queryFn: async () => {
+      if (!selectedCampaign) return [];
+      const { data, error } = await supabase
+        .from("donations")
+        .select("donor_name, donor_email, amount, payment_mode, created_at")
+        .eq("campaign_id", selectedCampaign.id)
+        .eq("payment_status", "SUCCESS")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
   const saveMutation = useMutation({
     mutationFn: async (data: CampaignFormData) => {
       const payload = {
@@ -419,6 +435,30 @@ export const CampaignsTab = () => {
                   <span>Contributors: {donationStats[selectedCampaign.id]?.count || 0}</span>
                 </div>
               </div>
+
+              {campaignDonors.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="font-medium text-sm flex items-center gap-2">
+                    <Users className="h-4 w-4" /> Contributors List
+                  </h4>
+                  <div className="max-h-48 overflow-y-auto border rounded-lg divide-y">
+                    {campaignDonors.map((donor, idx) => (
+                      <div key={idx} className="flex justify-between items-center px-3 py-2 text-sm">
+                        <div>
+                          <div className="font-medium">{donor.donor_name || "Anonymous"}</div>
+                          <div className="text-xs text-muted-foreground">{donor.donor_email}</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-medium">₹{Number(donor.amount).toLocaleString()}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {donor.payment_mode === 'GIFT_CARD' ? 'Gift Card' : String(donor.payment_mode) === 'WALLET' ? 'Wallet' : 'Direct'}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div className="text-xs text-muted-foreground space-y-1">
                 <p>Created: {format(new Date(selectedCampaign.created_at), "dd MMM yyyy")}</p>
