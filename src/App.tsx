@@ -45,6 +45,8 @@ const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const RefundPolicy = lazy(() => import("./pages/RefundPolicy"));
 const AboutUs = lazy(() => import("./pages/AboutUs"));
+const VillageRegister = lazy(() => import("./pages/VillageRegister"));
+const PartnerWithUs = lazy(() => import("./pages/PartnerWithUs"));
 
 const queryClient = new QueryClient();
 
@@ -108,6 +110,8 @@ const App = () => (
                       <Route path="/privacy" element={<PrivacyPolicy />} />
                       <Route path="/refund-policy" element={<RefundPolicy />} />
                       <Route path="/about" element={<AboutUs />} />
+                      <Route path="/village-register" element={<VillageRegister />} />
+                      <Route path="/partner-with-us" element={<PartnerWithUs />} />
                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                       <Route path="*" element={<NotFound />} />
                     </Routes>

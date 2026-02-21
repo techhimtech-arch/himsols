@@ -431,6 +431,57 @@ export type Database = {
         }
         Relationships: []
       }
+      csr_partners: {
+        Row: {
+          budget_range: string | null
+          company_name: string
+          company_type: string
+          contact_person: string
+          created_at: string
+          email: string
+          id: string
+          interest_area: string | null
+          message: string | null
+          notes: string | null
+          phone: string
+          status: string
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          budget_range?: string | null
+          company_name: string
+          company_type?: string
+          contact_person: string
+          created_at?: string
+          email: string
+          id?: string
+          interest_area?: string | null
+          message?: string | null
+          notes?: string | null
+          phone: string
+          status?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          budget_range?: string | null
+          company_name?: string
+          company_type?: string
+          contact_person?: string
+          created_at?: string
+          email?: string
+          id?: string
+          interest_area?: string | null
+          message?: string | null
+          notes?: string | null
+          phone?: string
+          status?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       donations: {
         Row: {
           amount: number
@@ -1059,6 +1110,54 @@ export type Database = {
           },
         ]
       }
+      nurseries: {
+        Row: {
+          contact_person: string
+          created_at: string
+          district: string | null
+          id: string
+          is_active: boolean | null
+          is_verified: boolean | null
+          location: string
+          name: string
+          notes: string | null
+          phone: string
+          specialization: string | null
+          state: string | null
+          updated_at: string
+        }
+        Insert: {
+          contact_person: string
+          created_at?: string
+          district?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_verified?: boolean | null
+          location: string
+          name: string
+          notes?: string | null
+          phone: string
+          specialization?: string | null
+          state?: string | null
+          updated_at?: string
+        }
+        Update: {
+          contact_person?: string
+          created_at?: string
+          district?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_verified?: boolean | null
+          location?: string
+          name?: string
+          notes?: string | null
+          phone?: string
+          specialization?: string | null
+          state?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           created_at: string | null
@@ -1435,6 +1534,63 @@ export type Database = {
         }
         Relationships: []
       }
+      survival_updates: {
+        Row: {
+          created_at: string
+          health_status: string
+          height_cm: number | null
+          id: string
+          notes: string | null
+          order_id: string | null
+          photo_url: string | null
+          request_id: string | null
+          update_date: string
+          updated_at: string
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string
+          health_status?: string
+          height_cm?: number | null
+          id?: string
+          notes?: string | null
+          order_id?: string | null
+          photo_url?: string | null
+          request_id?: string | null
+          update_date?: string
+          updated_at?: string
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string
+          health_status?: string
+          height_cm?: number | null
+          id?: string
+          notes?: string | null
+          order_id?: string | null
+          photo_url?: string | null
+          request_id?: string | null
+          update_date?: string
+          updated_at?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "survival_updates_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "survival_updates_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "tree_plantation_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       testimonials: {
         Row: {
           avatar: string | null
@@ -1623,6 +1779,66 @@ export type Database = {
           role?: Database["public"]["Enums"]["app_role"]
           state?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      villages: {
+        Row: {
+          approved_at: string | null
+          block: string | null
+          contact_person: string
+          created_at: string
+          current_tree_count: number | null
+          district: string
+          email: string | null
+          id: string
+          name: string
+          notes: string | null
+          phone: string
+          population: number | null
+          registered_at: string
+          state: string
+          status: string
+          trees_requested: number | null
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          block?: string | null
+          contact_person: string
+          created_at?: string
+          current_tree_count?: number | null
+          district: string
+          email?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          phone: string
+          population?: number | null
+          registered_at?: string
+          state?: string
+          status?: string
+          trees_requested?: number | null
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          block?: string | null
+          contact_person?: string
+          created_at?: string
+          current_tree_count?: number | null
+          district?: string
+          email?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string
+          population?: number | null
+          registered_at?: string
+          state?: string
+          status?: string
+          trees_requested?: number | null
+          updated_at?: string
         }
         Relationships: []
       }
