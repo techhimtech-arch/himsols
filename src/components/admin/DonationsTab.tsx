@@ -63,8 +63,7 @@ export const DonationsTab = () => {
         .from("donations")
         .select(`
           *,
-          campaigns(title),
-          profiles:user_id(full_name, email)
+          campaigns(title)
         `)
         .order("created_at", { ascending: false });
 
@@ -176,7 +175,7 @@ export const DonationsTab = () => {
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="font-medium">
-                    {donation.donor_name || donation.profiles?.full_name || "Anonymous"}
+                    {donation.donor_name || "Anonymous"}
                   </h3>
                   <p className="text-sm text-muted-foreground">
                     {donation.campaigns?.title || "General Donation"}
@@ -231,10 +230,10 @@ export const DonationsTab = () => {
                     <TableCell>
                       <div>
                         <div className="font-medium">
-                          {donation.donor_name || donation.profiles?.full_name || "Anonymous"}
+                          {donation.donor_name || "Anonymous"}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          {donation.donor_email || donation.profiles?.email}
+                          {donation.donor_email || "—"}
                         </div>
                       </div>
                     </TableCell>
