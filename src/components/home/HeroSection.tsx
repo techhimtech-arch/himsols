@@ -39,7 +39,7 @@ export const HeroSection = memo(() => {
 
             {/* Tagline */}
             <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl mx-auto lg:mx-0">
-              Himsols helps you plant real trees with local farmers in Himachal Pradesh — track impact, receive certificates, and create a greener future.
+              Himsols helps you plant real trees with local farmers in Himachal Pradesh — with verified survival tracking, digital certificates, and transparent impact reporting.
             </p>
 
             {/* Primary CTAs */}
@@ -66,7 +66,7 @@ export const HeroSection = memo(() => {
             <div className="pt-4 space-y-3">
               <p className="text-sm font-medium text-foreground flex items-center justify-center lg:justify-start gap-2">
                 <span className="text-lg">🌱</span>
-                Trusted by individuals, farmers & institutions
+                Focused on tree survival, not just plantation
               </p>
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1.5">
