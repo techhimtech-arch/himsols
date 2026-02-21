@@ -23,7 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Users, TreePine, TrendingUp, Loader2, Package, Settings, FileText, Image, Quote, Activity, Handshake, Store, Globe, BarChart3, Heart, Flower2, Gift, MessageSquare, Menu, Link2, Wallet, Info } from "lucide-react";
+import { Shield, Users, TreePine, TrendingUp, Loader2, Package, Settings, FileText, Image, Quote, Activity, Handshake, Store, Globe, BarChart3, Heart, Flower2, Gift, MessageSquare, Menu, Link2, Wallet, Info, MapPin, Building2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlantsTab } from "@/components/admin/PlantsTab";
 import { OrdersTab } from "@/components/admin/OrdersTab";
@@ -50,6 +50,9 @@ import { ContactMessagesTab } from "@/components/admin/ContactMessagesTab";
 import { NavigationTab } from "@/components/admin/NavigationTab";
 import { FooterLinksTab } from "@/components/admin/FooterLinksTab";
 import { AboutPageTab } from "@/components/admin/AboutPageTab";
+import { VillagesTab } from "@/components/admin/VillagesTab";
+import { CSRPartnersTab } from "@/components/admin/CSRPartnersTab";
+import { NurseriesTab } from "@/components/admin/NurseriesTab";
 import { INDIAN_STATES, getDistrictsForState, IndianState } from "@/lib/constants";
 import { MobileCard, MobileCardRow, StatusBadge } from "@/components/admin/MobileCard";
 
@@ -658,6 +661,18 @@ const Admin = () => {
                   <Info className="h-3 w-3 md:h-4 md:w-4 mr-1" />
                   About
                 </TabsTrigger>
+                <TabsTrigger value="villages" className="text-xs md:text-sm">
+                  <MapPin className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  Villages
+                </TabsTrigger>
+                <TabsTrigger value="csr-partners" className="text-xs md:text-sm">
+                  <Building2 className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  CSR
+                </TabsTrigger>
+                <TabsTrigger value="nurseries" className="text-xs md:text-sm">
+                  <Flower2 className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  Nurseries
+                </TabsTrigger>
                 <TabsTrigger value="settings" className="text-xs md:text-sm">
                   <Settings className="h-3 w-3 md:h-4 md:w-4 mr-1" />
                   Settings
@@ -991,6 +1006,21 @@ const Admin = () => {
             {/* About Page Tab */}
             <TabsContent value="about-page">
               <AboutPageTab />
+            </TabsContent>
+
+            {/* Villages Tab */}
+            <TabsContent value="villages">
+              <VillagesTab />
+            </TabsContent>
+
+            {/* CSR Partners Tab */}
+            <TabsContent value="csr-partners">
+              <CSRPartnersTab />
+            </TabsContent>
+
+            {/* Nurseries Tab */}
+            <TabsContent value="nurseries">
+              <NurseriesTab />
             </TabsContent>
 
             {/* Settings Tab */}
