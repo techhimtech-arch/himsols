@@ -146,7 +146,7 @@ serve(async (req) => {
     });
 
     // Donation amount
-    const amountText = `Donation Amount: ₹${donation.amount.toLocaleString()}`;
+    const amountText = `Donation Amount: Rs. ${Number(donation.amount).toLocaleString("en-IN")}`;
     page.drawText(amountText, {
       x: width / 2 - helveticaBold.widthOfTextAtSize(amountText, 16) / 2,
       y: height - 350, size: 16, font: helveticaBold, color: primaryGreen,
