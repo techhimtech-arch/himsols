@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -29,7 +29,8 @@ import {
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Loader2, Package, Store } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, Package, Store, Upload, X, ImageIcon } from "lucide-react";
+import { compressImage } from "@/lib/imageCompression";
 import { Badge } from "@/components/ui/badge";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -73,6 +74,8 @@ export const MarketplaceProductsTab = () => {
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<MarketplaceProduct | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     name: "",
     name_hi: "",
@@ -221,6 +224,36 @@ export const MarketplaceProductsTab = () => {
       sort_order: product.sort_order,
     });
     setIsDialogOpen(true);
+  };
+
+  const handleImageUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    setIsUploading(true);
+    try {
+      const uploadedUrls: string[] = [];
+      for (const file of Array.from(files)) {
+        const compressed = await compressImage(file, 800, 800, 0.85);
+        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
+        const { error } = await supabase.storage
+          .from("marketplace-images")
+          .upload(fileName, compressed, { contentType: "image/jpeg" });
+        if (error) throw error;
+        const { data: urlData } = supabase.storage
+          .from("marketplace-images")
+          .getPublicUrl(fileName);
+        uploadedUrls.push(urlData.publicUrl);
+      }
+      // Use first image as main image_url
+      if (uploadedUrls.length > 0) {
+        setFormData((prev) => ({ ...prev, image_url: uploadedUrls[0] }));
+      }
+      toast.success(`${uploadedUrls.length} image(s) uploaded successfully`);
+    } catch (error: any) {
+      toast.error(error.message || "Image upload failed");
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -400,14 +433,60 @@ export const MarketplaceProductsTab = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="image">Image URL</Label>
+                  <Label htmlFor="sort_order">Sort Order</Label>
                   <Input
-                    id="image"
-                    value={formData.image_url}
-                    onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                    placeholder="https://..."
+                    id="sort_order"
+                    type="number"
+                    value={formData.sort_order}
+                    onChange={(e) => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })}
                   />
                 </div>
+              </div>
+
+              {/* Image Upload */}
+              <div className="space-y-2">
+                <Label>Product Image</Label>
+                {formData.image_url ? (
+                  <div className="relative inline-block">
+                    <img
+                      src={formData.image_url}
+                      alt="Product"
+                      className="w-32 h-32 rounded-lg object-cover border border-border"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, image_url: "" })}
+                      className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ) : (
+                  <div
+                    onClick={() => fileInputRef.current?.click()}
+                    className="border-2 border-dashed border-border rounded-lg p-6 text-center cursor-pointer hover:border-primary/50 transition-colors"
+                  >
+                    {isUploading ? (
+                      <div className="flex flex-col items-center gap-2">
+                        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                        <p className="text-sm text-muted-foreground">Uploading & compressing...</p>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center gap-2">
+                        <Upload className="w-8 h-8 text-muted-foreground" />
+                        <p className="text-sm text-muted-foreground">Click to upload image</p>
+                        <p className="text-xs text-muted-foreground">Auto-compressed for fast loading</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => handleImageUpload(e.target.files)}
+                />
               </div>
 
               <div className="flex flex-wrap gap-6">
