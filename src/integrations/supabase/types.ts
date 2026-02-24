@@ -170,6 +170,30 @@ export type Database = {
         }
         Relationships: []
       }
+      carbon_settings: {
+        Row: {
+          created_at: string | null
+          id: string
+          key: string
+          updated_at: string | null
+          value: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          key: string
+          updated_at?: string | null
+          value?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          key?: string
+          updated_at?: string | null
+          value?: string | null
+        }
+        Relationships: []
+      }
       contact_messages: {
         Row: {
           created_at: string | null
@@ -580,6 +604,60 @@ export type Database = {
           name?: string
           updated_at?: string
           url?: string
+        }
+        Relationships: []
+      }
+      farmer_registrations: {
+        Row: {
+          consent: boolean
+          created_at: string
+          district: string
+          full_name: string
+          id: string
+          interested_tree_types: string[] | null
+          irrigation_available: boolean | null
+          land_photo_url: string | null
+          land_size_acres: number | null
+          land_type: string | null
+          mobile: string
+          notes: string | null
+          status: string
+          updated_at: string
+          village: string
+        }
+        Insert: {
+          consent?: boolean
+          created_at?: string
+          district: string
+          full_name: string
+          id?: string
+          interested_tree_types?: string[] | null
+          irrigation_available?: boolean | null
+          land_photo_url?: string | null
+          land_size_acres?: number | null
+          land_type?: string | null
+          mobile: string
+          notes?: string | null
+          status?: string
+          updated_at?: string
+          village: string
+        }
+        Update: {
+          consent?: boolean
+          created_at?: string
+          district?: string
+          full_name?: string
+          id?: string
+          interested_tree_types?: string[] | null
+          irrigation_available?: boolean | null
+          land_photo_url?: string | null
+          land_size_acres?: number | null
+          land_type?: string | null
+          mobile?: string
+          notes?: string | null
+          status?: string
+          updated_at?: string
+          village?: string
         }
         Relationships: []
       }

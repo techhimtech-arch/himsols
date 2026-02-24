@@ -47,6 +47,9 @@ const RefundPolicy = lazy(() => import("./pages/RefundPolicy"));
 const AboutUs = lazy(() => import("./pages/AboutUs"));
 const VillageRegister = lazy(() => import("./pages/VillageRegister"));
 const PartnerWithUs = lazy(() => import("./pages/PartnerWithUs"));
+const CarbonDashboard = lazy(() => import("./pages/CarbonDashboard"));
+const FarmerRegistration = lazy(() => import("./pages/FarmerRegistration"));
+const CSRCarbonOffset = lazy(() => import("./pages/CSRCarbonOffset"));
 
 const queryClient = new QueryClient();
 
@@ -112,6 +115,9 @@ const App = () => (
                       <Route path="/about" element={<AboutUs />} />
                       <Route path="/village-register" element={<VillageRegister />} />
                       <Route path="/partner-with-us" element={<PartnerWithUs />} />
+                      <Route path="/carbon-dashboard" element={<CarbonDashboard />} />
+                      <Route path="/farmer-registration" element={<FarmerRegistration />} />
+                      <Route path="/csr-carbon-offset" element={<CSRCarbonOffset />} />
                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                       <Route path="*" element={<NotFound />} />
                     </Routes>
