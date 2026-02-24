@@ -23,7 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Users, TreePine, TrendingUp, Loader2, Package, Settings, FileText, Image, Quote, Activity, Handshake, Store, Globe, BarChart3, Heart, Flower2, Gift, MessageSquare, Menu, Link2, Wallet, Info, MapPin, Building2 } from "lucide-react";
+import { Shield, Users, TreePine, TrendingUp, Loader2, Package, Settings, FileText, Image, Quote, Activity, Handshake, Store, Globe, BarChart3, Heart, Flower2, Gift, MessageSquare, Menu, Link2, Wallet, Info, MapPin, Building2, Sprout, Gauge } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlantsTab } from "@/components/admin/PlantsTab";
 import { OrdersTab } from "@/components/admin/OrdersTab";
@@ -53,6 +53,8 @@ import { AboutPageTab } from "@/components/admin/AboutPageTab";
 import { VillagesTab } from "@/components/admin/VillagesTab";
 import { CSRPartnersTab } from "@/components/admin/CSRPartnersTab";
 import { NurseriesTab } from "@/components/admin/NurseriesTab";
+import CarbonSettingsTab from "@/components/admin/CarbonSettingsTab";
+import FarmerRegistrationsTab from "@/components/admin/FarmerRegistrationsTab";
 import { INDIAN_STATES, getDistrictsForState, IndianState } from "@/lib/constants";
 import { MobileCard, MobileCardRow, StatusBadge } from "@/components/admin/MobileCard";
 
@@ -673,6 +675,14 @@ const Admin = () => {
                   <Flower2 className="h-3 w-3 md:h-4 md:w-4 mr-1" />
                   Nurseries
                 </TabsTrigger>
+                <TabsTrigger value="carbon" className="text-xs md:text-sm">
+                  <Gauge className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  Carbon
+                </TabsTrigger>
+                <TabsTrigger value="farmers" className="text-xs md:text-sm">
+                  <Sprout className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  Farmers
+                </TabsTrigger>
                 <TabsTrigger value="settings" className="text-xs md:text-sm">
                   <Settings className="h-3 w-3 md:h-4 md:w-4 mr-1" />
                   Settings
@@ -1021,6 +1031,16 @@ const Admin = () => {
             {/* Nurseries Tab */}
             <TabsContent value="nurseries">
               <NurseriesTab />
+            </TabsContent>
+
+            {/* Carbon Settings Tab */}
+            <TabsContent value="carbon">
+              <CarbonSettingsTab />
+            </TabsContent>
+
+            {/* Farmer Registrations Tab */}
+            <TabsContent value="farmers">
+              <FarmerRegistrationsTab />
             </TabsContent>
 
             {/* Settings Tab */}
