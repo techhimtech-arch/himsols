@@ -38,7 +38,7 @@ const CarbonDashboard = () => {
 
   const impactCards = [
     { icon: TreeDeciduous, label: "Total Trees Planted", value: currentTrees.toLocaleString(), color: "text-primary" },
-    { icon: Wind, label: "Estimated CO₂ Offset", value: `${co2Tonnes} tonnes`, color: "text-secondary" },
+    { icon: Wind, label: "Estimated CO₂ Offset*", value: `~${co2Tonnes} tonnes`, color: "text-secondary" },
     { icon: Users, label: "Farmers Participating", value: farmers, color: "text-accent-foreground" },
     { icon: MapPin, label: "Active Plantation Sites", value: activeSites, color: "text-primary" },
   ];
@@ -55,12 +55,22 @@ const CarbonDashboard = () => {
             <TrendingUp className="w-4 h-4" />
             <span className="text-sm font-medium">Live Environmental Impact</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Carbon Impact Dashboard</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Our Environmental Impact</h1>
           <p className="text-lg max-w-2xl mx-auto opacity-90">
-            Transparent, real-time tracking of our environmental contributions through tree plantation activities in Himachal Pradesh.
+            Estimated environmental contributions from our tree plantation activities in Himachal Pradesh. All figures are indicative and based on standard agroforestry data.
           </p>
         </div>
       </section>
+
+      {/* Disclaimer Banner */}
+      <div className="container mx-auto px-4 -mt-6 relative z-10">
+        <div className="bg-accent/50 backdrop-blur-sm border border-border/50 rounded-xl px-4 py-3 flex items-start gap-3 max-w-3xl mx-auto">
+          <Info className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+          <p className="text-xs text-muted-foreground">
+            <strong>Note:</strong> All impact figures shown are estimates based on standard agroforestry averages. These are not certified carbon credits. Actual values may vary by species, soil, and climate conditions.
+          </p>
+        </div>
+      </div>
 
       {/* Impact Cards */}
       <section className="py-12 md:py-16">
