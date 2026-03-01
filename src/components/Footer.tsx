@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
-import { Mail, Phone, MapPin, Facebook, Instagram, Twitter } from "lucide-react";
+import { Mail, Phone, MapPin, Facebook, Instagram, Twitter, Eye } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Logo } from "@/components/Logo";
+import { useEffect, useRef } from "react";
 
 interface FooterLink {
   id: string;
@@ -21,6 +22,31 @@ interface FooterLink {
 export const Footer = () => {
   const { t, language } = useLanguage();
   const { settings } = useSiteSettings();
+  const visitRecorded = useRef(false);
+
+  // Record visit
+  useEffect(() => {
+    if (visitRecorded.current) return;
+    visitRecorded.current = true;
+    
+    let visitorId = localStorage.getItem("himsols_visitor_id");
+    if (!visitorId) {
+      visitorId = crypto.randomUUID();
+      localStorage.setItem("himsols_visitor_id", visitorId);
+    }
+    supabase.rpc("record_visit", { p_visitor_id: visitorId, p_page_path: window.location.pathname }).then();
+  }, []);
+
+  // Fetch visitor count
+  const { data: visitorCount } = useQuery({
+    queryKey: ["visitor-count"],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_visitor_count");
+      if (error) throw error;
+      return (data as number) || 0;
+    },
+    staleTime: 60000,
+  });
 
   // Fetch dynamic footer links
   const { data: footerLinks = [] } = useQuery({
@@ -212,9 +238,18 @@ export const Footer = () => {
               Refund Policy
             </Link>
           </div>
-          <p className="text-muted-foreground text-xs md:text-sm text-center">
-            © {new Date().getFullYear()} Himsols. {t("footer.rights")}
-          </p>
+          <div className="flex items-center justify-center gap-4">
+            <p className="text-muted-foreground text-xs md:text-sm text-center">
+              © {new Date().getFullYear()} Himsols. {t("footer.rights")}
+            </p>
+            {visitorCount !== undefined && visitorCount > 0 && (
+              <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-background/60 px-2.5 py-1 rounded-full border border-border">
+                <Eye className="h-3 w-3 text-primary" />
+                <span className="font-medium text-foreground">{visitorCount.toLocaleString()}</span>
+                {language === "hi" ? "विज़िटर" : "Visitors"}
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </footer>
