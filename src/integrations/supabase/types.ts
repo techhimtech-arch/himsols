@@ -1612,6 +1612,27 @@ export type Database = {
         }
         Relationships: []
       }
+      site_visitors: {
+        Row: {
+          id: string
+          page_path: string | null
+          visited_at: string
+          visitor_id: string
+        }
+        Insert: {
+          id?: string
+          page_path?: string | null
+          visited_at?: string
+          visitor_id: string
+        }
+        Update: {
+          id?: string
+          page_path?: string | null
+          visited_at?: string
+          visitor_id?: string
+        }
+        Relationships: []
+      }
       survival_updates: {
         Row: {
           created_at: string
@@ -2058,6 +2079,7 @@ export type Database = {
       generate_referral_code: { Args: never; Returns: string }
       generate_tracking_id: { Args: never; Returns: string }
       generate_waste_tracking_id: { Args: never; Returns: string }
+      get_visitor_count: { Args: never; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -2066,6 +2088,10 @@ export type Database = {
         Returns: boolean
       }
       increment_blog_views: { Args: { post_id: string }; Returns: undefined }
+      record_visit: {
+        Args: { p_page_path?: string; p_visitor_id: string }
+        Returns: undefined
+      }
       wallet_transaction: {
         Args: {
           p_amount: number
