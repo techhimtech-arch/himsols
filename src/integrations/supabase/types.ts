@@ -2065,6 +2065,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_blog_views: { Args: { post_id: string }; Returns: undefined }
       wallet_transaction: {
         Args: {
           p_amount: number
