@@ -14,6 +14,8 @@ const STATUSES = ["registered", "approved", "active", "inactive"];
 export const VillagesTab = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [filterState, setFilterState] = useState<string>("all");
+  const [filterDistrict, setFilterDistrict] = useState<string>("all");
 
   const { data: villages = [], isLoading } = useQuery({
     queryKey: ["admin-villages"],
@@ -48,24 +50,56 @@ export const VillagesTab = () => {
     queryClient.invalidateQueries({ queryKey: ["admin-villages"] });
   };
 
+  const uniqueStates = [...new Set(villages.map((v: any) => v.state).filter(Boolean))];
+  const uniqueDistricts = [...new Set(
+    villages
+      .filter((v: any) => filterState === "all" || v.state === filterState)
+      .map((v: any) => v.district)
+      .filter(Boolean)
+  )];
+
+  const filteredVillages = villages.filter((v: any) => {
+    if (filterState !== "all" && v.state !== filterState) return false;
+    if (filterDistrict !== "all" && v.district !== filterDistrict) return false;
+    return true;
+  });
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
           <MapPin className="h-5 w-5 text-primary" />
-          Village Management ({villages.length})
+          Village Management ({filteredVillages.length})
         </CardTitle>
+        <div className="flex flex-col sm:flex-row gap-2 mt-3">
+          <Select value={filterState} onValueChange={(v) => { setFilterState(v); setFilterDistrict("all"); }}>
+            <SelectTrigger className="w-full sm:w-[160px]"><SelectValue placeholder="All States" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All States</SelectItem>
+              {uniqueStates.map((s: string) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          {filterState !== "all" && (
+            <Select value={filterDistrict} onValueChange={setFilterDistrict}>
+              <SelectTrigger className="w-full sm:w-[160px]"><SelectValue placeholder="All Districts" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Districts</SelectItem>
+                {uniqueDistricts.map((d: string) => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         {isLoading ? (
           <p className="text-center py-8 text-muted-foreground">Loading...</p>
-        ) : villages.length === 0 ? (
+        ) : filteredVillages.length === 0 ? (
           <p className="text-center py-8 text-muted-foreground">No villages registered yet</p>
         ) : (
           <>
             {/* Mobile */}
             <div className="block md:hidden space-y-4">
-              {villages.map((v: any) => (
+              {filteredVillages.map((v: any) => (
                 <MobileCard key={v.id}>
                   <div className="flex justify-between items-start mb-2">
                     <span className="font-semibold text-sm">{v.name}</span>
@@ -105,7 +139,7 @@ export const VillagesTab = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {villages.map((v: any) => (
+                  {filteredVillages.map((v: any) => (
                     <TableRow key={v.id}>
                       <TableCell className="font-medium">{v.name}</TableCell>
                       <TableCell>{v.district}, {v.state}</TableCell>

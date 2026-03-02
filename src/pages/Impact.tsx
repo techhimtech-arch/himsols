@@ -1,3 +1,4 @@
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/Navbar";
@@ -5,19 +6,21 @@ import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TreePine, Users, MapPin, Activity, Sprout, Mountain } from "lucide-react";
 
 const Impact = () => {
+  const [stateFilter, setStateFilter] = useState<string>("all");
+
   const { data: stats, isLoading } = useQuery({
     queryKey: ["public-impact-stats"],
     queryFn: async () => {
-      const [ordersRes, allocRes, survivalRes, villagesRes, partnersRes, liveStatsRes] = await Promise.all([
-        supabase.from("orders").select("quantity, total_price").eq("status", "completed"),
+      const [ordersRes, allocRes, survivalRes, villagesRes, partnersRes] = await Promise.all([
+        supabase.from("orders").select("quantity, total_price, state").eq("status", "completed"),
         supabase.from("tree_allocations").select("tree_count, status"),
         supabase.from("survival_updates").select("health_status"),
-        supabase.from("villages" as any).select("id").eq("status", "active"),
-        supabase.from("land_partner_applications").select("id").eq("status", "Verified"),
-        supabase.from("live_stats").select("*").eq("is_active", true).order("sort_order"),
+        (supabase as any).from("villages").select("id, state").eq("status", "active"),
+        supabase.from("land_partner_applications").select("id, district").eq("status", "Verified"),
       ]);
 
       const orders = ordersRes.data || [];
@@ -26,12 +29,21 @@ const Impact = () => {
       const villages = villagesRes.data || [];
       const partners = partnersRes.data || [];
 
+      // Build state-wise breakdown from orders
+      const stateMap: Record<string, { trees: number; revenue: number }> = {};
+      orders.forEach((o: any) => {
+        const st = o.state || "Unknown";
+        if (!stateMap[st]) stateMap[st] = { trees: 0, revenue: 0 };
+        stateMap[st].trees += o.quantity || 0;
+        stateMap[st].revenue += Number(o.total_price || 0);
+      });
+
       const totalTreesSponsored = orders.reduce((s: number, o: any) => s + (o.quantity || 0), 0);
       const totalAllocated = allocs.reduce((s: number, a: any) => s + (a.tree_count || 0), 0);
       const totalRevenue = orders.reduce((s: number, o: any) => s + Number(o.total_price || 0), 0);
       const healthyCount = survivals.filter((s: any) => s.health_status === "healthy").length;
       const survivalRate = survivals.length > 0 ? Math.round((healthyCount / survivals.length) * 100) : 0;
-      const co2Estimate = totalAllocated * 22; // ~22kg CO2 per tree per year
+      const co2Estimate = totalAllocated * 22;
 
       return {
         totalTreesSponsored,
@@ -41,18 +53,31 @@ const Impact = () => {
         co2Estimate,
         activeVillages: villages.length,
         verifiedPartners: partners.length,
-        liveStats: liveStatsRes.data || [],
+        stateBreakdown: Object.entries(stateMap).map(([state, data]) => ({ state, ...data })).sort((a, b) => b.trees - a.trees),
+        availableStates: [...new Set(orders.map((o: any) => o.state).filter(Boolean))] as string[],
       };
     },
   });
 
+  const filteredMetrics = useMemo(() => {
+    if (!stats) return null;
+    if (stateFilter === "all") return stats;
+
+    const stateData = stats.stateBreakdown.find((s) => s.state === stateFilter);
+    return {
+      ...stats,
+      totalTreesSponsored: stateData?.trees || 0,
+      totalRevenue: stateData?.revenue || 0,
+    };
+  }, [stats, stateFilter]);
+
   const metrics = [
-    { icon: TreePine, label: "Trees Sponsored", value: stats?.totalTreesSponsored || 0, suffix: "" },
-    { icon: Sprout, label: "Trees Allocated to Land", value: stats?.totalAllocated || 0, suffix: "" },
-    { icon: Activity, label: "Survival Rate", value: stats?.survivalRate || 0, suffix: "%" },
-    { icon: Mountain, label: "Est. CO₂ Offset", value: stats?.co2Estimate || 0, suffix: " kg/yr" },
-    { icon: MapPin, label: "Active Villages", value: stats?.activeVillages || 0, suffix: "" },
-    { icon: Users, label: "Verified Land Partners", value: stats?.verifiedPartners || 0, suffix: "" },
+    { icon: TreePine, label: "Trees Sponsored", value: filteredMetrics?.totalTreesSponsored || 0, suffix: "" },
+    { icon: Sprout, label: "Trees Allocated to Land", value: filteredMetrics?.totalAllocated || 0, suffix: "" },
+    { icon: Activity, label: "Survival Rate", value: filteredMetrics?.survivalRate || 0, suffix: "%" },
+    { icon: Mountain, label: "Est. CO₂ Offset", value: filteredMetrics?.co2Estimate || 0, suffix: " kg/yr" },
+    { icon: MapPin, label: "Active Villages", value: filteredMetrics?.activeVillages || 0, suffix: "" },
+    { icon: Users, label: "Verified Land Partners", value: filteredMetrics?.verifiedPartners || 0, suffix: "" },
   ];
 
   return (
@@ -69,14 +94,30 @@ const Impact = () => {
           <h1 className="text-3xl md:text-4xl font-bold mb-4">
             Verified Climate Impact
           </h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
+          <p className="text-muted-foreground max-w-2xl mx-auto text-lg mb-6">
             Every metric is derived from verified allocations on our land partner network. 
             No estimates without data. No claims without proof.
           </p>
+          {/* State Filter */}
+          {stats && stats.availableStates.length > 0 && (
+            <div className="flex justify-center">
+              <Select value={stateFilter} onValueChange={setStateFilter}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="All States" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All States</SelectItem>
+                  {stats.availableStates.map((s) => (
+                    <SelectItem key={s} value={s}>{s}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </section>
 
         {/* Metrics Grid */}
-        <section className="container mx-auto px-4 pb-16">
+        <section className="container mx-auto px-4 pb-12">
           {isLoading ? (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {[1, 2, 3, 4, 5, 6].map(i => <Skeleton key={i} className="h-32" />)}
@@ -97,6 +138,29 @@ const Impact = () => {
             </div>
           )}
         </section>
+
+        {/* State Breakdown */}
+        {stats && stats.stateBreakdown.length > 1 && stateFilter === "all" && (
+          <section className="container mx-auto px-4 pb-16">
+            <h2 className="text-xl font-bold mb-4">State-wise Breakdown</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {stats.stateBreakdown.map((s) => (
+                <Card key={s.state}>
+                  <CardContent className="pt-6 pb-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <MapPin className="h-4 w-4 text-primary" />
+                      <span className="font-semibold">{s.state}</span>
+                    </div>
+                    <div className="flex justify-between text-sm text-muted-foreground">
+                      <span>{s.trees.toLocaleString()} trees</span>
+                      <span>₹{s.revenue.toLocaleString()}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Methodology */}
         <section className="bg-muted/30 py-16">
