@@ -22,38 +22,63 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Set up auth state listener
+    let sessionCleared = false;
+
+    const clearStaleSession = () => {
+      if (sessionCleared) return;
+      sessionCleared = true;
+      // Remove all supabase auth keys from localStorage to stop retry loops
+      const keysToRemove: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && (key.startsWith('sb-') || key.includes('supabase'))) {
+          keysToRemove.push(key);
+        }
+      }
+      keysToRemove.forEach(key => localStorage.removeItem(key));
+      setSession(null);
+      setUser(null);
+      setLoading(false);
+    };
+
+    // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        // If token refresh failed, clear the invalid session
-        if (event === 'TOKEN_REFRESHED' && !session) {
-          supabase.auth.signOut({ scope: 'local' });
+      (event, currentSession) => {
+        // If token refresh failed or signed out, clear everything
+        if (event === 'TOKEN_REFRESHED' && !currentSession) {
+          clearStaleSession();
+          return;
+        }
+        if (event === 'SIGNED_OUT') {
           setSession(null);
           setUser(null);
           setLoading(false);
           return;
         }
-        setSession(session);
-        setUser(session?.user ?? null);
+        setSession(currentSession);
+        setUser(currentSession?.user ?? null);
         setLoading(false);
       }
     );
 
-    // Check for existing session and validate it
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      if (error || !session) {
-        // Clear any stale/invalid session from localStorage
-        if (error) {
-          console.warn("Session invalid, clearing:", error.message);
-          supabase.auth.signOut({ scope: 'local' });
-        }
+    // Then check for existing session
+    supabase.auth.getSession().then(({ data: { session: existingSession }, error }) => {
+      if (error) {
+        console.warn("Session invalid, clearing:", error.message);
+        clearStaleSession();
+        return;
+      }
+      if (!existingSession) {
         setSession(null);
         setUser(null);
-      } else {
-        setSession(session);
-        setUser(session.user);
+        setLoading(false);
+        return;
       }
+      setSession(existingSession);
+      setUser(existingSession.user);
       setLoading(false);
+    }).catch(() => {
+      clearStaleSession();
     });
 
     return () => subscription.unsubscribe();
