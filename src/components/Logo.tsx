@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { Leaf } from "lucide-react";
+import staticLogo from "@/assets/himsols-logo.png";
 
 interface LogoProps {
   size?: "sm" | "md" | "lg";
@@ -28,22 +29,16 @@ export const Logo = ({
   linkTo = "/"
 }: LogoProps) => {
   const { settings } = useSiteSettings();
-  const logoUrl = settings?.logo_url;
+  const logoSrc = settings?.logo_url || staticLogo;
 
   const LogoContent = () => (
     <div className={`flex items-center gap-2 ${className}`}>
-      {logoUrl ? (
-        <img 
-          src={logoUrl} 
-          alt="Himsols Logo" 
-          className={`${sizeClasses[size]} object-contain`}
-          loading="lazy"
-        />
-      ) : (
-        <div className={`bg-gradient-to-br from-primary to-secondary rounded-full p-2 shadow-lg ${size === "sm" ? "p-1.5" : size === "lg" ? "p-3" : "p-2"}`}>
-          <Leaf className={`${size === "sm" ? "h-4 w-4" : size === "lg" ? "h-8 w-8" : "h-5 w-5"} text-primary-foreground`} />
-        </div>
-      )}
+      <img 
+        src={logoSrc} 
+        alt="Himsols Logo" 
+        className={`${sizeClasses[size]} object-contain`}
+        loading="lazy"
+      />
       {showText && (
         <span className={`bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-bold ${textSizeClasses[size]}`}>
           Himsols
