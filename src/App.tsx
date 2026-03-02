@@ -54,7 +54,17 @@ const ApplyLandPartner = lazy(() => import("./pages/ApplyLandPartner"));
 const PartnerDashboard = lazy(() => import("./pages/PartnerDashboard"));
 const Impact = lazy(() => import("./pages/Impact"));
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes - don't refetch if data is fresh
+      gcTime: 10 * 60 * 1000, // 10 minutes cache
+      retry: 2, // Max 2 retries on failure
+      retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 10000),
+      refetchOnWindowFocus: false, // Don't refetch on tab switch
+    },
+  },
+});
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center">

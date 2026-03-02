@@ -25,16 +25,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        // If token refresh failed, clear the invalid session
+        if (event === 'TOKEN_REFRESHED' && !session) {
+          supabase.auth.signOut({ scope: 'local' });
+          setSession(null);
+          setUser(null);
+          setLoading(false);
+          return;
+        }
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
       }
     );
 
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+    // Check for existing session and validate it
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error || !session) {
+        // Clear any stale/invalid session from localStorage
+        if (error) {
+          console.warn("Session invalid, clearing:", error.message);
+          supabase.auth.signOut({ scope: 'local' });
+        }
+        setSession(null);
+        setUser(null);
+      } else {
+        setSession(session);
+        setUser(session.user);
+      }
       setLoading(false);
     });
 
