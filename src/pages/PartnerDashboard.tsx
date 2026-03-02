@@ -7,7 +7,7 @@ import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
-import { Loader2, TreePine, CalendarDays, Sprout, ShieldCheck } from "lucide-react";
+import { Loader2, TreePine, CalendarDays, Sprout, ShieldCheck, IndianRupee } from "lucide-react";
 import { format } from "date-fns";
 
 const PartnerDashboard = () => {
@@ -50,9 +50,12 @@ const PartnerDashboard = () => {
     }
   };
 
-  const totalTrees = allocations.reduce((sum, a) => sum + a.tree_count, 0);
-  const upcomingPlantations = allocations.filter(a => new Date(a.plantation_date) >= new Date());
-  const completedAllocations = allocations.filter(a => a.status === "planted");
+  const totalTrees = allocations.reduce((sum: number, a: any) => sum + a.tree_count, 0);
+  const totalAlive = allocations.reduce((sum: number, a: any) => sum + (a.trees_alive || 0), 0);
+  const totalEarned = allocations.filter((a: any) => a.payout_status === "paid").reduce((sum: number, a: any) => sum + (a.payout_amount || 0), 0);
+  const pendingPayout = allocations.filter((a: any) => a.payout_status === "eligible").reduce((sum: number, a: any) => sum + (a.payout_amount || 0), 0);
+  const upcomingPlantations = allocations.filter((a: any) => new Date(a.plantation_date) >= new Date());
+  const completedAllocations = allocations.filter((a: any) => a.status === "planted" || a.status === "completed");
 
   if (authLoading || loading) {
     return <div className="min-h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
@@ -77,34 +80,36 @@ const PartnerDashboard = () => {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <Card>
-              <CardContent className="p-4 text-center">
-                <TreePine className="h-6 w-6 mx-auto text-primary mb-2" />
-                <p className="text-2xl font-bold">{totalTrees}</p>
-                <p className="text-xs text-muted-foreground">Total Trees Allocated</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                <Sprout className="h-6 w-6 mx-auto text-primary mb-2" />
-                <p className="text-2xl font-bold">{completedAllocations.length}</p>
-                <p className="text-xs text-muted-foreground">Batches Planted</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                <CalendarDays className="h-6 w-6 mx-auto text-primary mb-2" />
-                <p className="text-2xl font-bold">{upcomingPlantations.length}</p>
-                <p className="text-xs text-muted-foreground">Upcoming</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                <p className="text-2xl font-bold">{application?.land_size || 0}</p>
-                <p className="text-xs text-muted-foreground">{application?.land_unit || "acre"} Land Registered</p>
-              </CardContent>
-            </Card>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+            <Card><CardContent className="p-4 text-center">
+              <TreePine className="h-6 w-6 mx-auto text-primary mb-2" />
+              <p className="text-2xl font-bold">{totalTrees}</p>
+              <p className="text-xs text-muted-foreground">Trees Allocated</p>
+            </CardContent></Card>
+            <Card><CardContent className="p-4 text-center">
+              <Sprout className="h-6 w-6 mx-auto text-primary mb-2" />
+              <p className="text-2xl font-bold">{totalAlive}</p>
+              <p className="text-xs text-muted-foreground">Trees Alive</p>
+            </CardContent></Card>
+            <Card><CardContent className="p-4 text-center">
+              <CalendarDays className="h-6 w-6 mx-auto text-primary mb-2" />
+              <p className="text-2xl font-bold">{completedAllocations.length}</p>
+              <p className="text-xs text-muted-foreground">Batches Done</p>
+            </CardContent></Card>
+            <Card><CardContent className="p-4 text-center">
+              <IndianRupee className="h-6 w-6 mx-auto text-primary mb-2" />
+              <p className="text-2xl font-bold">₹{totalEarned.toLocaleString()}</p>
+              <p className="text-xs text-muted-foreground">Total Earned</p>
+            </CardContent></Card>
+            <Card><CardContent className="p-4 text-center">
+              <IndianRupee className="h-6 w-6 mx-auto text-amber-600 mb-2" />
+              <p className="text-2xl font-bold">₹{pendingPayout.toLocaleString()}</p>
+              <p className="text-xs text-muted-foreground">Pending Payout</p>
+            </CardContent></Card>
+            <Card><CardContent className="p-4 text-center">
+              <p className="text-2xl font-bold">{application?.land_size || 0}</p>
+              <p className="text-xs text-muted-foreground">{application?.land_unit || "acre"} Land</p>
+            </CardContent></Card>
           </div>
 
           {/* Allocations */}
@@ -117,15 +122,26 @@ const PartnerDashboard = () => {
                 <p className="text-center py-8 text-muted-foreground">No tree allocations yet. Admin will assign batches after verification.</p>
               ) : (
                 <div className="space-y-3">
-                  {allocations.map(alloc => (
-                    <div key={alloc.id} className="flex items-center justify-between p-4 rounded-lg border border-border bg-card">
-                      <div>
-                        <p className="font-medium">{alloc.tree_count} × {alloc.species}</p>
-                        <p className="text-sm text-muted-foreground">
-                          Plantation: {format(new Date(alloc.plantation_date), "dd MMM yyyy")}
-                        </p>
+                  {allocations.map((alloc: any) => (
+                    <div key={alloc.id} className="p-4 rounded-lg border border-border bg-card space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-medium">{alloc.tree_count} × {alloc.species}</p>
+                          <p className="text-sm text-muted-foreground">
+                            Plantation: {format(new Date(alloc.plantation_date), "dd MMM yyyy")}
+                          </p>
+                          {alloc.batch_id && <p className="text-xs font-mono text-muted-foreground">{alloc.batch_id}</p>}
+                        </div>
+                        <Badge variant="outline" className="capitalize">{alloc.status}</Badge>
                       </div>
-                      <Badge variant="outline" className="capitalize">{alloc.status}</Badge>
+                      {alloc.trees_alive !== null && (
+                        <div className="flex items-center gap-4 text-sm pt-1 border-t border-border">
+                          <span>Alive: <strong className="text-primary">{alloc.trees_alive}</strong></span>
+                          <span>Dead: <strong className="text-destructive">{alloc.trees_dead || 0}</strong></span>
+                          <span>Incentive: <strong>₹{(alloc.payout_amount || 0).toLocaleString()}</strong></span>
+                          <Badge variant={alloc.payout_status === "paid" ? "default" : "secondary"} className="capitalize ml-auto text-xs">{alloc.payout_status}</Badge>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

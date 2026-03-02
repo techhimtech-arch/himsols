@@ -1834,43 +1834,70 @@ export type Database = {
         Row: {
           allocated_by: string
           application_id: string
+          batch_id: string | null
           created_at: string
           id: string
+          incentive_per_tree: number
           notes: string | null
           order_id: string | null
           partner_id: string
+          payout_amount: number | null
+          payout_date: string | null
+          payout_reference: string | null
+          payout_status: string
           plantation_date: string
+          review_date: string | null
           species: string
           status: string
           tree_count: number
+          trees_alive: number | null
+          trees_dead: number | null
           updated_at: string
         }
         Insert: {
           allocated_by: string
           application_id: string
+          batch_id?: string | null
           created_at?: string
           id?: string
+          incentive_per_tree?: number
           notes?: string | null
           order_id?: string | null
           partner_id: string
+          payout_amount?: number | null
+          payout_date?: string | null
+          payout_reference?: string | null
+          payout_status?: string
           plantation_date: string
+          review_date?: string | null
           species: string
           status?: string
           tree_count: number
+          trees_alive?: number | null
+          trees_dead?: number | null
           updated_at?: string
         }
         Update: {
           allocated_by?: string
           application_id?: string
+          batch_id?: string | null
           created_at?: string
           id?: string
+          incentive_per_tree?: number
           notes?: string | null
           order_id?: string | null
           partner_id?: string
+          payout_amount?: number | null
+          payout_date?: string | null
+          payout_reference?: string | null
+          payout_status?: string
           plantation_date?: string
+          review_date?: string | null
           species?: string
           status?: string
           tree_count?: number
+          trees_alive?: number | null
+          trees_dead?: number | null
           updated_at?: string
         }
         Relationships: [

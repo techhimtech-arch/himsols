@@ -31,6 +31,11 @@ interface OrderWithAllocation {
     plantation_date: string;
     status: string;
     partner_id: string;
+    batch_id: string | null;
+    trees_alive: number | null;
+    trees_dead: number | null;
+    review_date: string | null;
+    payout_status: string;
   }[] | null;
 }
 
@@ -58,7 +63,7 @@ const MyContributions = () => {
       if (!user) return [];
       const { data, error } = await supabase
         .from("orders")
-        .select(`id, quantity, total_price, status, created_at, delivery_location, tree_allocations(id, tree_count, species, plantation_date, status, partner_id)`)
+        .select(`id, quantity, total_price, status, created_at, delivery_location, tree_allocations(id, tree_count, species, plantation_date, status, partner_id, batch_id, trees_alive, trees_dead, review_date, payout_status)`)
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -123,11 +128,12 @@ const MyContributions = () => {
 
   const totalTreesOrdered = orders.reduce((sum, o) => sum + o.quantity, 0);
   const totalAllocated = orders.reduce((sum, o) => sum + (o.tree_allocations?.reduce((s, a) => s + a.tree_count, 0) || 0), 0);
+  const totalTreesAlive = orders.reduce((sum, o) => sum + (o.tree_allocations?.reduce((s, a) => s + (a.trees_alive ?? a.tree_count), 0) || 0), 0);
   const totalSpent = orders.reduce((sum, o) => sum + Number(o.total_price), 0) + 
     donations.reduce((sum: number, d: any) => sum + Number(d.amount), 0);
   const healthyUpdates = survivalUpdates.filter(s => s.health_status === "healthy").length;
   const totalUpdates = survivalUpdates.length;
-  const survivalRate = totalUpdates > 0 ? Math.round((healthyUpdates / totalUpdates) * 100) : 0;
+  const survivalRate = totalAllocated > 0 ? Math.round((totalTreesAlive / totalAllocated) * 100) : (totalUpdates > 0 ? Math.round((healthyUpdates / totalUpdates) * 100) : 0);
 
   if (authLoading) {
     return (
@@ -203,15 +209,15 @@ const MyContributions = () => {
               </div>
             </CardContent>
           </Card>
-          <Card>
+           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
                 <div className="p-3 bg-primary/10 rounded-lg">
-                  <MapPin className="h-5 w-5 text-primary" />
+                  <Sprout className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-xl font-bold">{totalAllocated}</p>
-                  <p className="text-xs text-muted-foreground">Trees Allocated</p>
+                  <p className="text-xl font-bold">{totalTreesAlive}</p>
+                  <p className="text-xs text-muted-foreground">Trees Alive</p>
                 </div>
               </div>
             </CardContent>
@@ -236,7 +242,7 @@ const MyContributions = () => {
                   <CloudRain className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-xl font-bold">{Math.round(totalAllocated * (survivalRate / 100) * 22)} kg</p>
+                  <p className="text-xl font-bold">{Math.round(totalTreesAlive * 20)} kg</p>
                   <p className="text-xs text-muted-foreground">CO₂ Offset/yr</p>
                 </div>
               </div>
@@ -284,7 +290,11 @@ const MyContributions = () => {
                               <div className="text-xs space-y-1 p-2 rounded bg-muted/50">
                                 <p><Sprout className="h-3 w-3 inline mr-1" />{alloc.tree_count} × {alloc.species}</p>
                                 <p>Plantation: {format(new Date(alloc.plantation_date), "dd MMM yyyy")}</p>
+                                {alloc.trees_alive !== null && (
+                                  <p className="font-medium">Alive: {alloc.trees_alive} / {alloc.tree_count}</p>
+                                )}
                                 <Badge variant="outline" className="text-xs capitalize">{alloc.status}</Badge>
+                                {alloc.batch_id && <p className="text-muted-foreground font-mono">{alloc.batch_id}</p>}
                               </div>
                             ) : (
                               <p className="text-xs text-muted-foreground">⏳ Awaiting land partner allocation</p>
@@ -304,6 +314,7 @@ const MyContributions = () => {
                           <TableHead>Allocation</TableHead>
                           <TableHead>Species</TableHead>
                           <TableHead>Plantation Date</TableHead>
+                          <TableHead>Alive</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -328,6 +339,11 @@ const MyContributions = () => {
                               </TableCell>
                               <TableCell>{alloc?.species || "—"}</TableCell>
                               <TableCell>{alloc ? format(new Date(alloc.plantation_date), "dd MMM yyyy") : "—"}</TableCell>
+                              <TableCell>
+                                {alloc?.trees_alive !== null && alloc?.trees_alive !== undefined
+                                  ? <span className="font-medium">{alloc.trees_alive} / {alloc.tree_count}</span>
+                                  : "—"}
+                              </TableCell>
                             </TableRow>
                           );
                         })}
