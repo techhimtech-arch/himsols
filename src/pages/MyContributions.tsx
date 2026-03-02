@@ -12,22 +12,36 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
-import { Heart, TreePine, ArrowRight, Wallet, Download, Loader2 } from "lucide-react";
+import { TreePine, ArrowRight, Wallet, Download, Loader2, MapPin, Sprout, Activity } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MobileCard } from "@/components/admin/MobileCard";
 
-interface Donation {
+interface OrderWithAllocation {
   id: string;
-  amount: number;
-  payment_status: 'PENDING' | 'SUCCESS' | 'FAILED' | 'REFUNDED';
-  payment_mode: 'DIRECT' | 'GIFT_CARD';
+  quantity: number;
+  total_price: number;
+  status: string;
   created_at: string;
-  campaigns: {
+  delivery_location: string;
+  tree_allocations: {
     id: string;
-    title: string;
-    price_per_tree: number | null;
-  } | null;
+    tree_count: number;
+    species: string;
+    plantation_date: string;
+    status: string;
+    partner_id: string;
+  }[] | null;
+}
+
+interface SurvivalUpdate {
+  id: string;
+  health_status: string;
+  height_cm: number | null;
+  photo_url: string | null;
+  update_date: string;
+  notes: string | null;
+  order_id: string;
 }
 
 const MyContributions = () => {
@@ -37,24 +51,68 @@ const MyContributions = () => {
   const { toast } = useToast();
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
+  // Fetch orders with linked allocations
+  const { data: orders = [], isLoading: ordersLoading } = useQuery({
+    queryKey: ["my-orders-with-allocations", user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data, error } = await supabase
+        .from("orders")
+        .select(`id, quantity, total_price, status, created_at, delivery_location, tree_allocations(id, tree_count, species, plantation_date, status, partner_id)`)
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data || []) as unknown as OrderWithAllocation[];
+    },
+    enabled: !!user,
+  });
+
+  // Fetch survival updates for user's orders
+  const { data: survivalUpdates = [] } = useQuery({
+    queryKey: ["my-survival-updates", user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data, error } = await supabase
+        .from("survival_updates")
+        .select("*")
+        .order("update_date", { ascending: false });
+      if (error) throw error;
+      return (data || []) as SurvivalUpdate[];
+    },
+    enabled: !!user,
+  });
+
+  // Fetch donations too
+  const { data: donations = [] } = useQuery({
+    queryKey: ["my-donations", user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data, error } = await supabase
+        .from("donations")
+        .select("id, amount, payment_status, created_at, campaigns(id, title, price_per_tree)")
+        .eq("user_id", user.id)
+        .eq("payment_status", "SUCCESS")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!user,
+  });
+
   const handleDownloadCertificate = async (donationId: string) => {
     setDownloadingId(donationId);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
       const response = await supabase.functions.invoke("generate-donation-certificate", {
         body: { donationId },
       });
-      
       if (response.error) throw new Error(response.error.message);
-      
       const blob = new Blob([response.data], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `HIMSOLS-Donation-Certificate.pdf`;
+      a.download = `HIMSOLS-Certificate.pdf`;
       a.click();
       URL.revokeObjectURL(url);
-      
       toast({ title: "Certificate Downloaded! 🎉" });
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
@@ -63,49 +121,13 @@ const MyContributions = () => {
     }
   };
 
-  const { data: donations = [], isLoading } = useQuery({
-    queryKey: ["my-contributions", user?.id],
-    queryFn: async () => {
-      if (!user) return [];
-      const { data, error } = await supabase
-        .from("donations")
-        .select(`
-          id,
-          amount,
-          payment_status,
-          payment_mode,
-          created_at,
-          campaigns(id, title, price_per_tree)
-        `)
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data as unknown as Donation[];
-    },
-    enabled: !!user,
-  });
-
-  const getStatusBadge = (status: string) => {
-    const config: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; label: string }> = {
-      PENDING: { variant: "secondary", label: "Pending" },
-      SUCCESS: { variant: "default", label: "Successful" },
-      FAILED: { variant: "destructive", label: "Failed" },
-      REFUNDED: { variant: "outline", label: "Refunded" },
-    };
-    const c = config[status] || config.PENDING;
-    return <Badge variant={c.variant}>{c.label}</Badge>;
-  };
-
-  const totalContributed = donations
-    .filter((d) => d.payment_status === 'SUCCESS')
-    .reduce((sum, d) => sum + Number(d.amount), 0);
-
-  const totalTrees = donations
-    .filter((d) => d.payment_status === 'SUCCESS')
-    .reduce((sum, d) => {
-      const pricePerTree = d.campaigns?.price_per_tree || 99;
-      return sum + Math.floor(Number(d.amount) / pricePerTree);
-    }, 0);
+  const totalTreesOrdered = orders.reduce((sum, o) => sum + o.quantity, 0);
+  const totalAllocated = orders.reduce((sum, o) => sum + (o.tree_allocations?.reduce((s, a) => s + a.tree_count, 0) || 0), 0);
+  const totalSpent = orders.reduce((sum, o) => sum + Number(o.total_price), 0) + 
+    donations.reduce((sum: number, d: any) => sum + Number(d.amount), 0);
+  const healthyUpdates = survivalUpdates.filter(s => s.health_status === "healthy").length;
+  const totalUpdates = survivalUpdates.length;
+  const survivalRate = totalUpdates > 0 ? Math.round((healthyUpdates / totalUpdates) * 100) : 0;
 
   if (authLoading) {
     return (
@@ -113,11 +135,7 @@ const MyContributions = () => {
         <Navbar />
         <main className="pt-20 container mx-auto px-4 py-8">
           <Skeleton className="h-8 w-48 mb-8" />
-          <div className="grid gap-4">
-            {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-24" />
-            ))}
-          </div>
+          <div className="grid gap-4">{[1, 2, 3].map(i => <Skeleton key={i} className="h-24" />)}</div>
         </main>
         <Footer />
       </div>
@@ -129,195 +147,240 @@ const MyContributions = () => {
       <div className="min-h-screen bg-background">
         <Navbar />
         <main className="pt-20 container mx-auto px-4 py-16 text-center">
-          <Heart className="h-16 w-16 mx-auto text-muted-foreground/50 mb-4" />
+          <TreePine className="h-16 w-16 mx-auto text-muted-foreground/50 mb-4" />
           <h1 className="text-2xl font-bold mb-2">Login Required</h1>
-          <p className="text-muted-foreground mb-6">
-            Please login to view your contributions.
-          </p>
-          <Button onClick={() => navigate("/auth")}>
-            Login Now
-          </Button>
+          <p className="text-muted-foreground mb-6">Login to view your climate impact dashboard.</p>
+          <Button onClick={() => navigate("/auth")}>Login Now</Button>
         </main>
         <Footer />
       </div>
     );
   }
 
+  const isLoading = ordersLoading;
+
   return (
     <div className="min-h-screen bg-background">
-      <SEO title="My Contributions | Himsols" description="View your campaign contributions and impact." />
+      <SEO title="My Impact Dashboard | Himsols" description="Track your tree sponsorships, allocations, and survival updates." />
       <Navbar />
       
       <main className="pt-20 container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-2xl font-bold">My Contributions</h1>
-            <p className="text-muted-foreground">Track your impact and donation history</p>
+            <h1 className="text-2xl font-bold">My Impact Dashboard</h1>
+            <p className="text-muted-foreground">Track your climate contributions end-to-end</p>
           </div>
-          <Button onClick={() => navigate("/campaigns")}>
-            Support More Campaigns
-            <ArrowRight className="h-4 w-4 ml-2" />
+          <Button onClick={() => navigate("/shop")}>
+            Sponsor More Trees <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        {/* Impact Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <Card>
             <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
                 <div className="p-3 bg-primary/10 rounded-lg">
-                  <Wallet className="h-6 w-6 text-primary" />
+                  <Wallet className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">₹{totalContributed.toLocaleString()}</p>
-                  <p className="text-sm text-muted-foreground">Total Contributed</p>
+                  <p className="text-xl font-bold">₹{totalSpent.toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground">Total Invested</p>
                 </div>
               </div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                  <TreePine className="h-6 w-6 text-green-600" />
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-primary/10 rounded-lg">
+                  <TreePine className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{totalTrees}</p>
-                  <p className="text-sm text-muted-foreground">Trees Planted</p>
+                  <p className="text-xl font-bold">{totalTreesOrdered}</p>
+                  <p className="text-xs text-muted-foreground">Trees Sponsored</p>
                 </div>
               </div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                  <Heart className="h-6 w-6 text-blue-600" />
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-primary/10 rounded-lg">
+                  <MapPin className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{donations.filter(d => d.payment_status === 'SUCCESS').length}</p>
-                  <p className="text-sm text-muted-foreground">Campaigns Supported</p>
+                  <p className="text-xl font-bold">{totalAllocated}</p>
+                  <p className="text-xs text-muted-foreground">Trees Allocated</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-primary/10 rounded-lg">
+                  <Activity className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-xl font-bold">{survivalRate}%</p>
+                  <p className="text-xs text-muted-foreground">Survival Rate</p>
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Contributions Table */}
+        {/* Orders & Allocations Pipeline */}
         {isLoading ? (
-          <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-20" />
-            ))}
-          </div>
-        ) : donations.length === 0 ? (
+          <div className="space-y-4">{[1, 2, 3].map(i => <Skeleton key={i} className="h-20" />)}</div>
+        ) : orders.length === 0 && donations.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center">
-              <Heart className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
+              <TreePine className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
               <h2 className="text-lg font-semibold mb-2">No Contributions Yet</h2>
-              <p className="text-muted-foreground mb-4">
-                Start supporting campaigns to make an impact!
-              </p>
-              <Button onClick={() => navigate("/campaigns")}>
-                Explore Campaigns
-              </Button>
+              <p className="text-muted-foreground mb-4">Sponsor your first Climate Impact Pack to start building your impact.</p>
+              <Button onClick={() => navigate("/shop")}>Get Climate Impact Pack</Button>
             </CardContent>
           </Card>
-        ) : isMobile ? (
-          <div className="space-y-3">
-            {donations.map((donation) => (
-              <MobileCard key={donation.id}>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-medium">{donation.campaigns?.title || "General Donation"}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {format(new Date(donation.created_at), "dd MMM yyyy")}
-                    </p>
-                  </div>
-                  {getStatusBadge(donation.payment_status)}
-                </div>
-                 <div className="flex justify-between items-center mt-2">
-                   <span className="text-xs text-muted-foreground">{donation.payment_mode}</span>
-                   <div className="flex items-center gap-2">
-                     {donation.payment_status === 'SUCCESS' && (
-                       <Button
-                         size="sm"
-                         variant="outline"
-                         className="h-7 text-xs gap-1"
-                         disabled={downloadingId === donation.id}
-                         onClick={() => handleDownloadCertificate(donation.id)}
-                       >
-                         {downloadingId === donation.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Download className="h-3 w-3" />}
-                         Certificate
-                       </Button>
-                     )}
-                     <span className="font-bold text-primary">₹{Number(donation.amount).toLocaleString()}</span>
-                   </div>
-                 </div>
-               </MobileCard>
-            ))}
-          </div>
         ) : (
-          <Card>
-            <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                     <TableHead>Campaign</TableHead>
-                     <TableHead>Amount</TableHead>
-                     <TableHead>Trees</TableHead>
-                     <TableHead>Mode</TableHead>
-                     <TableHead>Status</TableHead>
-                     <TableHead>Date</TableHead>
-                     <TableHead>Certificate</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {donations.map((donation) => {
-                    const pricePerTree = donation.campaigns?.price_per_tree || 99;
-                    const trees = Math.floor(Number(donation.amount) / pricePerTree);
-                    return (
-                      <TableRow key={donation.id}>
-                        <TableCell className="font-medium">
-                          {donation.campaigns?.title || "General Donation"}
-                        </TableCell>
-                        <TableCell className="font-bold">
-                          ₹{Number(donation.amount).toLocaleString()}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-1">
-                            <TreePine className="h-4 w-4 text-green-600" />
-                            {trees}
-                          </div>
-                        </TableCell>
-                        <TableCell>{donation.payment_mode}</TableCell>
-                        <TableCell>{getStatusBadge(donation.payment_status)}</TableCell>
-                         <TableCell>
-                           {format(new Date(donation.created_at), "dd MMM yyyy")}
-                         </TableCell>
-                         <TableCell>
-                           {donation.payment_status === 'SUCCESS' ? (
-                             <Button
-                               size="sm"
-                               variant="outline"
-                               className="h-8 gap-1"
-                               disabled={downloadingId === donation.id}
-                               onClick={() => handleDownloadCertificate(donation.id)}
-                             >
-                               {downloadingId === donation.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Download className="h-3 w-3" />}
-                               Download
-                             </Button>
-                           ) : (
-                             <span className="text-muted-foreground text-sm">—</span>
-                           )}
-                         </TableCell>
-                       </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+          <div className="space-y-6">
+            {/* Tree Orders with Allocation Status */}
+            {orders.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Tree Sponsorship Pipeline</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {isMobile ? (
+                    <div className="space-y-3">
+                      {orders.map(order => {
+                        const alloc = order.tree_allocations?.[0];
+                        return (
+                          <MobileCard key={order.id}>
+                            <div className="flex justify-between items-start mb-2">
+                              <div>
+                                <p className="font-medium">{order.quantity} Trees · ₹{Number(order.total_price).toLocaleString()}</p>
+                                <p className="text-xs text-muted-foreground">{format(new Date(order.created_at), "dd MMM yyyy")}</p>
+                              </div>
+                              <Badge variant={order.status === "completed" ? "default" : "secondary"} className="text-xs capitalize">
+                                {order.status}
+                              </Badge>
+                            </div>
+                            {alloc ? (
+                              <div className="text-xs space-y-1 p-2 rounded bg-muted/50">
+                                <p><Sprout className="h-3 w-3 inline mr-1" />{alloc.tree_count} × {alloc.species}</p>
+                                <p>Plantation: {format(new Date(alloc.plantation_date), "dd MMM yyyy")}</p>
+                                <Badge variant="outline" className="text-xs capitalize">{alloc.status}</Badge>
+                              </div>
+                            ) : (
+                              <p className="text-xs text-muted-foreground">⏳ Awaiting land partner allocation</p>
+                            )}
+                          </MobileCard>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Date</TableHead>
+                          <TableHead>Trees</TableHead>
+                          <TableHead>Amount</TableHead>
+                          <TableHead>Order Status</TableHead>
+                          <TableHead>Allocation</TableHead>
+                          <TableHead>Species</TableHead>
+                          <TableHead>Plantation Date</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {orders.map(order => {
+                          const alloc = order.tree_allocations?.[0];
+                          return (
+                            <TableRow key={order.id}>
+                              <TableCell className="text-sm">{format(new Date(order.created_at), "dd MMM yyyy")}</TableCell>
+                              <TableCell className="font-medium">{order.quantity}</TableCell>
+                              <TableCell>₹{Number(order.total_price).toLocaleString()}</TableCell>
+                              <TableCell>
+                                <Badge variant={order.status === "completed" ? "default" : "secondary"} className="capitalize">
+                                  {order.status}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>
+                                {alloc ? (
+                                  <Badge variant="outline" className="capitalize">{alloc.status}</Badge>
+                                ) : (
+                                  <span className="text-muted-foreground text-sm">Pending</span>
+                                )}
+                              </TableCell>
+                              <TableCell>{alloc?.species || "—"}</TableCell>
+                              <TableCell>{alloc ? format(new Date(alloc.plantation_date), "dd MMM yyyy") : "—"}</TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Survival Updates */}
+            {survivalUpdates.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Survival Updates</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {survivalUpdates.slice(0, 6).map(update => (
+                      <div key={update.id} className="rounded-lg border p-4 space-y-2">
+                        {update.photo_url && (
+                          <img src={update.photo_url} alt="Tree" className="w-full h-32 object-cover rounded-md" />
+                        )}
+                        <div className="flex justify-between items-center">
+                          <Badge variant={update.health_status === "healthy" ? "default" : update.health_status === "weak" ? "secondary" : "destructive"} className="capitalize">
+                            {update.health_status}
+                          </Badge>
+                          <span className="text-xs text-muted-foreground">{format(new Date(update.update_date), "dd MMM yyyy")}</span>
+                        </div>
+                        {update.height_cm && <p className="text-sm">Height: {update.height_cm} cm</p>}
+                        {update.notes && <p className="text-xs text-muted-foreground">{update.notes}</p>}
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Campaign Donations */}
+            {donations.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Campaign Contributions</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {donations.map((d: any) => (
+                      <div key={d.id} className="flex items-center justify-between p-3 rounded-lg border">
+                        <div>
+                          <p className="font-medium">{d.campaigns?.title || "General"}</p>
+                          <p className="text-xs text-muted-foreground">{format(new Date(d.created_at), "dd MMM yyyy")}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button size="sm" variant="outline" className="h-7 text-xs gap-1" disabled={downloadingId === d.id} onClick={() => handleDownloadCertificate(d.id)}>
+                            {downloadingId === d.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Download className="h-3 w-3" />}
+                            Certificate
+                          </Button>
+                          <span className="font-bold text-primary">₹{Number(d.amount).toLocaleString()}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         )}
       </main>
 

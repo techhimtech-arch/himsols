@@ -1837,6 +1837,7 @@ export type Database = {
           created_at: string
           id: string
           notes: string | null
+          order_id: string | null
           partner_id: string
           plantation_date: string
           species: string
@@ -1850,6 +1851,7 @@ export type Database = {
           created_at?: string
           id?: string
           notes?: string | null
+          order_id?: string | null
           partner_id: string
           plantation_date: string
           species: string
@@ -1863,6 +1865,7 @@ export type Database = {
           created_at?: string
           id?: string
           notes?: string | null
+          order_id?: string | null
           partner_id?: string
           plantation_date?: string
           species?: string
@@ -1876,6 +1879,13 @@ export type Database = {
             columns: ["application_id"]
             isOneToOne: false
             referencedRelation: "land_partner_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tree_allocations_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
             referencedColumns: ["id"]
           },
         ]
