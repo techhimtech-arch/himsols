@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Eye, CheckCircle, XCircle, TreePine, Plus } from "lucide-react";
+import { Loader2, Eye, CheckCircle, XCircle, TreePine, Plus, Link as LinkIcon } from "lucide-react";
 import { format } from "date-fns";
 
 interface Application {
@@ -38,7 +38,19 @@ interface Allocation {
   species: string;
   plantation_date: string;
   status: string;
+  order_id: string | null;
   created_at: string;
+}
+
+interface UnassignedOrder {
+  id: string;
+  user_id: string;
+  quantity: number;
+  total_price: number;
+  status: string;
+  created_at: string;
+  delivery_location: string;
+  profiles?: { full_name: string; email: string } | null;
 }
 
 const statusColors: Record<string, string> = {
@@ -53,24 +65,44 @@ export const LandPartnersTab = () => {
   const { toast } = useToast();
   const [applications, setApplications] = useState<Application[]>([]);
   const [allocations, setAllocations] = useState<Allocation[]>([]);
+  const [unassignedOrders, setUnassignedOrders] = useState<UnassignedOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
   const [adminNotes, setAdminNotes] = useState("");
   const [allocDialog, setAllocDialog] = useState(false);
-  const [allocForm, setAllocForm] = useState({ partner_id: "", application_id: "", tree_count: "10", species: "", plantation_date: "" });
+  const [allocForm, setAllocForm] = useState({
+    partner_id: "", application_id: "", tree_count: "10", species: "", plantation_date: "", order_id: ""
+  });
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  useEffect(() => { loadData(); }, []);
 
   const loadData = async () => {
     setLoading(true);
-    const [appsRes, allocRes] = await Promise.all([
+    const [appsRes, allocRes, ordersRes] = await Promise.all([
       supabase.from("land_partner_applications").select("*").order("created_at", { ascending: false }),
       supabase.from("tree_allocations").select("*").order("created_at", { ascending: false }),
+      // Fetch paid orders not yet linked to any allocation
+      supabase.from("orders").select("id, user_id, quantity, total_price, status, created_at, delivery_location").eq("status", "completed" as any).order("created_at", { ascending: false }),
     ]);
+
+    const allocs = (allocRes.data as Allocation[]) || [];
+    const linkedOrderIds = new Set(allocs.filter(a => a.order_id).map(a => a.order_id));
+    const orders = ((ordersRes.data as UnassignedOrder[]) || []).filter(o => !linkedOrderIds.has(o.id));
+
+    // Fetch buyer names for unassigned orders
+    if (orders.length > 0) {
+      const userIds = [...new Set(orders.map(o => o.user_id))];
+      const { data: profiles } = await supabase.from("profiles").select("id, full_name, email").in("id", userIds);
+      const profileMap = new Map((profiles || []).map(p => [p.id, p]));
+      orders.forEach(o => {
+        const p = profileMap.get(o.user_id);
+        if (p) o.profiles = { full_name: p.full_name, email: p.email };
+      });
+    }
+
     setApplications((appsRes.data as Application[]) || []);
-    setAllocations((allocRes.data as Allocation[]) || []);
+    setAllocations(allocs);
+    setUnassignedOrders(orders);
     setLoading(false);
   };
 
@@ -82,18 +114,16 @@ export const LandPartnersTab = () => {
         .eq("id", appId);
       if (error) throw error;
 
-      // If verified, update user role
       if (newStatus === "Verified") {
         await supabase.from("user_roles").delete().eq("user_id", userId);
         await supabase.from("user_roles").insert({ user_id: userId, role: "verified_land_partner" as any });
       }
-      // If rejected/suspended, revert to user role
       if (newStatus === "Rejected" || newStatus === "Suspended") {
         await supabase.from("user_roles").delete().eq("user_id", userId);
         await supabase.from("user_roles").insert({ user_id: userId, role: "user" as any });
       }
 
-      toast({ title: "✅ Updated", description: `Application status set to ${newStatus}` });
+      toast({ title: "✅ Updated", description: `Status set to ${newStatus}` });
       setSelectedApp(null);
       setAdminNotes("");
       loadData();
@@ -109,38 +139,51 @@ export const LandPartnersTab = () => {
       return;
     }
     if (!allocForm.species || !allocForm.plantation_date || !allocForm.partner_id) {
-      toast({ title: "Error", description: "Fill all allocation fields.", variant: "destructive" });
+      toast({ title: "Error", description: "Fill all required fields.", variant: "destructive" });
       return;
     }
 
-    // Verify partner is verified
     const app = applications.find(a => a.id === allocForm.application_id);
     if (!app || app.status !== "Verified") {
-      toast({ title: "Error", description: "Partner must be verified before allocation.", variant: "destructive" });
+      toast({ title: "Error", description: "Partner must be verified.", variant: "destructive" });
       return;
     }
 
     try {
-      const { error } = await supabase.from("tree_allocations").insert({
+      const insertData: any = {
         partner_id: allocForm.partner_id,
         application_id: allocForm.application_id,
         tree_count: count,
         species: allocForm.species,
         plantation_date: allocForm.plantation_date,
         allocated_by: user?.id,
-      });
+      };
+      if (allocForm.order_id) {
+        insertData.order_id = allocForm.order_id;
+      }
+
+      const { error } = await supabase.from("tree_allocations").insert(insertData);
       if (error) throw error;
 
-      // Log allocation
+      // Update order status to fulfilled if linked
+      if (allocForm.order_id) {
+        await supabase.from("orders").update({ status: "completed" }).eq("id", allocForm.order_id);
+      }
+
       await supabase.from("allocation_logs").insert({
         action: "TREES_ALLOCATED",
         performed_by: user?.id,
-        details: { partner_id: allocForm.partner_id, tree_count: count, species: allocForm.species },
+        details: {
+          partner_id: allocForm.partner_id,
+          tree_count: count,
+          species: allocForm.species,
+          order_id: allocForm.order_id || null,
+        },
       });
 
-      toast({ title: "✅ Allocated", description: `${count} trees allocated successfully.` });
+      toast({ title: "✅ Allocated", description: `${count} trees allocated${allocForm.order_id ? " & order linked" : ""}.` });
       setAllocDialog(false);
-      setAllocForm({ partner_id: "", application_id: "", tree_count: "10", species: "", plantation_date: "" });
+      setAllocForm({ partner_id: "", application_id: "", tree_count: "10", species: "", plantation_date: "", order_id: "" });
       loadData();
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
@@ -155,6 +198,39 @@ export const LandPartnersTab = () => {
 
   return (
     <div className="space-y-6">
+      {/* Unassigned Orders Pipeline */}
+      {unassignedOrders.length > 0 && (
+        <Card className="border-primary/30">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <LinkIcon className="h-5 w-5 text-primary" />
+              Unassigned Orders ({unassignedOrders.length})
+              <span className="text-sm font-normal text-muted-foreground ml-2">— Paid orders waiting for land partner allocation</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {unassignedOrders.map(order => (
+                <div key={order.id} className="flex items-center justify-between p-3 rounded-lg border bg-card">
+                  <div>
+                    <p className="font-medium">{order.profiles?.full_name || "Unknown Buyer"}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {order.quantity} trees · ₹{Number(order.total_price).toLocaleString()} · {format(new Date(order.created_at), "dd MMM yyyy")}
+                    </p>
+                  </div>
+                  <Button size="sm" variant="outline" onClick={() => {
+                    setAllocForm(f => ({ ...f, order_id: order.id, tree_count: String(Math.ceil(order.quantity / 10) * 10) }));
+                    setAllocDialog(true);
+                  }}>
+                    <TreePine className="h-3 w-3 mr-1" /> Assign to Partner
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Applications */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
@@ -184,6 +260,23 @@ export const LandPartnersTab = () => {
                     </SelectContent>
                   </Select>
                 </div>
+
+                {/* Link to buyer order */}
+                <div>
+                  <Label>Link to Buyer Order (optional)</Label>
+                  <Select value={allocForm.order_id} onValueChange={v => setAllocForm(f => ({ ...f, order_id: v === "none" ? "" : v }))}>
+                    <SelectTrigger><SelectValue placeholder="No order linked" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">No order linked</SelectItem>
+                      {unassignedOrders.map(o => (
+                        <SelectItem key={o.id} value={o.id}>
+                          {o.profiles?.full_name || "Buyer"} — {o.quantity} trees · ₹{Number(o.total_price).toLocaleString()}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <div>
                   <Label>Number of Trees (multiples of 10) *</Label>
                   <Input type="number" min={10} step={10} value={allocForm.tree_count} onChange={e => setAllocForm(f => ({ ...f, tree_count: e.target.value }))} />
@@ -304,6 +397,7 @@ export const LandPartnersTab = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Partner</TableHead>
+                  <TableHead>Buyer Order</TableHead>
                   <TableHead>Trees</TableHead>
                   <TableHead>Species</TableHead>
                   <TableHead>Plantation Date</TableHead>
@@ -316,6 +410,15 @@ export const LandPartnersTab = () => {
                   return (
                     <TableRow key={alloc.id}>
                       <TableCell className="font-medium">{partner?.full_name || "—"}</TableCell>
+                      <TableCell>
+                        {alloc.order_id ? (
+                          <Badge variant="outline" className="text-xs">
+                            <LinkIcon className="h-3 w-3 mr-1" /> Linked
+                          </Badge>
+                        ) : (
+                          <span className="text-muted-foreground text-xs">Unlinked</span>
+                        )}
+                      </TableCell>
                       <TableCell>{alloc.tree_count}</TableCell>
                       <TableCell>{alloc.species}</TableCell>
                       <TableCell>{format(new Date(alloc.plantation_date), "dd MMM yyyy")}</TableCell>
@@ -324,7 +427,7 @@ export const LandPartnersTab = () => {
                   );
                 })}
                 {allocations.length === 0 && (
-                  <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">No allocations yet</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">No allocations yet</TableCell></TableRow>
                 )}
               </TableBody>
             </Table>
