@@ -1,98 +1,91 @@
 
 
-# Sab Features Ek Saath - Complete Green Infrastructure System
+# Himsols Platform — Gap Analysis & Remaining Work
 
-## Kya Banana Hai
+## What's Already Built (Done)
 
-Website pe jo bhi claim kiya hai pitch mein - Village Onboarding, CSR Partner Onboarding, Survival Tracking, Nursery Partnerships - sab ko real working features banana hai. Abhi sirf content hai, functionality nahi hai.
-
-## 4 Major Systems Banenge
-
-### 1. Village Onboarding System
-- Ek naya "villages" table banega database mein
-- Public form jahan village/panchayat register kar sake (village name, district, state, contact person, phone, trees needed)
-- Admin panel mein "Villages" tab add hoga jahan admin approve/reject/manage kare
-- Village ka status track hoga: registered -> approved -> active -> campaign_linked
-
-### 2. CSR Partner Onboarding System  
-- "csr_partners" table banega
-- Public "/partner-with-us" page banega jahan companies/NGOs sign up kare (company name, type, contact person, email, phone, CSR budget range, interest area)
-- Admin mein "CSR Partners" tab add hoga
-- Partner status: inquiry -> contacted -> onboarded -> active
-
-### 3. Tree Survival Tracking System
-- "survival_updates" table banega jo existing plantation_photos + tree_plantation_requests se link hoga
-- Admin panel mein jab order fulfill ho, toh uske baad periodic survival updates add kar sake (photo, health status: healthy/weak/dead, height, notes)
-- Public "Track Your Tree" page pe survival history dikhe with photos
-- Automatic survival rate calculation based on updates
-
-### 4. Nursery Partnership Management
-- "nurseries" table banega (name, location, contact, specialization, verified status)
-- Admin mein "Nurseries" tab add hoga
-- Villages aur campaigns ko nurseries se link kar sake
-
-## New Pages (Public)
-1. **`/partner-with-us`** - CSR/NGO/Institution onboarding form
-2. **`/village-register`** - Village/Panchayat registration form  
-3. Update existing **`/track`** page to show survival updates
-
-## Admin Panel New Tabs
-1. **Villages Tab** - Manage registered villages
-2. **CSR Partners Tab** - Manage partner inquiries
-3. **Nurseries Tab** - Manage nursery partnerships
-4. **Survival Updates** - Add tree health updates to fulfilled orders
-
-## Live Stats Auto-Update
-- About page aur homepage pe stats database se automatically calculate honge (total villages, total partners, survival rate %)
+| System | Status |
+|--------|--------|
+| Database: `orders`, `tree_allocations`, `survival_updates`, `villages`, `csr_partners`, `nurseries`, `allocation_logs`, `land_partner_applications` | Done |
+| Admin tabs: Villages, CSR Partners, Nurseries, Orders with allocation, Land Partners, Sellers | Done |
+| Public pages: `/village-register`, `/partner-with-us`, `/apply-land-partner`, `/impact` | Done |
+| Land Partner verification workflow (Apply → Admin Review → Role grant) | Done |
+| Tree allocation pipeline (Admin assigns batches of 10 to verified partners via `order_id`) | Done |
+| Buyer Impact Dashboard (`/my-contributions`) — orders, allocations, survival updates | Done |
+| Public Impact Dashboard (`/impact`) — aggregated stats from real data | Done |
+| Homepage restructured as SaaS-style platform (Hero, How It Works, Impact Dashboard, ₹2,999 Pack, CSR, Partner Farmer) | Done |
+| Role-based access (`user_roles` table, `has_role()` function) | Done |
+| Wallet, Gift Cards, Campaigns, Marketplace — all functional | Done |
+| Auth session self-healing (token refresh failure cleanup) | Done |
+| Query caching optimized (5min stale, no refetch on focus) | Done |
 
 ---
 
-## Technical Details
+## What's Remaining (4 Gaps)
 
-### Database Tables (New)
+### Gap 1: No Dedicated ₹2,999 Checkout Flow
+**Current state:** The "Start Your Climate Impact" button on homepage goes to `/shop` — a generic tree catalog with individual tree selection, filters, cart, etc.
+**Problem:** A user wanting the ₹2,999 pack has to manually browse, select trees, and build a cart. There's no single-click "Buy the Pack" experience.
+**What to build:**
+- A dedicated `/climate-impact-pack` page (or a streamlined checkout component) that:
+  - Shows the pack details (10 trees, geo-tags, survival tracking, certificate)
+  - Has a single "Buy Now — ₹2,999" button
+  - Requires login → Creates a single order with quantity=10 and total_price=2999
+  - Redirects to Razorpay payment
+  - On success → order created → admin allocation pipeline kicks in
+- Update all CTAs across the site (Hero, ClimateImpactPackSection, MobileStickyCTA, MyContributions empty state) to point to this new page instead of `/shop`
 
-**villages**
-- id, name, district, state, block, contact_person, phone, email
-- population (approx), current_tree_count, trees_requested
-- status (registered/approved/active/inactive)
-- registered_at, approved_at, notes
-- RLS: Anyone can INSERT (register), admins can SELECT/UPDATE/DELETE
+### Gap 2: Gift Card → Impact Pack Integration
+**Current state:** Gift cards can only be redeemed for campaign donations or wallet credit. They can't be used to purchase the Climate Impact Pack directly.
+**What to build:**
+- Add a "Use Gift Card" payment option in the new Impact Pack checkout flow
+- When a gift card code is applied, validate balance ≥ ₹2,999
+- Deduct from gift card balance and create the order (similar to the existing `redeem-gift-card` edge function but creating an `orders` row instead of a `donations` row)
+- Alternatively, allow wallet balance (already topped up from gift cards) as payment for tree orders
 
-**csr_partners**
-- id, company_name, company_type (CSR/NGO/Educational/Panchayat/Other)
-- contact_person, email, phone, website
-- interest_area, budget_range, message
-- status (inquiry/contacted/onboarded/active)
-- RLS: Anyone can INSERT (register), admins can SELECT/UPDATE/DELETE
+### Gap 3: Per-User CO₂ Reporting in My Contributions
+**Current state:** CO₂ offset is only shown on the public `/impact` page as an aggregate. Individual users don't see their personal carbon impact.
+**What to build:**
+- In `/my-contributions`, add a "Your CO₂ Impact" card
+- Calculate: user's allocated trees × survival rate × 22 kg/year
+- Show it prominently alongside existing stats (Total Invested, Trees Sponsored, Trees Allocated, Survival Rate)
 
-**nurseries**
-- id, name, location, district, state
-- contact_person, phone, specialization
-- is_verified, is_active
-- RLS: Admins only for all operations, public SELECT for active ones
+### Gap 4: Multi-State Region Filtering on Dashboards
+**Current state:** State/district fields exist on `orders`, `villages`, `land_partner_applications`, etc. but no filtering UI uses them.
+**What to build:**
+- Admin dashboard: Add state/district filter dropdowns on Orders, Villages, Land Partners tabs
+- Public `/impact` page: Optional state-based breakdown of metrics
+- This enables the "Today Himachal, Tomorrow multi-state" scalability goal
 
-**survival_updates**
-- id, order_id (links to orders table), request_id (links to tree_plantation_requests)
-- photo_url, health_status (healthy/weak/dead), height_cm
-- notes, update_date, uploaded_by
-- RLS: Admins can manage, users can view their own order's updates, public can view by tracking_id
+---
 
-### Files to Create
-1. `src/pages/PartnerWithUs.tsx` - CSR partner registration form
-2. `src/pages/VillageRegister.tsx` - Village registration form
-3. `src/components/admin/VillagesTab.tsx` - Admin village management
-4. `src/components/admin/CSRPartnersTab.tsx` - Admin CSR partner management
-5. `src/components/admin/NurseriesTab.tsx` - Admin nursery management
+## Implementation Plan (Priority Order)
 
-### Files to Modify
-1. `src/App.tsx` - Add new routes (/partner-with-us, /village-register)
-2. `src/pages/Admin.tsx` - Add new admin tabs (Villages, CSR Partners, Nurseries)
-3. `src/pages/TrackRequest.tsx` - Add survival update history display
-4. `src/components/admin/OrdersTab.tsx` - Add "Add Survival Update" button on fulfilled orders
+### Task 1: Dedicated Climate Impact Pack Checkout Page
+- Create `src/pages/ClimateImpactPack.tsx` — focused single-product page
+- Add route `/climate-impact-pack` in App.tsx
+- Integrate Razorpay payment (reuse existing `useRazorpay` hook)
+- On payment success, create order in `orders` table (quantity=10, total_price=2999)
+- Update all homepage CTAs to link to `/climate-impact-pack`
 
-### No Breaking Changes
-- All existing functionality stays as is
-- New tables with proper RLS
-- New pages are additive
-- Existing admin tabs remain unchanged
+### Task 2: Per-User CO₂ Card in My Contributions
+- Add a 5th stat card in the impact stats grid
+- Formula: `totalAllocated × (survivalRate/100) × 22` kg CO₂/year
+- Simple addition, no backend changes needed
+
+### Task 3: Gift Card / Wallet Payment for Impact Pack
+- Add wallet balance check + deduction in the checkout flow
+- Add gift card code input as alternative payment method
+- Create an edge function or extend existing logic to handle order creation via wallet/gift card
+
+### Task 4: State/District Filters on Admin Tabs
+- Add filter dropdowns to OrdersTab, VillagesTab, LandPartnersTab
+- Filter queries by selected state/district
+- Add state breakdown cards on `/impact` page
+
+---
+
+## Summary
+
+Out of the full strategic vision, roughly **85% is built**. The 4 remaining gaps above are what separate the current state from a fully ship-ready, scalable climate business platform. Gap 1 (dedicated checkout) is the highest priority as it directly impacts conversion and revenue.
 
