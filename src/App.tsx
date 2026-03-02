@@ -50,6 +50,8 @@ const PartnerWithUs = lazy(() => import("./pages/PartnerWithUs"));
 const CarbonDashboard = lazy(() => import("./pages/CarbonDashboard"));
 const FarmerRegistration = lazy(() => import("./pages/FarmerRegistration"));
 const CSRCarbonOffset = lazy(() => import("./pages/CSRCarbonOffset"));
+const ApplyLandPartner = lazy(() => import("./pages/ApplyLandPartner"));
+const PartnerDashboard = lazy(() => import("./pages/PartnerDashboard"));
 
 const queryClient = new QueryClient();
 
@@ -118,6 +120,8 @@ const App = () => (
                       <Route path="/carbon-dashboard" element={<CarbonDashboard />} />
                       <Route path="/farmer-registration" element={<FarmerRegistration />} />
                       <Route path="/csr-carbon-offset" element={<CSRCarbonOffset />} />
+                      <Route path="/apply-land-partner" element={<ApplyLandPartner />} />
+                      <Route path="/partner-dashboard" element={<PartnerDashboard />} />
                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                       <Route path="*" element={<NotFound />} />
                     </Routes>

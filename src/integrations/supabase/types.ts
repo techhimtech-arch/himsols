@@ -53,6 +53,41 @@ export type Database = {
         }
         Relationships: []
       }
+      allocation_logs: {
+        Row: {
+          action: string
+          allocation_id: string | null
+          created_at: string
+          details: Json | null
+          id: string
+          performed_by: string
+        }
+        Insert: {
+          action: string
+          allocation_id?: string | null
+          created_at?: string
+          details?: Json | null
+          id?: string
+          performed_by: string
+        }
+        Update: {
+          action?: string
+          allocation_id?: string | null
+          created_at?: string
+          details?: Json | null
+          id?: string
+          performed_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "allocation_logs_allocation_id_fkey"
+            columns: ["allocation_id"]
+            isOneToOne: false
+            referencedRelation: "tree_allocations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blog_posts: {
         Row: {
           author_id: string
@@ -974,6 +1009,69 @@ export type Database = {
         }
         Relationships: []
       }
+      land_partner_applications: {
+        Row: {
+          admin_notes: string | null
+          consent: boolean
+          created_at: string
+          district: string
+          full_name: string
+          id: string
+          irrigation_type: string
+          land_photos: string[]
+          land_size: number
+          land_unit: string
+          mobile: string
+          ownership_type: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+          user_id: string
+          village: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          consent?: boolean
+          created_at?: string
+          district: string
+          full_name: string
+          id?: string
+          irrigation_type?: string
+          land_photos?: string[]
+          land_size: number
+          land_unit?: string
+          mobile: string
+          ownership_type?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+          village: string
+        }
+        Update: {
+          admin_notes?: string | null
+          consent?: boolean
+          created_at?: string
+          district?: string
+          full_name?: string
+          id?: string
+          irrigation_type?: string
+          land_photos?: string[]
+          land_size?: number
+          land_unit?: string
+          mobile?: string
+          ownership_type?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+          village?: string
+        }
+        Relationships: []
+      }
       live_stats: {
         Row: {
           color: string
@@ -1732,6 +1830,56 @@ export type Database = {
         }
         Relationships: []
       }
+      tree_allocations: {
+        Row: {
+          allocated_by: string
+          application_id: string
+          created_at: string
+          id: string
+          notes: string | null
+          partner_id: string
+          plantation_date: string
+          species: string
+          status: string
+          tree_count: number
+          updated_at: string
+        }
+        Insert: {
+          allocated_by: string
+          application_id: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          partner_id: string
+          plantation_date: string
+          species: string
+          status?: string
+          tree_count: number
+          updated_at?: string
+        }
+        Update: {
+          allocated_by?: string
+          application_id?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          partner_id?: string
+          plantation_date?: string
+          species?: string
+          status?: string
+          tree_count?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tree_allocations_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "land_partner_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tree_plantation_requests: {
         Row: {
           created_at: string | null
@@ -2108,7 +2256,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "user"
+      app_role: "admin" | "user" | "land_partner" | "verified_land_partner"
       campaign_status: "ACTIVE" | "INACTIVE" | "COMPLETED"
       marketplace_category:
         | "farmer_produce"
@@ -2252,7 +2400,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "user"],
+      app_role: ["admin", "user", "land_partner", "verified_land_partner"],
       campaign_status: ["ACTIVE", "INACTIVE", "COMPLETED"],
       marketplace_category: [
         "farmer_produce",
