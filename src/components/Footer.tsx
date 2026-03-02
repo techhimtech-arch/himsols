@@ -21,7 +21,7 @@ interface FooterLink {
 
 export const Footer = () => {
   const { t, language } = useLanguage();
-  const { settings } = useSiteSettings();
+  const { settings, isLoading: settingsLoading } = useSiteSettings();
   const visitRecorded = useRef(false);
 
   // Record visit
@@ -200,18 +200,32 @@ export const Footer = () => {
           <div>
             <h3 className="font-semibold text-foreground text-sm md:text-base mb-3 md:mb-4">{t("footer.contact")}</h3>
             <ul className="space-y-2 md:space-y-3">
-              <li className="flex items-center gap-2 text-muted-foreground text-xs md:text-sm">
-                <Mail className="h-3.5 w-3.5 md:h-4 md:w-4 text-primary flex-shrink-0" />
-                <span className="truncate">{settings?.contact_email || "info@himsols.com"}</span>
-              </li>
-              <li className="flex items-center gap-2 text-muted-foreground text-xs md:text-sm">
-                <Phone className="h-3.5 w-3.5 md:h-4 md:w-4 text-primary flex-shrink-0" />
-                <span>{settings?.contact_phone || "+91 1234567890"}</span>
-              </li>
-              <li className="flex items-center gap-2 text-muted-foreground text-xs md:text-sm">
-                <MapPin className="h-3.5 w-3.5 md:h-4 md:w-4 text-primary flex-shrink-0" />
-                <span>Himachal Pradesh</span>
-              </li>
+              {settingsLoading ? (
+                <>
+                  <li className="h-4 w-32 bg-muted-foreground/10 rounded animate-pulse" />
+                  <li className="h-4 w-28 bg-muted-foreground/10 rounded animate-pulse" />
+                  <li className="h-4 w-24 bg-muted-foreground/10 rounded animate-pulse" />
+                </>
+              ) : (
+                <>
+                  {settings?.contact_email && (
+                    <li className="flex items-center gap-2 text-muted-foreground text-xs md:text-sm">
+                      <Mail className="h-3.5 w-3.5 md:h-4 md:w-4 text-primary flex-shrink-0" />
+                      <span className="truncate">{settings.contact_email}</span>
+                    </li>
+                  )}
+                  {settings?.contact_phone && (
+                    <li className="flex items-center gap-2 text-muted-foreground text-xs md:text-sm">
+                      <Phone className="h-3.5 w-3.5 md:h-4 md:w-4 text-primary flex-shrink-0" />
+                      <span>{settings.contact_phone}</span>
+                    </li>
+                  )}
+                  <li className="flex items-center gap-2 text-muted-foreground text-xs md:text-sm">
+                    <MapPin className="h-3.5 w-3.5 md:h-4 md:w-4 text-primary flex-shrink-0" />
+                    <span>Himachal Pradesh</span>
+                  </li>
+                </>
+              )}
             </ul>
             {/* Support Links */}
             {supportLinks.length > 0 && (
