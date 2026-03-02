@@ -7,11 +7,7 @@ export const MobileStickyCTA = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      // Show after scrolling down 400px
-      setIsVisible(window.scrollY > 400);
-    };
-
+    const handleScroll = () => setIsVisible(window.scrollY > 400);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -23,7 +19,7 @@ export const MobileStickyCTA = () => {
       <Link to="/shop" className="block">
         <Button size="lg" className="w-full gap-2">
           <TreePine className="h-5 w-5" />
-          Plant Now
+          Adopt Trees – ₹2,999
           <ArrowRight className="h-4 w-4" />
         </Button>
       </Link>
