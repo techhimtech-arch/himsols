@@ -16,7 +16,7 @@ export const MobileStickyCTA = () => {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 p-3 bg-background/95 backdrop-blur-xl border-t border-border/50 shadow-2xl md:hidden animate-slide-up">
-      <Link to="/shop" className="block">
+      <Link to="/climate-impact-pack" className="block">
         <Button size="lg" className="w-full gap-2">
           <TreePine className="h-5 w-5" />
           Adopt Trees – ₹2,999

@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
-import { TreePine, ArrowRight, Wallet, Download, Loader2, MapPin, Sprout, Activity } from "lucide-react";
+import { TreePine, ArrowRight, Wallet, Download, Loader2, MapPin, Sprout, Activity, CloudRain } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MobileCard } from "@/components/admin/MobileCard";
@@ -170,13 +170,13 @@ const MyContributions = () => {
             <h1 className="text-2xl font-bold">My Impact Dashboard</h1>
             <p className="text-muted-foreground">Track your climate contributions end-to-end</p>
           </div>
-          <Button onClick={() => navigate("/shop")}>
+          <Button onClick={() => navigate("/climate-impact-pack")}>
             Sponsor More Trees <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
         </div>
 
         {/* Impact Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
@@ -229,6 +229,19 @@ const MyContributions = () => {
               </div>
             </CardContent>
           </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-primary/10 rounded-lg">
+                  <CloudRain className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-xl font-bold">{Math.round(totalAllocated * (survivalRate / 100) * 22)} kg</p>
+                  <p className="text-xs text-muted-foreground">CO₂ Offset/yr</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Orders & Allocations Pipeline */}
@@ -240,7 +253,7 @@ const MyContributions = () => {
               <TreePine className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
               <h2 className="text-lg font-semibold mb-2">No Contributions Yet</h2>
               <p className="text-muted-foreground mb-4">Sponsor your first Climate Impact Pack to start building your impact.</p>
-              <Button onClick={() => navigate("/shop")}>Get Climate Impact Pack</Button>
+              <Button onClick={() => navigate("/climate-impact-pack")}>Get Climate Impact Pack</Button>
             </CardContent>
           </Card>
         ) : (

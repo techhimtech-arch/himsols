@@ -45,7 +45,7 @@ export const ClimateImpactPackSection = memo(() => {
               ))}
             </div>
 
-            <Link to="/shop">
+            <Link to="/climate-impact-pack">
               <Button size="lg" className="gap-2 group px-8 text-base">
                 Start Your Climate Impact
                 <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />

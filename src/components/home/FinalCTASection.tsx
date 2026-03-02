@@ -18,7 +18,7 @@ export const FinalCTASection = memo(() => {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link to="/shop">
+          <Link to="/climate-impact-pack">
             <Button size="lg" className="bg-background text-foreground hover:bg-background/90 gap-2 group px-8 w-full sm:w-auto text-base">
               Adopt Trees
               <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
