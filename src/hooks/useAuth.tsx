@@ -27,7 +27,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const clearStaleSession = () => {
       if (sessionCleared) return;
       sessionCleared = true;
-      // Remove all supabase auth keys from localStorage to stop retry loops
+
+      // Stop background refresh loop immediately
+      try {
+        (supabase.auth as any).stopAutoRefresh?.();
+      } catch {
+        // no-op
+      }
+
+      // Also clear in-memory auth state in client
+      supabase.auth.signOut({ scope: 'local' }).catch(() => {
+        // no-op
+      });
+
+      // Remove all auth keys from localStorage
       const keysToRemove: string[] = [];
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
@@ -35,7 +48,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           keysToRemove.push(key);
         }
       }
-      keysToRemove.forEach(key => localStorage.removeItem(key));
+      keysToRemove.forEach((key) => localStorage.removeItem(key));
+
       setSession(null);
       setUser(null);
       setLoading(false);
