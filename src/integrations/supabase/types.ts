@@ -658,6 +658,7 @@ export type Database = {
           notes: string | null
           status: string
           updated_at: string
+          user_id: string | null
           village: string
         }
         Insert: {
@@ -675,6 +676,7 @@ export type Database = {
           notes?: string | null
           status?: string
           updated_at?: string
+          user_id?: string | null
           village: string
         }
         Update: {
@@ -692,6 +694,7 @@ export type Database = {
           notes?: string | null
           status?: string
           updated_at?: string
+          user_id?: string | null
           village?: string
         }
         Relationships: []
