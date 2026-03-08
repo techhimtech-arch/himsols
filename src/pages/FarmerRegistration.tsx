@@ -13,11 +13,11 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { compressImage } from "@/lib/imageCompression";
+import { INDIAN_STATES, getDistrictsForState, type IndianState } from "@/lib/constants";
 import { Sprout, CheckCircle, TreeDeciduous, Leaf, HandCoins, Upload, X, Loader2 } from "lucide-react";
 
 const LAND_TYPES = ["Vacant", "Boundary", "Grassland", "Mixed"];
 const TREE_TYPES = ["Forest", "Fruit", "Medicinal"];
-const HP_DISTRICTS = ["Bilaspur", "Chamba", "Hamirpur", "Kangra", "Kinnaur", "Kullu", "Lahaul & Spiti", "Mandi", "Shimla", "Sirmaur", "Solan", "Una"];
 
 const FarmerRegistration = () => {
   const { user, loading: authLoading } = useAuth();
