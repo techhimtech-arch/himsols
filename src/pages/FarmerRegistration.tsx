@@ -192,17 +192,26 @@ const FarmerRegistration = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="village">Village *</Label>
                     <Input id="village" required value={form.village} onChange={e => setForm(p => ({ ...p, village: e.target.value }))} placeholder="Village name" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>State *</Label>
+                    <Select value={form.state} onValueChange={v => setForm(p => ({ ...p, state: v as IndianState, district: "" }))}>
+                      <SelectTrigger><SelectValue placeholder="Select State" /></SelectTrigger>
+                      <SelectContent>
+                        {INDIAN_STATES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="space-y-2">
                     <Label>District *</Label>
                     <Select value={form.district} onValueChange={v => setForm(p => ({ ...p, district: v }))}>
                       <SelectTrigger><SelectValue placeholder="Select District" /></SelectTrigger>
                       <SelectContent>
-                        {HP_DISTRICTS.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+                        {getDistrictsForState(form.state).map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
                       </SelectContent>
                     </Select>
                   </div>
