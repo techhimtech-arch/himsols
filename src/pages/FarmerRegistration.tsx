@@ -33,8 +33,8 @@ const FarmerRegistration = () => {
   const [selectedTrees, setSelectedTrees] = useState<string[]>([]);
   const [consent, setConsent] = useState(false);
   const [form, setForm] = useState({
-    full_name: "", mobile: "", village: "", district: "", land_size_acres: "",
-    land_type: "", irrigation_available: "",
+    full_name: "", mobile: "", village: "", district: "", state: "Himachal Pradesh" as IndianState,
+    land_size_acres: "", land_type: "", irrigation_available: "",
   });
 
   // Redirect to auth if not logged in
