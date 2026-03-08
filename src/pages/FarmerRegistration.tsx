@@ -95,6 +95,7 @@ const FarmerRegistration = () => {
         mobile: form.mobile.trim(),
         village: form.village.trim(),
         district: form.district,
+        state: form.state,
         land_size_acres: form.land_size_acres ? parseFloat(form.land_size_acres) : null,
         land_type: form.land_type || null,
         interested_tree_types: selectedTrees.length > 0 ? selectedTrees : null,
