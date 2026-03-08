@@ -132,7 +132,7 @@ const App = () => (
                       <Route path="/carbon-dashboard" element={<CarbonDashboard />} />
                       <Route path="/farmer-registration" element={<FarmerRegistration />} />
                       <Route path="/csr-carbon-offset" element={<CSRCarbonOffset />} />
-                      <Route path="/apply-land-partner" element={<ApplyLandPartner />} />
+                      <Route path="/apply-land-partner" element={<Navigate to="/farmer-registration" replace />} />
                       <Route path="/partner-dashboard" element={<PartnerDashboard />} />
                       <Route path="/impact" element={<Impact />} />
                       <Route path="/climate-impact-pack" element={<ClimateImpactPack />} />
