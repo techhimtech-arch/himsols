@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { CartProvider } from "@/hooks/useCart";
 import { MarketplaceCartProvider } from "@/hooks/useMarketplaceCart";
@@ -50,7 +50,7 @@ const PartnerWithUs = lazy(() => import("./pages/PartnerWithUs"));
 const CarbonDashboard = lazy(() => import("./pages/CarbonDashboard"));
 const FarmerRegistration = lazy(() => import("./pages/FarmerRegistration"));
 const CSRCarbonOffset = lazy(() => import("./pages/CSRCarbonOffset"));
-const ApplyLandPartner = lazy(() => import("./pages/ApplyLandPartner"));
+
 const PartnerDashboard = lazy(() => import("./pages/PartnerDashboard"));
 const Impact = lazy(() => import("./pages/Impact"));
 const ClimateImpactPack = lazy(() => import("./pages/ClimateImpactPack"));
@@ -132,7 +132,7 @@ const App = () => (
                       <Route path="/carbon-dashboard" element={<CarbonDashboard />} />
                       <Route path="/farmer-registration" element={<FarmerRegistration />} />
                       <Route path="/csr-carbon-offset" element={<CSRCarbonOffset />} />
-                      <Route path="/apply-land-partner" element={<ApplyLandPartner />} />
+                      <Route path="/apply-land-partner" element={<Navigate to="/farmer-registration" replace />} />
                       <Route path="/partner-dashboard" element={<PartnerDashboard />} />
                       <Route path="/impact" element={<Impact />} />
                       <Route path="/climate-impact-pack" element={<ClimateImpactPack />} />
