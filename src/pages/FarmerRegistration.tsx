@@ -13,11 +13,11 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { compressImage } from "@/lib/imageCompression";
+import { INDIAN_STATES, getDistrictsForState, type IndianState } from "@/lib/constants";
 import { Sprout, CheckCircle, TreeDeciduous, Leaf, HandCoins, Upload, X, Loader2 } from "lucide-react";
 
 const LAND_TYPES = ["Vacant", "Boundary", "Grassland", "Mixed"];
 const TREE_TYPES = ["Forest", "Fruit", "Medicinal"];
-const HP_DISTRICTS = ["Bilaspur", "Chamba", "Hamirpur", "Kangra", "Kinnaur", "Kullu", "Lahaul & Spiti", "Mandi", "Shimla", "Sirmaur", "Solan", "Una"];
 
 const FarmerRegistration = () => {
   const { user, loading: authLoading } = useAuth();
@@ -33,8 +33,8 @@ const FarmerRegistration = () => {
   const [selectedTrees, setSelectedTrees] = useState<string[]>([]);
   const [consent, setConsent] = useState(false);
   const [form, setForm] = useState({
-    full_name: "", mobile: "", village: "", district: "", land_size_acres: "",
-    land_type: "", irrigation_available: "",
+    full_name: "", mobile: "", village: "", district: "", state: "Himachal Pradesh" as IndianState,
+    land_size_acres: "", land_type: "", irrigation_available: "",
   });
 
   // Redirect to auth if not logged in
@@ -95,6 +95,7 @@ const FarmerRegistration = () => {
         mobile: form.mobile.trim(),
         village: form.village.trim(),
         district: form.district,
+        state: form.state,
         land_size_acres: form.land_size_acres ? parseFloat(form.land_size_acres) : null,
         land_type: form.land_type || null,
         interested_tree_types: selectedTrees.length > 0 ? selectedTrees : null,
@@ -192,17 +193,26 @@ const FarmerRegistration = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="village">Village *</Label>
                     <Input id="village" required value={form.village} onChange={e => setForm(p => ({ ...p, village: e.target.value }))} placeholder="Village name" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>State *</Label>
+                    <Select value={form.state} onValueChange={v => setForm(p => ({ ...p, state: v as IndianState, district: "" }))}>
+                      <SelectTrigger><SelectValue placeholder="Select State" /></SelectTrigger>
+                      <SelectContent>
+                        {INDIAN_STATES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="space-y-2">
                     <Label>District *</Label>
                     <Select value={form.district} onValueChange={v => setForm(p => ({ ...p, district: v }))}>
                       <SelectTrigger><SelectValue placeholder="Select District" /></SelectTrigger>
                       <SelectContent>
-                        {HP_DISTRICTS.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+                        {getDistrictsForState(form.state).map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
                       </SelectContent>
                     </Select>
                   </div>

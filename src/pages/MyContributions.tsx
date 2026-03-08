@@ -242,7 +242,7 @@ const MyContributions = () => {
                   <CloudRain className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-xl font-bold">{Math.round(totalTreesAlive * 20)} kg</p>
+                  <p className="text-xl font-bold">{Math.round(totalTreesAlive * (survivalRate / 100) * 22)} kg</p>
                   <p className="text-xs text-muted-foreground">CO₂ Offset/yr</p>
                 </div>
               </div>

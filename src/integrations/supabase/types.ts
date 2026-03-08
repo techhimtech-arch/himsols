@@ -656,6 +656,7 @@ export type Database = {
           land_type: string | null
           mobile: string
           notes: string | null
+          state: string | null
           status: string
           updated_at: string
           user_id: string | null
@@ -674,6 +675,7 @@ export type Database = {
           land_type?: string | null
           mobile: string
           notes?: string | null
+          state?: string | null
           status?: string
           updated_at?: string
           user_id?: string | null
@@ -692,6 +694,7 @@ export type Database = {
           land_type?: string | null
           mobile?: string
           notes?: string | null
+          state?: string | null
           status?: string
           updated_at?: string
           user_id?: string | null
