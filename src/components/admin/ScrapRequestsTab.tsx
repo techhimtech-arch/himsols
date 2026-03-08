@@ -1,20 +1,15 @@
+import { useState, useMemo } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { useState, useMemo } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { INDIAN_STATES, getDistrictsForState, IndianState } from "@/lib/constants";
 import { MobileCard, MobileCardRow, StatusBadge } from "./MobileCard";
 
@@ -35,19 +30,42 @@ interface ScrapRequest {
   district: string | null;
 }
 
-interface ScrapRequestsTabProps {
-  requests: ScrapRequest[];
-  onUpdateStatus: (requestId: string, newStatus: string) => void;
-}
-
-export const ScrapRequestsTab = ({ requests, onUpdateStatus }: ScrapRequestsTabProps) => {
+export const ScrapRequestsTab = () => {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [filterState, setFilterState] = useState<string>("all");
   const [filterDistrict, setFilterDistrict] = useState<string>("all");
 
+  const { data: requests = [], isLoading } = useQuery({
+    queryKey: ["admin-scrap-requests"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("waste_management_requests")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data as ScrapRequest[];
+    },
+  });
+
+  const updateStatus = async (requestId: string, newStatus: string) => {
+    try {
+      const { error } = await supabase
+        .from("waste_management_requests")
+        .update({ status: newStatus as any })
+        .eq("id", requestId);
+      if (error) throw error;
+      toast({ title: "Success", description: "Scrap request status updated." });
+      queryClient.invalidateQueries({ queryKey: ["admin-scrap-requests"] });
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    }
+  };
+
   const filteredRequests = useMemo(() => {
-    return requests.filter((request) => {
-      if (filterState !== "all" && request.state !== filterState) return false;
-      if (filterDistrict !== "all" && request.district !== filterDistrict) return false;
+    return requests.filter((r) => {
+      if (filterState !== "all" && r.state !== filterState) return false;
+      if (filterDistrict !== "all" && r.district !== filterDistrict) return false;
       return true;
     });
   }, [requests, filterState, filterDistrict]);
@@ -57,46 +75,29 @@ export const ScrapRequestsTab = ({ requests, onUpdateStatus }: ScrapRequestsTabP
     return getDistrictsForState(filterState as IndianState);
   }, [filterState]);
 
+  if (isLoading) {
+    return <Card><CardContent className="p-6"><Skeleton className="h-40 w-full" /></CardContent></Card>;
+  }
+
   return (
     <Card>
       <CardHeader className="pb-4">
         <div className="flex flex-col gap-4">
           <CardTitle className="text-lg md:text-xl">Valuable Scrap Collection Requests</CardTitle>
           <div className="flex flex-col sm:flex-row gap-2">
-            <Select
-              value={filterState}
-              onValueChange={(value) => {
-                setFilterState(value);
-                setFilterDistrict("all");
-              }}
-            >
-              <SelectTrigger className="w-full sm:w-[160px] bg-background">
-                <SelectValue placeholder="Filter by State" />
-              </SelectTrigger>
+            <Select value={filterState} onValueChange={(v) => { setFilterState(v); setFilterDistrict("all"); }}>
+              <SelectTrigger className="w-full sm:w-[160px] bg-background"><SelectValue placeholder="Filter by State" /></SelectTrigger>
               <SelectContent className="bg-popover border border-border z-50">
                 <SelectItem value="all">All States</SelectItem>
-                {INDIAN_STATES.map((state) => (
-                  <SelectItem key={state} value={state}>
-                    {state}
-                  </SelectItem>
-                ))}
+                {INDIAN_STATES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
               </SelectContent>
             </Select>
             {filterState !== "all" && (
-              <Select
-                value={filterDistrict}
-                onValueChange={setFilterDistrict}
-              >
-                <SelectTrigger className="w-full sm:w-[160px] bg-background">
-                  <SelectValue placeholder="Filter by District" />
-                </SelectTrigger>
+              <Select value={filterDistrict} onValueChange={setFilterDistrict}>
+                <SelectTrigger className="w-full sm:w-[160px] bg-background"><SelectValue placeholder="Filter by District" /></SelectTrigger>
                 <SelectContent className="bg-popover border border-border z-50">
                   <SelectItem value="all">All Districts</SelectItem>
-                  {availableDistricts.map((district) => (
-                    <SelectItem key={district} value={district}>
-                      {district}
-                    </SelectItem>
-                  ))}
+                  {availableDistricts.map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}
                 </SelectContent>
               </Select>
             )}
@@ -124,13 +125,8 @@ export const ScrapRequestsTab = ({ requests, onUpdateStatus }: ScrapRequestsTabP
                 <MobileCardRow label="Scrap Type" value={request.waste_type} />
                 <MobileCardRow label="Quantity" value={request.estimated_quantity || "-"} />
                 <div className="pt-2 border-t border-border">
-                  <Select
-                    value={request.status}
-                    onValueChange={(value) => onUpdateStatus(request.id, value)}
-                  >
-                    <SelectTrigger className="w-full bg-background">
-                      <SelectValue />
-                    </SelectTrigger>
+                  <Select value={request.status} onValueChange={(v) => updateStatus(request.id, v)}>
+                    <SelectTrigger className="w-full bg-background"><SelectValue /></SelectTrigger>
                     <SelectContent className="bg-popover border border-border z-50">
                       <SelectItem value="pending">Pending</SelectItem>
                       <SelectItem value="site_verified">Verified</SelectItem>
@@ -167,9 +163,7 @@ export const ScrapRequestsTab = ({ requests, onUpdateStatus }: ScrapRequestsTabP
             <TableBody>
               {filteredRequests.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={11} className="text-center text-muted-foreground py-8">
-                    No scrap collection requests found
-                  </TableCell>
+                  <TableCell colSpan={11} className="text-center text-muted-foreground py-8">No scrap collection requests found</TableCell>
                 </TableRow>
               ) : (
                 filteredRequests.map((request) => (
@@ -179,23 +173,14 @@ export const ScrapRequestsTab = ({ requests, onUpdateStatus }: ScrapRequestsTabP
                     <TableCell>{request.phone}</TableCell>
                     <TableCell>{request.state || "-"}</TableCell>
                     <TableCell>{request.district || "-"}</TableCell>
-                    <TableCell className="max-w-[200px] truncate" title={request.address}>
-                      {request.address}
-                    </TableCell>
+                    <TableCell className="max-w-[200px] truncate" title={request.address}>{request.address}</TableCell>
                     <TableCell>{new Date(request.pickup_date).toLocaleDateString()}</TableCell>
                     <TableCell>{request.waste_type}</TableCell>
                     <TableCell>{request.estimated_quantity || "-"}</TableCell>
+                    <TableCell><StatusBadge status={request.status} /></TableCell>
                     <TableCell>
-                      <StatusBadge status={request.status} />
-                    </TableCell>
-                    <TableCell>
-                      <Select
-                        value={request.status}
-                        onValueChange={(value) => onUpdateStatus(request.id, value)}
-                      >
-                        <SelectTrigger className="w-[150px] bg-background">
-                          <SelectValue />
-                        </SelectTrigger>
+                      <Select value={request.status} onValueChange={(v) => updateStatus(request.id, v)}>
+                        <SelectTrigger className="w-[150px] bg-background"><SelectValue /></SelectTrigger>
                         <SelectContent className="bg-popover border border-border z-50">
                           <SelectItem value="pending">Pending</SelectItem>
                           <SelectItem value="site_verified">Verified</SelectItem>
