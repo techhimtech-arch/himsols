@@ -11,9 +11,35 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { user_id, campaign_id, amount, donor_name, donor_email, donor_phone } = await req.json();
+    // Verify JWT - extract authenticated user
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
-    if (!user_id || !campaign_id || !amount) {
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const userClient = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await userClient.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const user_id = claimsData.claims.sub;
+
+    const { campaign_id, amount, donor_name, donor_email, donor_phone } = await req.json();
+
+    if (!campaign_id || !amount) {
       return new Response(
         JSON.stringify({ success: false, error: "Missing required fields" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -27,7 +53,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
@@ -45,14 +70,9 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Check sufficient balance
     if (Number(wallet.balance) < amount) {
       return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: "Insufficient wallet balance",
-          current_balance: wallet.balance 
-        }),
+        JSON.stringify({ success: false, error: "Insufficient wallet balance", current_balance: wallet.balance }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -74,7 +94,6 @@ Deno.serve(async (req) => {
 
     const newBalance = Number(wallet.balance) - amount;
 
-    // Create donation record first
     const { data: donation, error: donationError } = await supabase
       .from("donations")
       .insert({
@@ -97,19 +116,16 @@ Deno.serve(async (req) => {
       throw new Error("Failed to create donation record");
     }
 
-    // Debit wallet balance
     const { error: updateWalletError } = await supabase
       .from("wallets")
       .update({ balance: newBalance, updated_at: new Date().toISOString() })
       .eq("id", wallet.id);
 
     if (updateWalletError) {
-      // Rollback donation if wallet update fails
       await supabase.from("donations").delete().eq("id", donation.id);
       throw new Error("Failed to update wallet balance");
     }
 
-    // Create wallet transaction record
     const { error: txnError } = await supabase
       .from("wallet_transactions")
       .insert({
@@ -125,7 +141,6 @@ Deno.serve(async (req) => {
 
     if (txnError) {
       console.error("Error creating transaction record:", txnError);
-      // Don't fail the whole operation for this, donation is already done
     }
 
     return new Response(

@@ -2283,6 +2283,15 @@ export type Database = {
         Args: { p_page_path?: string; p_visitor_id: string }
         Returns: undefined
       }
+      validate_gift_card_code: {
+        Args: { p_code: string }
+        Returns: {
+          balance: number
+          expires_at: string
+          id: string
+          status: string
+        }[]
+      }
       wallet_transaction: {
         Args: {
           p_amount: number

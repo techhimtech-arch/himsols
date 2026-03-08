@@ -11,9 +11,35 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { user_id, items, total_price, delivery_address, district, state, notes } = await req.json();
+    // Verify JWT - extract authenticated user
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
-    if (!user_id || !items || !total_price || !delivery_address || !district || !state) {
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const userClient = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await userClient.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const user_id = claimsData.claims.sub;
+
+    const { items, total_price, delivery_address, district, state, notes } = await req.json();
+
+    if (!items || !total_price || !delivery_address || !district || !state) {
       return new Response(
         JSON.stringify({ success: false, error: "Missing required fields" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -27,7 +53,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
@@ -45,25 +70,18 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Check sufficient balance
     if (Number(wallet.balance) < total_price) {
       return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: "Insufficient wallet balance",
-          current_balance: wallet.balance 
-        }),
+        JSON.stringify({ success: false, error: "Insufficient wallet balance", current_balance: wallet.balance }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Generate order number
     const { data: orderNum, error: numError } = await supabase.rpc("generate_marketplace_order_number");
     if (numError) throw numError;
 
     const newBalance = Number(wallet.balance) - total_price;
 
-    // Create marketplace order
     const { data: order, error: orderError } = await supabase
       .from("marketplace_orders")
       .insert({
@@ -85,19 +103,16 @@ Deno.serve(async (req) => {
       throw new Error("Failed to create order");
     }
 
-    // Debit wallet balance
     const { error: updateWalletError } = await supabase
       .from("wallets")
       .update({ balance: newBalance, updated_at: new Date().toISOString() })
       .eq("id", wallet.id);
 
     if (updateWalletError) {
-      // Rollback order if wallet update fails
       await supabase.from("marketplace_orders").delete().eq("id", order.id);
       throw new Error("Failed to update wallet balance");
     }
 
-    // Create wallet transaction record
     const { error: txnError } = await supabase
       .from("wallet_transactions")
       .insert({
