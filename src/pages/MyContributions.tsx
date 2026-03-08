@@ -183,7 +183,13 @@ const MyContributions = () => {
         </div>
 
         {/* Impact Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+        {/* CO₂ Impact Card */}
+        <div className="mb-8">
+          <CO2ImpactCard totalAllocated={totalAllocated} survivalRate={survivalRate} />
+        </div>
+
+        {/* Impact Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
@@ -232,19 +238,6 @@ const MyContributions = () => {
                 <div>
                   <p className="text-xl font-bold">{survivalRate}%</p>
                   <p className="text-xs text-muted-foreground">Survival Rate</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-3">
-                <div className="p-3 bg-primary/10 rounded-lg">
-                  <CloudRain className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-xl font-bold">{Math.round(totalTreesAlive * (survivalRate / 100) * 22)} kg</p>
-                  <p className="text-xs text-muted-foreground">CO₂ Offset/yr</p>
                 </div>
               </div>
             </CardContent>
