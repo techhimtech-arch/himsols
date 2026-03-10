@@ -297,27 +297,41 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     }
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data: signInData, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (error) {
-      // Check if it's an email not confirmed error
-      const isEmailNotConfirmed = error.message.toLowerCase().includes("email not confirmed");
-      
       toast({
         title: "Login Error",
-        description: isEmailNotConfirmed 
-          ? "Email not verified. Please check your inbox or resend verification email."
-          : error.message,
+        description: error.message,
         variant: "destructive",
       });
-
-      return { error, needsVerification: isEmailNotConfirmed, email: isEmailNotConfirmed ? email : null };
+      return { error, needsVerification: false, email: null };
     }
 
-    return { error, needsVerification: false, email: null };
+    // Check custom email_verified flag in profiles
+    if (signInData?.user) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('email_verified')
+        .eq('id', signInData.user.id)
+        .single();
+
+      if (profile && !profile.email_verified) {
+        // Sign out the user since email is not verified
+        await supabase.auth.signOut({ scope: 'local' });
+        toast({
+          title: "Login Error",
+          description: "Email not verified. Please check your inbox or resend verification email.",
+          variant: "destructive",
+        });
+        return { error: { message: "Email not verified" }, needsVerification: true, email };
+      }
+    }
+
+    return { error: null, needsVerification: false, email: null };
   };
 
   const resendVerificationEmail = async (email: string) => {
