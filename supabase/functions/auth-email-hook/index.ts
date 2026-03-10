@@ -233,33 +233,38 @@ async function handleWebhook(req: Request): Promise<Response> {
     plainText: true,
   })
 
-  // Send email via Lovable Email API
-  // The callback URL is provided in the payload by Lovable, ensuring correct routing
-  // for both production and local development
-  const callbackUrl = payload.data.callback_url
-  if (!callbackUrl) {
-    console.error('No callback_url in payload', { run_id })
-    return new Response(JSON.stringify({ error: 'Missing callback_url in payload' }), {
-      status: 400,
+  // Send email via Resend API directly
+  const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
+  if (!RESEND_API_KEY) {
+    console.error('RESEND_API_KEY not configured', { run_id })
+    return new Response(JSON.stringify({ error: 'RESEND_API_KEY not configured' }), {
+      status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   }
 
-  let result: { message_id?: string }
+  let result: { id?: string }
   try {
-    result = await sendLovableEmail(
-      {
-        run_id,
-        to: payload.data.email,
-        from: `${SITE_NAME} <noreply@${FROM_DOMAIN}>`,
-        sender_domain: SENDER_DOMAIN,
+    const emailResponse = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: `Himsols <noreply@himsols.com>`,
+        to: [payload.data.email],
         subject: EMAIL_SUBJECTS[emailType] || 'Notification',
         html,
         text,
-        purpose: 'transactional',
-      },
-      { apiKey, sendUrl: callbackUrl }
-    )
+      }),
+    })
+
+    result = await emailResponse.json()
+
+    if (!emailResponse.ok) {
+      throw new Error(`Resend API error [${emailResponse.status}]: ${JSON.stringify(result)}`)
+    }
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Failed to send email'
     console.error('Email API error', { error: message, run_id })
