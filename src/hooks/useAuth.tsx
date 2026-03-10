@@ -170,9 +170,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           .eq("id", userData.user.id);
       }
 
-      // Supabase automatically sends verification email on signup
-      // Just show success toast
+      // Send branded verification email via Resend
       if (data?.user && email && !email.includes('@phone.himsols.local')) {
+        try {
+          await fetch(
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-verification-email`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+              },
+              body: JSON.stringify({
+                email: authEmail,
+                userName: fullName,
+                redirectTo: redirectUrl,
+              }),
+            }
+          );
+        } catch (emailError) {
+          console.error("Error sending branded verification email:", emailError);
+        }
+        
         toast({
           title: "✅ Account Created!",
           description: "Please check your email to verify your account before logging in.",
@@ -289,21 +308,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const resendVerificationEmail = async (email: string) => {
     try {
-      const { error } = await supabase.auth.resend({
-        type: 'signup',
-        email: email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-        },
-      });
+      // Send branded verification email via Resend edge function
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-verification-email`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            email: email,
+            userName: "User",
+            redirectTo: `${window.location.origin}/`,
+          }),
+        }
+      );
 
-      if (error) {
-        throw error;
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || "Failed to send verification email");
       }
 
       toast({
         title: "✅ Email Sent!",
-        description: "Verification email has been sent. Please check your inbox.",
+        description: "Verification email has been sent from noreply@himsols.com. Please check your inbox.",
       });
       return { success: true };
     } catch (error: any) {
