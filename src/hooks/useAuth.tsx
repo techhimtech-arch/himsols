@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, currentSession) => {
+      async (event, currentSession) => {
         // If token refresh failed or signed out, clear everything
         if (event === 'TOKEN_REFRESHED' && !currentSession) {
           clearStaleSession();
@@ -72,6 +72,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         setLoading(false);
+
+        // When user logs in via magiclink, mark email as verified
+        if (event === 'SIGNED_IN' && currentSession?.user) {
+          setTimeout(async () => {
+            try {
+              await supabase
+                .from('profiles')
+                .update({ email_verified: true })
+                .eq('id', currentSession.user.id);
+            } catch (e) {
+              console.error('Failed to mark email as verified:', e);
+            }
+          }, 0);
+        }
       }
     );
 
@@ -283,27 +297,41 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     }
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data: signInData, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (error) {
-      // Check if it's an email not confirmed error
-      const isEmailNotConfirmed = error.message.toLowerCase().includes("email not confirmed");
-      
       toast({
         title: "Login Error",
-        description: isEmailNotConfirmed 
-          ? "Email not verified. Please check your inbox or resend verification email."
-          : error.message,
+        description: error.message,
         variant: "destructive",
       });
-
-      return { error, needsVerification: isEmailNotConfirmed, email: isEmailNotConfirmed ? email : null };
+      return { error, needsVerification: false, email: null };
     }
 
-    return { error, needsVerification: false, email: null };
+    // Check custom email_verified flag in profiles
+    if (signInData?.user) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('email_verified')
+        .eq('id', signInData.user.id)
+        .single();
+
+      if (profile && !profile.email_verified) {
+        // Sign out the user since email is not verified
+        await supabase.auth.signOut({ scope: 'local' });
+        toast({
+          title: "Login Error",
+          description: "Email not verified. Please check your inbox or resend verification email.",
+          variant: "destructive",
+        });
+        return { error: { message: "Email not verified" }, needsVerification: true, email };
+      }
+    }
+
+    return { error: null, needsVerification: false, email: null };
   };
 
   const resendVerificationEmail = async (email: string) => {
