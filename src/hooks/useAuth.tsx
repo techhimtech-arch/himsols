@@ -289,41 +289,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const resendVerificationEmail = async (email: string) => {
     try {
-      // Use edge function to get user name securely
-      const confirmationUrl = `${window.location.origin}/auth?confirm=true`;
-      
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-verification-email`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          },
-          body: JSON.stringify({
-            email: email,
-            userName: "User",
-            verificationUrl: confirmationUrl,
-          }),
-        }
-      );
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+        },
+      });
 
-      const result = await response.json();
-
-      if (result.success) {
-        toast({
-          title: "✅ Email Sent!",
-          description: "Verification email has been sent. Please check your inbox.",
-        });
-        return { success: true };
-      } else {
-        throw new Error(result.error || "Failed to send email");
+      if (error) {
+        throw error;
       }
+
+      toast({
+        title: "✅ Email Sent!",
+        description: "Verification email has been sent. Please check your inbox.",
+      });
+      return { success: true };
     } catch (error: any) {
       console.error("Error resending verification email:", error);
       toast({
         title: "Error",
-        description: "Failed to send verification email. Please try again.",
+        description: error.message || "Failed to send verification email. Please try again.",
         variant: "destructive",
       });
       return { success: false, error };
