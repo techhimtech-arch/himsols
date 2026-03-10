@@ -170,9 +170,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           .eq("id", userData.user.id);
       }
 
-      // Supabase automatically sends verification email on signup
-      // Just show success toast
+      // Send branded verification email via Resend
       if (data?.user && email && !email.includes('@phone.himsols.local')) {
+        try {
+          await fetch(
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-verification-email`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+              },
+              body: JSON.stringify({
+                email: authEmail,
+                userName: fullName,
+                redirectTo: redirectUrl,
+              }),
+            }
+          );
+        } catch (emailError) {
+          console.error("Error sending branded verification email:", emailError);
+        }
+        
         toast({
           title: "✅ Account Created!",
           description: "Please check your email to verify your account before logging in.",
