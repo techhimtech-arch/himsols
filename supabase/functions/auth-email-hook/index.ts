@@ -274,10 +274,10 @@ async function handleWebhook(req: Request): Promise<Response> {
     })
   }
 
-  console.log('Email sent successfully', { message_id: result.message_id, run_id })
+  console.log('Email sent successfully via Resend', { email_id: result.id, run_id })
 
   return new Response(
-    JSON.stringify({ success: true, message_id: result.message_id }),
+    JSON.stringify({ success: true, email_id: result.id }),
     { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
   )
 }
