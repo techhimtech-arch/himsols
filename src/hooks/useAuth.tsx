@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, currentSession) => {
+      async (event, currentSession) => {
         // If token refresh failed or signed out, clear everything
         if (event === 'TOKEN_REFRESHED' && !currentSession) {
           clearStaleSession();
@@ -72,6 +72,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         setLoading(false);
+
+        // When user logs in via magiclink, mark email as verified
+        if (event === 'SIGNED_IN' && currentSession?.user) {
+          setTimeout(async () => {
+            try {
+              await supabase
+                .from('profiles')
+                .update({ email_verified: true })
+                .eq('id', currentSession.user.id);
+            } catch (e) {
+              console.error('Failed to mark email as verified:', e);
+            }
+          }, 0);
+        }
       }
     );
 
