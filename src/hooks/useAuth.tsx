@@ -170,36 +170,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           .eq("id", userData.user.id);
       }
 
-      // Send custom verification email via Resend
+      // Supabase automatically sends verification email on signup
+      // Just show success toast
       if (data?.user && email && !email.includes('@phone.himsols.local')) {
-        try {
-          // Get the confirmation URL from Supabase
-          const confirmationUrl = `${window.location.origin}/auth?confirm=true`;
-          
-          await fetch(
-            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-verification-email`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-              },
-              body: JSON.stringify({
-                email: email,
-                userName: fullName || "User",
-                verificationUrl: confirmationUrl,
-              }),
-            }
-          );
-          
-          toast({
-            title: "✅ Account Created!",
-            description: "Please check your email to verify your account.",
-          });
-        } catch (emailError) {
-          console.error("Error sending verification email:", emailError);
-          // Don't fail signup if email fails
-        }
+        toast({
+          title: "✅ Account Created!",
+          description: "Please check your email to verify your account before logging in.",
+        });
       }
 
       // Process signup bonuses via edge function
