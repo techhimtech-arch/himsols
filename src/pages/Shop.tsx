@@ -51,6 +51,7 @@ type SortOption = "name-asc" | "name-desc" | "price-asc" | "price-desc" | "stock
 const GROWTH_RATES = ["Slow", "Medium", "Fast", "Very Fast"];
 
 const Shop = () => {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const { addToCart } = useCart();
   const { t, language } = useLanguage();
