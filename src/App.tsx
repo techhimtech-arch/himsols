@@ -55,6 +55,7 @@ const PartnerDashboard = lazy(() => import("./pages/PartnerDashboard"));
 const Impact = lazy(() => import("./pages/Impact"));
 const ClimateImpactPack = lazy(() => import("./pages/ClimateImpactPack"));
 const GreenQuiz = lazy(() => import("./pages/GreenQuiz"));
+const TreeCheckout = lazy(() => import("./pages/TreeCheckout"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -118,6 +119,7 @@ const App = () => (
                       <Route path="/auth" element={<Auth />} />
                       <Route path="/admin" element={<Admin />} />
                       <Route path="/shop" element={<Shop />} />
+                      <Route path="/shop/:id" element={<TreeCheckout />} />
                       <Route path="/gallery" element={<Gallery />} />
                       <Route path="/order-history" element={<OrderHistory />} />
                       <Route path="/cart" element={<Cart />} />

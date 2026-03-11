@@ -6,8 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { TreePine, ShoppingCart, Package, Search, Filter, Plus, SlidersHorizontal, X, ChevronDown, ArrowUpDown, Share2 } from "lucide-react";
+import { TreePine, ShoppingCart, Package, Search, Filter, Plus, SlidersHorizontal, X, ChevronDown, ArrowUpDown, Share2, ArrowRight } from "lucide-react";
 import { ShareButtons } from "@/components/ShareButtons";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useMemo } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -50,6 +51,7 @@ type SortOption = "name-asc" | "name-desc" | "price-asc" | "price-desc" | "stock
 const GROWTH_RATES = ["Slow", "Medium", "Fast", "Very Fast"];
 
 const Shop = () => {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const { addToCart } = useCart();
   const { t, language } = useLanguage();
@@ -527,7 +529,7 @@ const Shop = () => {
                             <p className="text-xs text-muted-foreground">{tree.stock_quantity} {t("common.inStock")}</p>
                           </div>
                           <Button
-                            onClick={() => handleAddToCart(tree)}
+                            onClick={() => navigate(`/shop/${tree.id}`)}
                             disabled={tree.stock_quantity === 0}
                             size="sm"
                             className="text-xs sm:text-sm"
@@ -536,9 +538,9 @@ const Shop = () => {
                               t("shop.outOfStock")
                             ) : (
                               <>
-                                <Plus className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
-                                <span className="hidden sm:inline">{t("shop.addToCart")}</span>
-                                <span className="sm:hidden">Add</span>
+                                <ArrowRight className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
+                                <span className="hidden sm:inline">Buy Now</span>
+                                <span className="sm:hidden">Buy</span>
                               </>
                             )}
                           </Button>
