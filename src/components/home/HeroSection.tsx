@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, BarChart3, MapPin, Shield } from "lucide-react";
+import { ArrowRight, TreePine, Building2, Sprout, MapPin, BarChart3, Shield } from "lucide-react";
 
 export const HeroSection = memo(() => {
   return (
@@ -15,25 +15,26 @@ export const HeroSection = memo(() => {
           {/* Tag */}
           <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase px-4 py-2 rounded-full border border-primary/20 bg-primary/5 text-primary">
             <Shield className="h-3.5 w-3.5" />
-            Village Climate Infrastructure Platform
+            Environmental Impact Platform
           </div>
 
-          {/* Headline */}
+          {/* Headline — instant clarity */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.08] tracking-tight text-foreground">
-            Build Measurable Climate Impact{" "}
-            <span className="text-primary">in Himachal</span>
+            Plant Trees. Support Rural Communities.{" "}
+            <span className="text-primary">Track Your Impact.</span>
           </h1>
 
           {/* Subheadline */}
           <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-            Sponsor verified tree plantations on farmer land with geo-tag proof, survival tracking, and carbon impact reporting.
+            Sponsor verified tree plantations on farmer land in Himachal Pradesh. Get geo-tagged proof, survival tracking, and carbon impact reports.
           </p>
 
-          {/* CTAs */}
+          {/* 3 Clear Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-2">
             <Link to="/climate-impact-pack">
               <Button size="lg" className="w-full sm:w-auto gap-2 shadow-lg hover:shadow-xl transition-all group px-8 text-base">
-                Adopt 10 Trees – ₹2,999
+                <TreePine className="h-4 w-4" />
+                Plant Trees
                 <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
@@ -43,7 +44,18 @@ export const HeroSection = memo(() => {
                 variant="outline"
                 className="w-full sm:w-auto gap-2 border-2 text-base px-8"
               >
-                For CSR & Bulk Projects
+                <Building2 className="h-4 w-4" />
+                CSR Projects
+              </Button>
+            </Link>
+            <Link to="/farmer-registration">
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full sm:w-auto gap-2 border-2 text-base px-8"
+              >
+                <Sprout className="h-4 w-4" />
+                Farmer Participation
               </Button>
             </Link>
           </div>

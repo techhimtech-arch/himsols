@@ -1,20 +1,21 @@
 import { memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Check, ArrowRight, TreePine, MapPin, Camera, BarChart3, FileText, Shield } from "lucide-react";
+import { Check, ArrowRight, TreePine, MapPin, Camera, BarChart3, FileText, Shield, Calendar } from "lucide-react";
 
-const features = [
-  { icon: TreePine, text: "10 Native Trees" },
-  { icon: MapPin, text: "Plantation on Farmer Land" },
-  { icon: Camera, text: "Geo-Tagged Photos" },
-  { icon: BarChart3, text: "6-Month Survival Update" },
-  { icon: FileText, text: "CO₂ Offset Estimate Certificate" },
+const inclusions = [
+  { icon: TreePine, text: "10 Native Trees Planted on Farmer Land" },
+  { icon: Camera, text: "Geo-Tagged Plantation Photos with GPS Proof" },
+  { icon: Calendar, text: "1-Year Monitoring & Survival Updates" },
+  { icon: FileText, text: "Plantation Certificate with Tree Details" },
+  { icon: MapPin, text: "Exact Location of Your Trees" },
+  { icon: BarChart3, text: "CO₂ Offset Impact Report" },
 ];
 
-const trustIndicators = [
-  "Transparent reporting",
-  "Farmer partnership model",
-  "Survival tracking system",
+const whyItMatters = [
+  "Every ₹299 plants one verified tree",
+  "Direct support to rural farming families",
+  "Transparent tracking — no blind donations",
 ];
 
 export const ClimateImpactPackSection = memo(() => {
@@ -28,51 +29,56 @@ export const ClimateImpactPackSection = memo(() => {
               Most Popular
             </span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 leading-tight">
-              ₹2,999 Climate Impact Pack
+              ₹2,999 Plantation Pack
             </h2>
             <p className="text-muted-foreground text-lg mb-8 max-w-lg">
-              A complete, verified tree sponsorship package with measurable environmental outcomes.
+              A complete, verified tree sponsorship package. Know exactly where your trees are, how they're growing, and the impact they create.
             </p>
 
-            <div className="space-y-4 mb-8">
-              {features.map((f) => (
-                <div key={f.text} className="flex items-center gap-3">
+            <div className="space-y-3.5 mb-8">
+              {inclusions.map((item) => (
+                <div key={item.text} className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <f.icon className="h-4.5 w-4.5 text-primary" />
+                    <item.icon className="h-4.5 w-4.5 text-primary" />
                   </div>
-                  <span className="text-foreground font-medium">{f.text}</span>
+                  <span className="text-foreground font-medium text-sm md:text-base">{item.text}</span>
                 </div>
               ))}
             </div>
 
             <Link to="/climate-impact-pack">
               <Button size="lg" className="gap-2 group px-8 text-base">
-                Start Your Climate Impact
+                Get Your Plantation Pack
                 <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
           </div>
 
-          {/* Right - Trust Card */}
+          {/* Right - Value Card */}
           <div className="bg-background/80 backdrop-blur-sm rounded-2xl p-8 md:p-10 border border-border/50">
             <div className="flex items-center gap-3 mb-6">
               <Shield className="h-6 w-6 text-primary" />
-              <h3 className="text-xl font-bold text-foreground">Built on Trust</h3>
+              <h3 className="text-xl font-bold text-foreground">Why ₹2,999?</h3>
             </div>
-            <div className="space-y-5">
-              {trustIndicators.map((item) => (
+            
+            <p className="text-muted-foreground mb-6 leading-relaxed">
+              Unlike anonymous donations, every rupee is traceable. You'll see where your trees are planted, which farmer is growing them, and how they're doing — with real photos and data.
+            </p>
+
+            <div className="space-y-4 mb-8">
+              {whyItMatters.map((item) => (
                 <div key={item} className="flex items-start gap-3">
                   <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                     <Check className="h-3.5 w-3.5 text-primary" />
                   </div>
-                  <span className="text-foreground">{item}</span>
+                  <span className="text-foreground text-sm">{item}</span>
                 </div>
               ))}
             </div>
 
-            <div className="mt-8 pt-6 border-t border-border/50">
+            <div className="pt-6 border-t border-border/50">
               <div className="text-4xl font-bold text-foreground mb-1">₹2,999</div>
-              <div className="text-muted-foreground text-sm">One-time sponsorship · No recurring fees</div>
+              <div className="text-muted-foreground text-sm">One-time · No recurring fees · Full transparency</div>
             </div>
           </div>
         </div>
