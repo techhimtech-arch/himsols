@@ -527,7 +527,7 @@ const Shop = () => {
                             <p className="text-xs text-muted-foreground">{tree.stock_quantity} {t("common.inStock")}</p>
                           </div>
                           <Button
-                            onClick={() => handleAddToCart(tree)}
+                            onClick={() => navigate(`/shop/${tree.id}`)}
                             disabled={tree.stock_quantity === 0}
                             size="sm"
                             className="text-xs sm:text-sm"
@@ -536,9 +536,9 @@ const Shop = () => {
                               t("shop.outOfStock")
                             ) : (
                               <>
-                                <Plus className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
-                                <span className="hidden sm:inline">{t("shop.addToCart")}</span>
-                                <span className="sm:hidden">Add</span>
+                                <ArrowRight className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
+                                <span className="hidden sm:inline">Buy Now</span>
+                                <span className="sm:hidden">Buy</span>
                               </>
                             )}
                           </Button>
