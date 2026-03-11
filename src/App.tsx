@@ -54,6 +54,7 @@ const CSRCarbonOffset = lazy(() => import("./pages/CSRCarbonOffset"));
 const PartnerDashboard = lazy(() => import("./pages/PartnerDashboard"));
 const Impact = lazy(() => import("./pages/Impact"));
 const ClimateImpactPack = lazy(() => import("./pages/ClimateImpactPack"));
+const GreenQuiz = lazy(() => import("./pages/GreenQuiz"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
