@@ -54,6 +54,7 @@ const CSRCarbonOffset = lazy(() => import("./pages/CSRCarbonOffset"));
 const PartnerDashboard = lazy(() => import("./pages/PartnerDashboard"));
 const Impact = lazy(() => import("./pages/Impact"));
 const ClimateImpactPack = lazy(() => import("./pages/ClimateImpactPack"));
+const GreenQuiz = lazy(() => import("./pages/GreenQuiz"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -136,6 +137,7 @@ const App = () => (
                       <Route path="/partner-dashboard" element={<PartnerDashboard />} />
                       <Route path="/impact" element={<Impact />} />
                       <Route path="/climate-impact-pack" element={<ClimateImpactPack />} />
+                      <Route path="/green-quiz" element={<GreenQuiz />} />
                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                       <Route path="*" element={<NotFound />} />
                     </Routes>
