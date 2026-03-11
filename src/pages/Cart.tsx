@@ -5,23 +5,37 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
+import { useWallet } from "@/hooks/useWallet";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, Link } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ShoppingCart, Minus, Plus, Trash2, TreePine, CheckCircle, ArrowLeft } from "lucide-react";
+import {
+  ShoppingCart, Minus, Plus, Trash2, TreePine, CheckCircle, ArrowLeft,
+  CreditCard, Wallet, Gift, Loader2, ArrowRight
+} from "lucide-react";
 import { useState } from "react";
 import { INDIAN_STATES, getDistrictsForState, IndianState } from "@/lib/constants";
+
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
 
 const Cart = () => {
   const { items, updateQuantity, removeFromCart, clearCart, totalItems, totalPrice } = useCart();
   const { user } = useAuth();
+  const { balance, fetchWallet } = useWallet();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [orderSuccess, setOrderSuccess] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentTab, setPaymentTab] = useState("razorpay");
+  const [giftCardCode, setGiftCardCode] = useState("");
   const [deliveryData, setDeliveryData] = useState({
     delivery_location: "",
     state: "" as IndianState | "",
@@ -29,94 +43,188 @@ const Cart = () => {
     notes: "",
   });
 
-  const handleCheckout = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const getOrderPayload = () => ({
+    items: items.map((i) => ({ id: i.id, quantity: i.quantity })),
+    delivery_location: deliveryData.delivery_location,
+    state: deliveryData.state || null,
+    district: deliveryData.district || null,
+    notes: deliveryData.notes || null,
+  });
+
+  const validateForm = (): boolean => {
     if (!user) {
-      toast({
-        title: "Login Required",
-        description: "Please login to place an order.",
-        variant: "destructive",
-      });
+      toast({ title: "Login Required", description: "Please login to place an order.", variant: "destructive" });
       navigate("/auth");
-      return;
+      return false;
     }
-
     if (items.length === 0) {
-      toast({
-        title: "Cart Empty",
-        description: "Add some trees to your cart first.",
-        variant: "destructive",
-      });
-      return;
+      toast({ title: "Cart Empty", description: "Add some trees to your cart first.", variant: "destructive" });
+      return false;
     }
+    return true;
+  };
 
-    setIsSubmitting(true);
+  const loadRazorpayScript = (): Promise<boolean> => {
+    return new Promise((resolve) => {
+      if (window.Razorpay) { resolve(true); return; }
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const handleRazorpayPayment = async () => {
+    if (!validateForm()) return;
+    setIsProcessing(true);
 
     try {
-      const orderPromises = items.map((item) =>
-        supabase.from("orders").insert({
-          user_id: user.id,
-          tree_id: item.id,
-          quantity: item.quantity,
-          total_price: item.price * item.quantity,
-          delivery_location: deliveryData.delivery_location,
-          state: deliveryData.state || null,
-          district: deliveryData.district,
-          notes: deliveryData.notes || null,
-        })
+      const loaded = await loadRazorpayScript();
+      if (!loaded) throw new Error("Failed to load payment gateway");
+
+      const { data: orderData, error: orderError } = await supabase.functions.invoke(
+        "create-razorpay-order",
+        { body: { amount: totalPrice, notes: { product: "Tree Order", items: items.length } } }
       );
 
-      const results = await Promise.all(orderPromises);
-      const errors = results.filter((r) => r.error);
+      if (orderError || !orderData?.order_id) throw new Error("Failed to create payment order");
 
-      if (errors.length > 0) {
-        throw new Error("Some orders failed to place");
-      }
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name, email, phone")
+        .eq("id", user!.id)
+        .single();
+
+      const razorpayOptions = {
+        key: orderData.key_id,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: "Himsols",
+        description: `Tree Order - ${totalItems} tree${totalItems > 1 ? "s" : ""}`,
+        order_id: orderData.order_id,
+        prefill: {
+          name: profile?.full_name || "",
+          email: profile?.email || user!.email || "",
+          contact: profile?.phone || "",
+        },
+        theme: { color: "#16a34a" },
+        handler: async (response: any) => {
+          try {
+            const { data, error } = await supabase.functions.invoke("purchase-tree-order", {
+              body: {
+                ...getOrderPayload(),
+                payment_method: "razorpay",
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              },
+            });
+
+            if (error || !data?.success) throw new Error(data?.error || "Verification failed");
+
+            setOrderSuccess(true);
+            clearCart();
+            toast({ title: "🎉 Order Placed!", description: "Payment successful. Your trees are on the way!" });
+          } catch (err: any) {
+            toast({ title: "Error", description: err.message, variant: "destructive" });
+          }
+        },
+        modal: { ondismiss: () => setIsProcessing(false) },
+      };
+
+      const razorpay = new window.Razorpay(razorpayOptions);
+      razorpay.on("payment.failed", (response: any) => {
+        toast({ title: "Payment Failed", description: response.error.description, variant: "destructive" });
+        setIsProcessing(false);
+      });
+      razorpay.open();
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleWalletPayment = async () => {
+    if (!validateForm()) return;
+    if (balance < totalPrice) {
+      toast({ title: "Insufficient Balance", description: `You need ₹${totalPrice}. Current balance: ₹${balance}`, variant: "destructive" });
+      return;
+    }
+
+    setIsProcessing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("purchase-tree-order", {
+        body: { ...getOrderPayload(), payment_method: "wallet" },
+      });
+
+      if (error || !data?.success) throw new Error(data?.error || "Payment failed");
 
       setOrderSuccess(true);
       clearCart();
-      setDeliveryData({ delivery_location: "", state: "", district: "", notes: "" });
-    } catch (error: any) {
-      console.error("Checkout error:", error);
-      toast({
-        title: "Error",
-        description: error.message || "Failed to place order.",
-        variant: "destructive",
-      });
+      await fetchWallet();
+      toast({ title: "🎉 Order Placed!", description: "Paid from wallet successfully." });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
     } finally {
-      setIsSubmitting(false);
+      setIsProcessing(false);
+    }
+  };
+
+  const handleGiftCardPayment = async () => {
+    if (!validateForm()) return;
+    if (!giftCardCode.trim()) {
+      toast({ title: "Enter Gift Card Code", variant: "destructive" });
+      return;
+    }
+
+    setIsProcessing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("purchase-tree-order", {
+        body: { ...getOrderPayload(), payment_method: "gift_card", gift_card_code: giftCardCode.trim().toUpperCase() },
+      });
+
+      if (error || !data?.success) throw new Error(data?.error || "Payment failed");
+
+      setOrderSuccess(true);
+      clearCart();
+      toast({ title: "🎉 Order Placed!", description: "Gift card redeemed successfully." });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    } finally {
+      setIsProcessing(false);
     }
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="pt-32 pb-12 px-4 bg-gradient-hero text-white">
+      {/* Hero */}
+      <section className="pt-28 pb-10 px-4 bg-gradient-to-b from-primary/10 via-background to-background">
         <div className="container mx-auto text-center">
-          <ShoppingCart className="h-12 w-12 mx-auto mb-4" />
-          <h1 className="text-4xl font-bold mb-2">Your Cart</h1>
-          <p className="text-lg opacity-90">
-            {totalItems} item{totalItems !== 1 ? "s" : ""} in your cart
+          <ShoppingCart className="h-10 w-10 mx-auto mb-3 text-primary" />
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Your Cart</h1>
+          <p className="text-muted-foreground">
+            {totalItems} item{totalItems !== 1 ? "s" : ""} · ₹{totalPrice.toLocaleString()}
           </p>
         </div>
       </section>
 
-      <section className="py-12 px-4">
+      <section className="py-10 px-4">
         <div className="container mx-auto max-w-5xl">
           {orderSuccess ? (
             <Card className="text-center py-12">
               <CardContent>
                 <CheckCircle className="h-20 w-20 mx-auto mb-6 text-primary" />
-                <h2 className="text-3xl font-bold mb-4">Order Placed Successfully!</h2>
+                <h2 className="text-3xl font-bold mb-4 text-foreground">Order Placed Successfully!</h2>
                 <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-                  Thank you for your order. We'll contact you soon to confirm delivery details.
+                  Your trees have been ordered. Track your plantation journey in My Contributions.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button onClick={() => navigate("/order-history")}>
-                    View My Orders
+                  <Button onClick={() => navigate("/my-contributions")} className="gap-2">
+                    <TreePine className="h-4 w-4" /> My Contributions
                   </Button>
                   <Button variant="outline" onClick={() => navigate("/shop")}>
                     Continue Shopping
@@ -128,13 +236,10 @@ const Cart = () => {
             <Card className="text-center py-12">
               <CardContent>
                 <ShoppingCart className="h-20 w-20 mx-auto mb-6 text-muted-foreground" />
-                <h2 className="text-2xl font-bold mb-4">Your Cart is Empty</h2>
-                <p className="text-muted-foreground mb-6">
-                  Looks like you haven't added any trees yet.
-                </p>
+                <h2 className="text-2xl font-bold mb-4 text-foreground">Your Cart is Empty</h2>
+                <p className="text-muted-foreground mb-6">Browse our trees and start planting!</p>
                 <Button onClick={() => navigate("/shop")}>
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Browse Trees
+                  <ArrowLeft className="mr-2 h-4 w-4" /> Browse Trees
                 </Button>
               </CardContent>
             </Card>
@@ -143,7 +248,7 @@ const Cart = () => {
               {/* Cart Items */}
               <div className="lg:col-span-2 space-y-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold">Cart Items</h2>
+                  <h2 className="text-xl font-semibold text-foreground">Cart Items</h2>
                   <Button variant="ghost" size="sm" onClick={clearCart} className="text-destructive hover:text-destructive">
                     Clear Cart
                   </Button>
@@ -154,61 +259,34 @@ const Cart = () => {
                     <CardContent className="p-4">
                       <div className="flex gap-4">
                         {item.image_url ? (
-                          <img
-                            src={item.image_url}
-                            alt={item.name}
-                            className="w-24 h-24 rounded-lg object-cover"
-                          />
+                          <img src={item.image_url} alt={item.name} className="w-24 h-24 rounded-lg object-cover" />
                         ) : (
                           <div className="w-24 h-24 rounded-lg bg-muted flex items-center justify-center">
                             <TreePine className="h-10 w-10 text-muted-foreground" />
                           </div>
                         )}
-                        
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between items-start">
                             <div>
-                              <h3 className="font-semibold text-lg">{item.name}</h3>
+                              <h3 className="font-semibold text-lg text-foreground">{item.name}</h3>
                               <p className="text-sm text-muted-foreground">{item.category}</p>
                               <p className="text-primary font-semibold mt-1">₹{item.price} each</p>
                             </div>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => removeFromCart(item.id)}
-                              className="text-destructive hover:text-destructive"
-                            >
+                            <Button variant="ghost" size="icon" onClick={() => removeFromCart(item.id)} className="text-destructive hover:text-destructive">
                               <Trash2 className="h-5 w-5" />
                             </Button>
                           </div>
-
                           <div className="flex items-center justify-between mt-4">
                             <div className="flex items-center gap-3">
-                              <Button
-                                variant="outline"
-                                size="icon"
-                                className="h-8 w-8"
-                                onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                              >
+                              <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => updateQuantity(item.id, item.quantity - 1)}>
                                 <Minus className="h-4 w-4" />
                               </Button>
-                              <span className="w-12 text-center font-semibold text-lg">{item.quantity}</span>
-                              <Button
-                                variant="outline"
-                                size="icon"
-                                className="h-8 w-8"
-                                onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                disabled={item.quantity >= item.stock_quantity}
-                              >
+                              <span className="w-12 text-center font-semibold text-lg text-foreground">{item.quantity}</span>
+                              <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => updateQuantity(item.id, item.quantity + 1)} disabled={item.quantity >= item.stock_quantity}>
                                 <Plus className="h-4 w-4" />
                               </Button>
-                              <span className="text-sm text-muted-foreground">
-                                (Max: {item.stock_quantity})
-                              </span>
                             </div>
-                            <p className="font-bold text-lg">
-                              ₹{(item.price * item.quantity).toFixed(2)}
-                            </p>
+                            <p className="font-bold text-lg text-foreground">₹{(item.price * item.quantity).toLocaleString()}</p>
                           </div>
                         </div>
                       </div>
@@ -217,105 +295,137 @@ const Cart = () => {
                 ))}
 
                 <Link to="/shop" className="inline-flex items-center text-primary hover:underline mt-4">
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Continue Shopping
+                  <ArrowLeft className="mr-2 h-4 w-4" /> Continue Shopping
                 </Link>
               </div>
 
-              {/* Order Summary & Checkout */}
+              {/* Checkout Panel */}
               <div className="lg:col-span-1">
-                <Card className="sticky top-24">
+                <Card className="sticky top-24 border-2 border-primary/20">
                   <CardHeader>
                     <CardTitle>Order Summary</CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3 mb-6">
+                  <CardContent className="space-y-6">
+                    {/* Items summary */}
+                    <div className="space-y-2">
                       {items.map((item) => (
                         <div key={item.id} className="flex justify-between text-sm">
-                          <span className="truncate pr-2">{item.name} x {item.quantity}</span>
-                          <span className="font-medium">₹{(item.price * item.quantity).toFixed(2)}</span>
+                          <span className="truncate pr-2 text-muted-foreground">{item.name} × {item.quantity}</span>
+                          <span className="font-medium text-foreground">₹{(item.price * item.quantity).toLocaleString()}</span>
                         </div>
                       ))}
                       <div className="border-t border-border pt-3 flex justify-between font-bold text-lg">
-                        <span>Total</span>
-                        <span className="text-primary">₹{totalPrice.toFixed(2)}</span>
+                        <span className="text-foreground">Total</span>
+                        <span className="text-primary">₹{totalPrice.toLocaleString()}</span>
                       </div>
                     </div>
 
-                    <form onSubmit={handleCheckout} className="space-y-4">
-                      <div className="space-y-2">
-                        <Label>State *</Label>
-                        <Select
-                          value={deliveryData.state}
-                          onValueChange={(value) => setDeliveryData({ ...deliveryData, state: value as IndianState, district: "" })}
-                          required
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select state" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {INDIAN_STATES.map((state) => (
-                              <SelectItem key={state} value={state}>
-                                {state}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                    {/* Delivery Details */}
+                    <div className="space-y-3">
+                      <h3 className="font-semibold text-sm text-foreground">Delivery Details (Optional)</h3>
+                      <Select
+                        value={deliveryData.state}
+                        onValueChange={(value) => setDeliveryData({ ...deliveryData, state: value as IndianState, district: "" })}
+                      >
+                        <SelectTrigger><SelectValue placeholder="Select state" /></SelectTrigger>
+                        <SelectContent>
+                          {INDIAN_STATES.map((state) => (
+                            <SelectItem key={state} value={state}>{state}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
 
-                      <div className="space-y-2">
-                        <Label>District *</Label>
+                      {deliveryData.state && (
                         <Select
                           value={deliveryData.district}
                           onValueChange={(value) => setDeliveryData({ ...deliveryData, district: value })}
-                          required
-                          disabled={!deliveryData.state}
                         >
-                          <SelectTrigger>
-                            <SelectValue placeholder={deliveryData.state ? "Select district" : "Select state first"} />
-                          </SelectTrigger>
+                          <SelectTrigger><SelectValue placeholder="Select district" /></SelectTrigger>
                           <SelectContent>
-                            {deliveryData.state && getDistrictsForState(deliveryData.state).map((district) => (
-                              <SelectItem key={district} value={district}>
-                                {district}
-                              </SelectItem>
+                            {getDistrictsForState(deliveryData.state).map((district) => (
+                              <SelectItem key={district} value={district}>{district}</SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="delivery_location">Delivery Address *</Label>
-                        <Input
-                          id="delivery_location"
-                          value={deliveryData.delivery_location}
-                          onChange={(e) => setDeliveryData({ ...deliveryData, delivery_location: e.target.value })}
-                          placeholder="Village/City, Landmark"
-                          required
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="notes">Special Instructions</Label>
-                        <Textarea
-                          id="notes"
-                          value={deliveryData.notes}
-                          onChange={(e) => setDeliveryData({ ...deliveryData, notes: e.target.value })}
-                          placeholder="Any delivery notes..."
-                          rows={3}
-                        />
-                      </div>
-
-                      <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
-                        {isSubmitting ? "Placing Order..." : "Place Order"}
-                      </Button>
-
-                      {!user && (
-                        <p className="text-sm text-muted-foreground text-center">
-                          You'll need to <Link to="/auth" className="text-primary hover:underline">login</Link> to checkout
-                        </p>
                       )}
-                    </form>
+
+                      <Input
+                        value={deliveryData.delivery_location}
+                        onChange={(e) => setDeliveryData({ ...deliveryData, delivery_location: e.target.value })}
+                        placeholder="Village/City, Landmark"
+                      />
+                      <Textarea
+                        value={deliveryData.notes}
+                        onChange={(e) => setDeliveryData({ ...deliveryData, notes: e.target.value })}
+                        placeholder="Special instructions..."
+                        rows={2}
+                      />
+                    </div>
+
+                    {/* Payment Tabs */}
+                    {!user ? (
+                      <div className="text-center space-y-3">
+                        <p className="text-sm text-muted-foreground">Login to complete your order</p>
+                        <Button onClick={() => navigate("/auth")} className="w-full gap-2" size="lg">
+                          Login to Continue <ArrowRight className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <Tabs value={paymentTab} onValueChange={setPaymentTab}>
+                        <TabsList className="grid w-full grid-cols-3">
+                          <TabsTrigger value="razorpay" className="text-xs gap-1">
+                            <CreditCard className="h-3 w-3" /> Pay Online
+                          </TabsTrigger>
+                          <TabsTrigger value="wallet" className="text-xs gap-1">
+                            <Wallet className="h-3 w-3" /> Wallet
+                          </TabsTrigger>
+                          <TabsTrigger value="gift_card" className="text-xs gap-1">
+                            <Gift className="h-3 w-3" /> Gift Card
+                          </TabsTrigger>
+                        </TabsList>
+
+                        <TabsContent value="razorpay" className="space-y-3 pt-3">
+                          <p className="text-xs text-muted-foreground">Pay via UPI, Card, or Net Banking.</p>
+                          <Button onClick={handleRazorpayPayment} disabled={isProcessing} className="w-full gap-2" size="lg">
+                            {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
+                            Pay ₹{totalPrice.toLocaleString()}
+                          </Button>
+                        </TabsContent>
+
+                        <TabsContent value="wallet" className="space-y-3 pt-3">
+                          <div className="flex justify-between items-center p-3 rounded-lg bg-muted/50">
+                            <span className="text-sm text-muted-foreground">Wallet Balance</span>
+                            <span className="font-bold text-foreground">₹{balance.toLocaleString()}</span>
+                          </div>
+                          {balance < totalPrice && (
+                            <p className="text-xs text-destructive">
+                              Insufficient balance. Need ₹{(totalPrice - balance).toLocaleString()} more.
+                            </p>
+                          )}
+                          <Button onClick={handleWalletPayment} disabled={isProcessing || balance < totalPrice} className="w-full gap-2" size="lg">
+                            {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wallet className="h-4 w-4" />}
+                            Pay from Wallet
+                          </Button>
+                        </TabsContent>
+
+                        <TabsContent value="gift_card" className="space-y-3 pt-3">
+                          <div>
+                            <Label htmlFor="gc-code" className="text-sm">Gift Card Code</Label>
+                            <Input
+                              id="gc-code"
+                              placeholder="GC-XXXX-XXXX"
+                              value={giftCardCode}
+                              onChange={(e) => setGiftCardCode(e.target.value.toUpperCase())}
+                              className="mt-1"
+                            />
+                          </div>
+                          <Button onClick={handleGiftCardPayment} disabled={isProcessing || !giftCardCode.trim()} className="w-full gap-2" size="lg">
+                            {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Gift className="h-4 w-4" />}
+                            Redeem & Pay
+                          </Button>
+                        </TabsContent>
+                      </Tabs>
+                    )}
                   </CardContent>
                 </Card>
               </div>
