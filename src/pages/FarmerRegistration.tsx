@@ -291,12 +291,12 @@ const FarmerRegistration = () => {
 
       <section className="py-12 bg-muted/30">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground text-center mb-8">What You Get</h2>
-          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground text-center mb-8">Partner Benefits</h2>
+          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-10">
             {[
-              { icon: TreeDeciduous, title: "Free Saplings", desc: "Quality saplings provided at no cost for agroforestry programs." },
-              { icon: Leaf, title: "Plantation Support", desc: "Technical guidance and support for tree planting and maintenance." },
-              { icon: HandCoins, title: "Survival-Based Income", desc: "₹120 per surviving tree after 6-month monitoring. Earn by caring for your trees." },
+              { icon: TreeDeciduous, title: "Free / Subsidized Plants", desc: "Quality saplings provided at no cost or subsidized rates for your land." },
+              { icon: Leaf, title: "Plantation Support", desc: "Technical guidance, nursery support & digital tracking for your trees." },
+              { icon: HandCoins, title: "₹120 Per Surviving Tree", desc: "Earn up to ₹120 per tree over 3 years for every tree that survives on your land." },
             ].map((item) => (
               <Card key={item.title} className="border-border/50 text-center">
                 <CardContent className="pt-6">
@@ -306,6 +306,36 @@ const FarmerRegistration = () => {
                 </CardContent>
               </Card>
             ))}
+          </div>
+
+          {/* Incentive Breakdown */}
+          <div className="max-w-2xl mx-auto">
+            <Card className="border-primary/20 bg-primary/5">
+              <CardContent className="pt-6">
+                <h3 className="text-lg font-bold text-foreground text-center mb-4">💰 Survival Incentive Breakdown</h3>
+                <p className="text-sm text-muted-foreground text-center mb-5">
+                  हर surviving tree के लिए 3 साल तक incentive मिलेगा — कुल ₹120 प्रति पेड़
+                </p>
+                <div className="grid grid-cols-3 gap-3 mb-4">
+                  {[
+                    { year: "Year 1", amount: "₹20", label: "प्रति surviving tree" },
+                    { year: "Year 2", amount: "₹40", label: "प्रति surviving tree" },
+                    { year: "Year 3", amount: "₹60", label: "प्रति surviving tree" },
+                  ].map((item) => (
+                    <div key={item.year} className="text-center p-3 rounded-lg bg-background border border-border/50">
+                      <p className="text-xs text-muted-foreground mb-1">{item.year}</p>
+                      <p className="text-2xl font-bold text-primary">{item.amount}</p>
+                      <p className="text-xs text-muted-foreground mt-1">{item.label}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="text-center p-3 rounded-lg bg-primary/10 border border-primary/20">
+                  <p className="text-sm text-muted-foreground">Total earning per surviving tree</p>
+                  <p className="text-3xl font-bold text-primary">₹120</p>
+                  <p className="text-xs text-muted-foreground mt-1">Example: 100 surviving trees = ₹12,000 over 3 years</p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
