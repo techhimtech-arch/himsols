@@ -140,6 +140,7 @@ const App = () => (
                       <Route path="/partner-dashboard" element={<PartnerDashboard />} />
                       <Route path="/impact" element={<Impact />} />
                       <Route path="/climate-impact-pack" element={<ClimateImpactPack />} />
+                      <Route path="/single-tree-pack" element={<SingleTreePack />} />
                       <Route path="/green-quiz" element={<GreenQuiz />} />
                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                       <Route path="*" element={<NotFound />} />

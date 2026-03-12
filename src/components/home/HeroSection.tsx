@@ -59,7 +59,7 @@ export const HeroSection = memo(() => {
 
           {/* Action Buttons — ₹299 tree prominent + Quiz CTA */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-2">
-            <Link to="/shop">
+            <Link to="/single-tree-pack">
               <Button size="lg" className="w-full sm:w-auto gap-2 shadow-lg hover:shadow-xl transition-all group px-8 text-base">
                 <TreePine className="h-4 w-4" />
                 {isHi ? `₹${minPrice} में पेड़ लगाओ` : `Plant a Tree – ₹${minPrice}`}
