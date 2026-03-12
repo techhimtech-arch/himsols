@@ -296,7 +296,7 @@ const FarmerRegistration = () => {
             {[
               { icon: TreeDeciduous, title: "Free / Subsidized Plants", desc: "Quality saplings provided at no cost or subsidized rates for your land." },
               { icon: Leaf, title: "Plantation Support", desc: "Technical guidance, nursery support & digital tracking for your trees." },
-              { icon: HandCoins, title: "₹120 Per Surviving Tree", desc: "Earn up to ₹120 per tree over 3 years for every tree that survives on your land." },
+              { icon: HandCoins, title: "₹120 Per Surviving Tree", desc: "Earn ₹120 per surviving tree over 3 years of monitoring — ₹20, ₹40, ₹60 annually. Earn by caring for your trees." },
             ].map((item) => (
               <Card key={item.title} className="border-border/50 text-center">
                 <CardContent className="pt-6">
