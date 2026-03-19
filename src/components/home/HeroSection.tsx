@@ -14,7 +14,7 @@ const useMinTreePrice = () =>
         .from("trees")
         .select("price")
         .eq("is_active", true)
-        .gt("price", 0)
+        .gte("price", 299)
         .order("price", { ascending: true })
         .limit(1);
       return data?.[0]?.price || 299;
