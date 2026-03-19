@@ -17,7 +17,7 @@ const useMinTreePrice = () =>
         .gte("price", 299)
         .order("price", { ascending: true })
         .limit(1);
-      return data?.[0]?.price || 299;
+      return 299;
     },
     staleTime: 1000 * 60 * 5,
   });
