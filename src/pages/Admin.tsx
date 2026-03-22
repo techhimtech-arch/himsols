@@ -9,7 +9,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Shield, Users, TreePine, TrendingUp, Loader2, Settings, FileText, Image, Quote, Activity, Handshake, Store, Globe, BarChart3, Heart, Flower2, Gift, MessageSquare, Menu, Link2, Info, MapPin, Building2, Sprout, Gauge, ShieldCheck } from "lucide-react";
+import { Shield, Users, TreePine, TrendingUp, Loader2, Settings, FileText, Image, Quote, Activity, Handshake, Store, Globe, BarChart3, Heart, Flower2, Gift, MessageSquare, Menu, Link2, Info, MapPin, Building2, Sprout, Gauge, ShieldCheck, IndianRupee } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlantsTab } from "@/components/admin/PlantsTab";
 import { OrdersTab } from "@/components/admin/OrdersTab";
