@@ -9,7 +9,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Shield, Users, TreePine, TrendingUp, Loader2, Settings, FileText, Image, Quote, Activity, Handshake, Store, Globe, BarChart3, Heart, Flower2, Gift, MessageSquare, Menu, Link2, Info, MapPin, Building2, Sprout, Gauge, ShieldCheck } from "lucide-react";
+import { Shield, Users, TreePine, TrendingUp, Loader2, Settings, FileText, Image, Quote, Activity, Handshake, Store, Globe, BarChart3, Heart, Flower2, Gift, MessageSquare, Menu, Link2, Info, MapPin, Building2, Sprout, Gauge, ShieldCheck, IndianRupee } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlantsTab } from "@/components/admin/PlantsTab";
 import { OrdersTab } from "@/components/admin/OrdersTab";
@@ -44,6 +44,7 @@ import FarmerRegistrationsTab from "@/components/admin/FarmerRegistrationsTab";
 import { LandPartnersTab } from "@/components/admin/LandPartnersTab";
 import { AllocationsTab } from "@/components/admin/AllocationsTab";
 import { UsersTab } from "@/components/admin/UsersTab";
+import { ScrapTypesTab } from "@/components/admin/ScrapTypesTab";
 
 const Admin = () => {
   const { user } = useAuth();
@@ -159,6 +160,7 @@ const Admin = () => {
                 <TabsTrigger value="farmers" className="text-xs md:text-sm"><Sprout className="h-3 w-3 md:h-4 md:w-4 mr-1" />Farmers</TabsTrigger>
                 <TabsTrigger value="land-partners" className="text-xs md:text-sm"><ShieldCheck className="h-3 w-3 md:h-4 md:w-4 mr-1" />Land Partners</TabsTrigger>
                 <TabsTrigger value="allocations" className="text-xs md:text-sm"><TreePine className="h-3 w-3 md:h-4 md:w-4 mr-1" />Allocations</TabsTrigger>
+                <TabsTrigger value="scrap-types" className="text-xs md:text-sm"><IndianRupee className="h-3 w-3 md:h-4 md:w-4 mr-1" />Scrap Rates</TabsTrigger>
                 <TabsTrigger value="settings" className="text-xs md:text-sm"><Settings className="h-3 w-3 md:h-4 md:w-4 mr-1" />Settings</TabsTrigger>
               </TabsList>
             </div>
@@ -201,6 +203,7 @@ const Admin = () => {
             <TabsContent value="farmers"><FarmerRegistrationsTab /></TabsContent>
             <TabsContent value="land-partners"><LandPartnersTab /></TabsContent>
             <TabsContent value="allocations"><AllocationsTab /></TabsContent>
+            <TabsContent value="scrap-types"><ScrapTypesTab /></TabsContent>
             <TabsContent value="settings"><SettingsTab /></TabsContent>
           </Tabs>
         </div>
