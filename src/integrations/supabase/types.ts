@@ -1653,6 +1653,93 @@ export type Database = {
           },
         ]
       }
+      scrap_request_items: {
+        Row: {
+          actual_qty_kg: number | null
+          created_at: string
+          estimated_qty_kg: number | null
+          id: string
+          line_total: number | null
+          rate_at_collection: number | null
+          request_id: string
+          scrap_type_id: string
+        }
+        Insert: {
+          actual_qty_kg?: number | null
+          created_at?: string
+          estimated_qty_kg?: number | null
+          id?: string
+          line_total?: number | null
+          rate_at_collection?: number | null
+          request_id: string
+          scrap_type_id: string
+        }
+        Update: {
+          actual_qty_kg?: number | null
+          created_at?: string
+          estimated_qty_kg?: number | null
+          id?: string
+          line_total?: number | null
+          rate_at_collection?: number | null
+          request_id?: string
+          scrap_type_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scrap_request_items_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "waste_management_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scrap_request_items_scrap_type_id_fkey"
+            columns: ["scrap_type_id"]
+            isOneToOne: false
+            referencedRelation: "scrap_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scrap_types: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          name_hi: string | null
+          rate_per_kg: number
+          sort_order: number
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          name_hi?: string | null
+          rate_per_kg?: number
+          sort_order?: number
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          name_hi?: string | null
+          rate_per_kg?: number
+          sort_order?: number
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       sellers: {
         Row: {
           avatar_url: string | null
