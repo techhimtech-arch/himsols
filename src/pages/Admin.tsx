@@ -203,6 +203,7 @@ const Admin = () => {
             <TabsContent value="farmers"><FarmerRegistrationsTab /></TabsContent>
             <TabsContent value="land-partners"><LandPartnersTab /></TabsContent>
             <TabsContent value="allocations"><AllocationsTab /></TabsContent>
+            <TabsContent value="scrap-types"><ScrapTypesTab /></TabsContent>
             <TabsContent value="settings"><SettingsTab /></TabsContent>
           </Tabs>
         </div>
