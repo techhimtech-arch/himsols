@@ -12,12 +12,29 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { 
-      razorpay_order_id, 
-      razorpay_payment_id, 
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+    // Authenticate caller via JWT
+    const authHeader = req.headers.get("Authorization") || "";
+    const userClient = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: authHeader } },
+      auth: { persistSession: false },
+    });
+    const { data: userData, error: userErr } = await userClient.auth.getUser();
+    if (userErr || !userData?.user) {
+      return new Response(
+        JSON.stringify({ verified: false, error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    const authedUserId = userData.user.id;
+
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
       razorpay_signature,
-      amount,
-      user_id
     } = await req.json();
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
@@ -27,8 +44,9 @@ Deno.serve(async (req) => {
       );
     }
 
+    const razorpayKeyId = Deno.env.get("RAZORPAY_KEY_ID");
     const razorpayKeySecret = Deno.env.get("RAZORPAY_KEY_SECRET");
-    if (!razorpayKeySecret) {
+    if (!razorpayKeyId || !razorpayKeySecret) {
       return new Response(
         JSON.stringify({ verified: false, error: "Payment gateway not configured" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -48,55 +66,98 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Payment verified - add to wallet
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    // Fetch the actual order from Razorpay to get verified amount + user_id from notes
+    const auth = btoa(`${razorpayKeyId}:${razorpayKeySecret}`);
+    const orderResp = await fetch(
+      `https://api.razorpay.com/v1/orders/${razorpay_order_id}`,
+      { headers: { Authorization: `Basic ${auth}` } }
+    );
+    if (!orderResp.ok) {
+      return new Response(
+        JSON.stringify({ verified: false, error: "Could not verify order" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    const rzpOrder = await orderResp.json();
+    const verifiedAmount = Number(rzpOrder.amount) / 100; // paise -> rupees
+    const orderUserId = rzpOrder.notes?.user_id;
+
+    if (!orderUserId || orderUserId !== authedUserId) {
+      return new Response(
+        JSON.stringify({ verified: false, error: "Order does not belong to caller" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (!verifiedAmount || verifiedAmount <= 0) {
+      return new Response(
+        JSON.stringify({ verified: false, error: "Invalid order amount" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, serviceKey, {
+      auth: { persistSession: false },
+    });
+
+    // Idempotency: skip if this payment already processed
+    const { data: existingTxn } = await supabase
+      .from("wallet_transactions")
+      .select("id, balance_after")
+      .eq("user_id", authedUserId)
+      .ilike("description", `%${razorpay_payment_id}%`)
+      .maybeSingle();
+    if (existingTxn) {
+      return new Response(
+        JSON.stringify({
+          verified: true,
+          new_balance: Number(existingTxn.balance_after),
+          payment_id: razorpay_payment_id,
+          idempotent: true,
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     // Get or create wallet
     let { data: wallet, error: walletError } = await supabase
       .from("wallets")
       .select("*")
-      .eq("user_id", user_id)
+      .eq("user_id", authedUserId)
       .single();
 
     if (walletError && walletError.code === "PGRST116") {
       const { data: newWallet, error: createError } = await supabase
         .from("wallets")
-        .insert({ user_id, balance: 0 })
+        .insert({ user_id: authedUserId, balance: 0 })
         .select()
         .single();
-
       if (createError) throw createError;
       wallet = newWallet;
     } else if (walletError) {
       throw walletError;
     }
 
-    const newBalance = Number(wallet.balance) + Number(amount);
+    const newBalance = Number(wallet.balance) + verifiedAmount;
 
-    // Update wallet balance
     const { error: updateError } = await supabase
       .from("wallets")
       .update({ balance: newBalance, updated_at: new Date().toISOString() })
       .eq("id", wallet.id);
-
     if (updateError) throw updateError;
 
-    // Create transaction record
     const { error: txnError } = await supabase
       .from("wallet_transactions")
       .insert({
         wallet_id: wallet.id,
-        user_id,
+        user_id: authedUserId,
         type: "CREDIT",
-        amount: Number(amount),
+        amount: verifiedAmount,
         source: "RAZORPAY",
         reference_id: null,
         description: `Wallet top-up via Razorpay (${razorpay_payment_id})`,
         balance_after: newBalance,
       });
-
     if (txnError) throw txnError;
 
     return new Response(
@@ -110,7 +171,7 @@ Deno.serve(async (req) => {
   } catch (error: any) {
     console.error("Error verifying wallet top-up:", error);
     return new Response(
-      JSON.stringify({ verified: false, error: error.message }),
+      JSON.stringify({ verified: false, error: "Verification failed" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
