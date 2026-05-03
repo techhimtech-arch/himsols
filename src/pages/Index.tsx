@@ -31,7 +31,10 @@ const Index = () => {
       {/* 2. How It Works - 3 Steps */}
       <HowItWorksSection />
 
-      {/* 3. ₹2,999 Plantation Pack */}
+      {/* 3. Scrap → Wallet → Plant flagship loop */}
+      <ScrapToWalletSection />
+
+      {/* 4. ₹2,999 Plantation Pack */}
       <ClimateImpactPackSection />
 
       {/* 4. Live Impact Dashboard */}
