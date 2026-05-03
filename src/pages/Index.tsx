@@ -4,6 +4,7 @@ import { HeroSection } from "@/components/home/HeroSection";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
 import { ImpactDashboardSection } from "@/components/home/ImpactDashboardSection";
 import { ClimateImpactPackSection } from "@/components/home/ClimateImpactPackSection";
+import { ScrapToWalletSection } from "@/components/home/ScrapToWalletSection";
 import { TrustProofSection } from "@/components/home/TrustProofSection";
 import { CSRSection } from "@/components/home/CSRSection";
 import { PartnerFarmerSection } from "@/components/home/PartnerFarmerSection";
@@ -30,7 +31,10 @@ const Index = () => {
       {/* 2. How It Works - 3 Steps */}
       <HowItWorksSection />
 
-      {/* 3. ₹2,999 Plantation Pack */}
+      {/* 3. Scrap → Wallet → Plant flagship loop */}
+      <ScrapToWalletSection />
+
+      {/* 4. ₹2,999 Plantation Pack */}
       <ClimateImpactPackSection />
 
       {/* 4. Live Impact Dashboard */}
