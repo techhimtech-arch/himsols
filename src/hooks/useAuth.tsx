@@ -212,8 +212,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         });
       }
 
-      // Process signup bonuses via edge function
-      if (data?.user) {
+      // Process signup bonuses via edge function (requires authenticated session)
+      if (data?.user && data?.session?.access_token) {
         try {
           const response = await fetch(
             `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/process-signup-bonus`,
@@ -221,17 +221,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+                Authorization: `Bearer ${data.session.access_token}`,
+                apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
               },
               body: JSON.stringify({
-                user_id: data.user.id,
                 referral_code: referralCode?.trim() || null,
               }),
             }
           );
 
           const result = await response.json();
-          
+
           if (result.success && result.total_bonus > 0) {
             toast({
               title: "🎉 Welcome Bonus!",
