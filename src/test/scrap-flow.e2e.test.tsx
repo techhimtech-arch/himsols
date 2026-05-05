@@ -171,9 +171,13 @@ describe("Scrap pickup → Track request E2E flow", () => {
     // Click "Track your request" link → navigates to /track-request
     await user.click(screen.getByRole("link", { name: /Track your request/i }));
 
-    // Tracking page renders with the request from history
+    // Tracking page rendered (heading visible)
+    await waitFor(() => {
+      expect(screen.getByRole("heading", { name: /Track Your Request/i })).toBeInTheDocument();
+    });
+    // And the user's pickup history surfaces the tracking ID
     await waitFor(() => {
       expect(screen.getAllByText(TRACKING_ID).length).toBeGreaterThan(0);
-    });
+    }, { timeout: 3000 });
   });
 });
