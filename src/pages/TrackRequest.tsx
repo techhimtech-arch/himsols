@@ -33,6 +33,7 @@ interface ScrapRequestData {
 const TrackRequest = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { trackingId: trackingIdParam } = useParams();
   const [trackingId, setTrackingId] = useState("");
   const [requestData, setRequestData] = useState<RequestData | null>(null);
   const [scrapRequestData, setScrapRequestData] = useState<ScrapRequestData | null>(null);
@@ -46,6 +47,15 @@ const TrackRequest = () => {
       loadUserRequests();
     }
   }, [user]);
+
+  useEffect(() => {
+    if (trackingIdParam) {
+      setTrackingId(trackingIdParam);
+      // auto-submit
+      handleTrack({ preventDefault: () => {} } as React.FormEvent, trackingIdParam);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trackingIdParam]);
 
   const loadUserRequests = async () => {
     if (!user) return;
