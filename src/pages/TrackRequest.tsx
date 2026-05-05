@@ -79,7 +79,7 @@ const TrackRequest = () => {
     if (scrapData) setUserScrapRequests(scrapData);
   };
 
-  const handleTrack = async (e: React.FormEvent) => {
+  const handleTrack = async (e: React.FormEvent, overrideId?: string) => {
     e.preventDefault();
     setLoading(true);
     setRequestData(null);
@@ -87,7 +87,7 @@ const TrackRequest = () => {
     setRequestType(null);
 
     try {
-      const trimmedId = trackingId.trim();
+      const trimmedId = (overrideId ?? trackingId).trim();
       
       // Check if it's a tree plantation request (HMS-) or scrap request (WMS-)
       if (trimmedId.startsWith('HMS-')) {
