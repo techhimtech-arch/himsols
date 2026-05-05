@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, CheckCircle, Clock, Truck, MapPin, Calendar, Package, TreePine } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -32,6 +33,7 @@ interface ScrapRequestData {
 const TrackRequest = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { trackingId: trackingIdParam } = useParams();
   const [trackingId, setTrackingId] = useState("");
   const [requestData, setRequestData] = useState<RequestData | null>(null);
   const [scrapRequestData, setScrapRequestData] = useState<ScrapRequestData | null>(null);
@@ -45,6 +47,15 @@ const TrackRequest = () => {
       loadUserRequests();
     }
   }, [user]);
+
+  useEffect(() => {
+    if (trackingIdParam) {
+      setTrackingId(trackingIdParam);
+      // auto-submit
+      handleTrack({ preventDefault: () => {} } as React.FormEvent, trackingIdParam);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trackingIdParam]);
 
   const loadUserRequests = async () => {
     if (!user) return;
@@ -68,7 +79,7 @@ const TrackRequest = () => {
     if (scrapData) setUserScrapRequests(scrapData);
   };
 
-  const handleTrack = async (e: React.FormEvent) => {
+  const handleTrack = async (e: React.FormEvent, overrideId?: string) => {
     e.preventDefault();
     setLoading(true);
     setRequestData(null);
@@ -76,7 +87,7 @@ const TrackRequest = () => {
     setRequestType(null);
 
     try {
-      const trimmedId = trackingId.trim();
+      const trimmedId = (overrideId ?? trackingId).trim();
       
       // Check if it's a tree plantation request (HMS-) or scrap request (WMS-)
       if (trimmedId.startsWith('HMS-')) {

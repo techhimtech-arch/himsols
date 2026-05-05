@@ -57,6 +57,7 @@ const ClimateImpactPack = lazy(() => import("./pages/ClimateImpactPack"));
 const GreenQuiz = lazy(() => import("./pages/GreenQuiz"));
 const TreeCheckout = lazy(() => import("./pages/TreeCheckout"));
 const SingleTreePack = lazy(() => import("./pages/SingleTreePack"));
+const TrackRequest = lazy(() => import("./pages/TrackRequest"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -142,6 +143,8 @@ const App = () => (
                       <Route path="/climate-impact-pack" element={<ClimateImpactPack />} />
                       <Route path="/single-tree-pack" element={<SingleTreePack />} />
                       <Route path="/green-quiz" element={<GreenQuiz />} />
+                      <Route path="/track-request" element={<TrackRequest />} />
+                      <Route path="/track-request/:trackingId" element={<TrackRequest />} />
                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                       <Route path="*" element={<NotFound />} />
                     </Routes>
