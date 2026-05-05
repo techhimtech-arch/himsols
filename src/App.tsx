@@ -57,6 +57,7 @@ const ClimateImpactPack = lazy(() => import("./pages/ClimateImpactPack"));
 const GreenQuiz = lazy(() => import("./pages/GreenQuiz"));
 const TreeCheckout = lazy(() => import("./pages/TreeCheckout"));
 const SingleTreePack = lazy(() => import("./pages/SingleTreePack"));
+const TrackRequest = lazy(() => import("./pages/TrackRequest"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
