@@ -5,9 +5,12 @@ import { MemoryRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // ---- Mocks ----
-const insertedRequests: any[] = [];
-const insertedItems: any[] = [];
-const TRACKING_ID = "WMS-2026-0042";
+const hoisted = vi.hoisted(() => ({
+  insertedRequests: [] as any[],
+  insertedItems: [] as any[],
+  TRACKING_ID: "WMS-2026-0042",
+}));
+const { insertedRequests, insertedItems, TRACKING_ID } = hoisted;
 
 vi.mock("@/integrations/supabase/client", () => {
   const select = vi.fn().mockResolvedValue({
