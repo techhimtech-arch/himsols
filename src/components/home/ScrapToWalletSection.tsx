@@ -1,13 +1,16 @@
 import { memo, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Recycle, Wallet, TreePine, ArrowRight, Calculator } from "lucide-react";
+import { Recycle, Wallet, TreePine, ArrowRight, Calculator, Loader2, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useAuthSafe } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 interface ScrapType {
   id: string;
@@ -20,6 +23,9 @@ interface ScrapType {
 export const ScrapToWalletSection = memo(() => {
   const { language } = useLanguage();
   const isHi = language === "hi";
+  const { user } = useAuthSafe();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   const { data: scrapTypes = [] } = useQuery({
     queryKey: ["scrap-types-home"],
@@ -38,6 +44,11 @@ export const ScrapToWalletSection = memo(() => {
 
   const [selectedId, setSelectedId] = useState<string>("");
   const [qty, setQty] = useState<string>("5");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submittedTrackingId, setSubmittedTrackingId] = useState<string | null>(null);
 
   const selected = useMemo(
     () => scrapTypes.find((s) => s.id === selectedId) || scrapTypes[0],
@@ -51,6 +62,101 @@ export const ScrapToWalletSection = memo(() => {
   }, [selected, qty]);
 
   const treesPossible = Math.floor(credit / 299);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!user) {
+      toast({
+        title: isHi ? "लॉगिन करें" : "Login required",
+        description: isHi ? "पिकअप बुक करने के लिए लॉगिन ज़रूरी है।" : "Please login to book a free pickup.",
+      });
+      navigate("/auth?redirect=/waste-management");
+      return;
+    }
+
+    if (!selected) {
+      toast({ title: isHi ? "स्क्रैप चुनें" : "Select scrap type", variant: "destructive" });
+      return;
+    }
+    const trimmedName = name.trim();
+    const trimmedPhone = phone.trim();
+    const trimmedAddress = address.trim();
+    const qtyNum = parseFloat(qty);
+
+    if (trimmedName.length < 2 || trimmedName.length > 100) {
+      toast({ title: isHi ? "नाम सही दर्ज करें" : "Enter a valid name", variant: "destructive" });
+      return;
+    }
+    if (!/^[0-9+\-\s]{7,15}$/.test(trimmedPhone)) {
+      toast({ title: isHi ? "मोबाइल नंबर सही दर्ज करें" : "Enter a valid phone number", variant: "destructive" });
+      return;
+    }
+    if (trimmedAddress.length < 8 || trimmedAddress.length > 500) {
+      toast({ title: isHi ? "पूरा पता दर्ज करें" : "Enter a complete address", variant: "destructive" });
+      return;
+    }
+    if (!qtyNum || qtyNum <= 0 || qtyNum > 10000) {
+      toast({ title: isHi ? "मात्रा सही दर्ज करें (kg)" : "Enter a valid quantity (kg)", variant: "destructive" });
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const { data: trackingData, error: trackingError } = await supabase.rpc("generate_waste_tracking_id");
+      if (trackingError) throw trackingError;
+
+      // pickup_date default: 2 days from today
+      const pickup = new Date();
+      pickup.setDate(pickup.getDate() + 2);
+      const pickupStr = pickup.toISOString().slice(0, 10);
+
+      const { data: req, error } = await supabase
+        .from("waste_management_requests")
+        .insert({
+          user_id: user.id,
+          tracking_id: trackingData,
+          name: trimmedName,
+          email: user.email || "",
+          phone: trimmedPhone,
+          address: trimmedAddress,
+          pickup_date: pickupStr,
+          waste_type: selected.name,
+          estimated_quantity: `${qtyNum} kg`,
+          message: null,
+        })
+        .select("id")
+        .single();
+      if (error) throw error;
+
+      if (req) {
+        await supabase.from("scrap_request_items").insert({
+          request_id: req.id,
+          scrap_type_id: selected.id,
+          estimated_qty_kg: qtyNum,
+        });
+      }
+
+      setSubmittedTrackingId(trackingData as string);
+      toast({
+        title: isHi ? "रिक्वेस्ट सबमिट हो गई!" : "Pickup requested!",
+        description: isHi
+          ? `ट्रैकिंग ID: ${trackingData}. हम जल्द संपर्क करेंगे।`
+          : `Tracking ID: ${trackingData}. We'll contact you shortly.`,
+      });
+      setName("");
+      setPhone("");
+      setAddress("");
+    } catch (err: any) {
+      toast({
+        title: isHi ? "त्रुटि" : "Error",
+        description: err.message || "Failed to submit request",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <section className="py-20 px-4 relative overflow-hidden">
@@ -71,8 +177,8 @@ export const ScrapToWalletSection = memo(() => {
           </h2>
           <p className="text-lg text-muted-foreground">
             {isHi
-              ? "अपना घर का कचरा हमें दो — पिकअप मुफ्त है। पैसा सीधे तुम्हारे Himsols वॉलेट में, जिससे पेड़, पौधे या स्थानीय उत्पाद खरीदो।"
-              : "Free doorstep pickup. Get instant Himsols wallet credit — spend it on trees, plants or local products. Zero cash, full circular impact."}
+              ? "अपना घर का कचरा हमें दो — पिकअप मुफ्त है। पैसा सीधे तुम्हारे Himsols वॉलेट में।"
+              : "Free doorstep pickup. Get instant Himsols wallet credit — spend it on trees, plants or local products."}
           </p>
         </div>
 
@@ -95,61 +201,104 @@ export const ScrapToWalletSection = memo(() => {
           ))}
         </div>
 
-        {/* Calculator + CTA card */}
+        {/* Calculator + Form card */}
         <Card className="p-6 md:p-8">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            {/* Calculator */}
+          <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-8">
+            {/* Left: Scrap selection + qty + contact */}
             <div className="space-y-4">
               <div className="flex items-center gap-2 text-sm font-semibold text-primary">
                 <Calculator className="h-4 w-4" />
-                {isHi ? "अपनी कमाई देखो" : "See your expected credit"}
+                {isHi ? "अपनी जानकारी भरें" : "Tell us about your pickup"}
               </div>
 
-              <div className="space-y-3">
-                <div>
-                  <Label className="text-xs text-muted-foreground mb-2 block">
-                    {isHi ? "स्क्रैप का प्रकार" : "Scrap type"}
-                  </Label>
-                  <div className="flex flex-wrap gap-2">
-                    {scrapTypes.map((s) => {
-                      const active = (selected?.id ?? scrapTypes[0]?.id) === s.id;
-                      return (
-                        <button
-                          key={s.id}
-                          type="button"
-                          onClick={() => setSelectedId(s.id)}
-                          className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
-                            active
-                              ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                              : "bg-background border-border hover:border-primary/50"
-                          }`}
-                        >
-                          {isHi && s.name_hi ? s.name_hi : s.name} · ₹{s.rate_per_kg}/{s.unit}
-                        </button>
-                      );
-                    })}
-                  </div>
+              <div>
+                <Label className="text-xs text-muted-foreground mb-2 block">
+                  {isHi ? "स्क्रैप का प्रकार" : "Scrap type"}
+                </Label>
+                <div className="flex flex-wrap gap-2">
+                  {scrapTypes.map((s) => {
+                    const active = (selected?.id ?? scrapTypes[0]?.id) === s.id;
+                    return (
+                      <button
+                        key={s.id}
+                        type="button"
+                        onClick={() => setSelectedId(s.id)}
+                        className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+                          active
+                            ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                            : "bg-background border-border hover:border-primary/50"
+                        }`}
+                      >
+                        {isHi && s.name_hi ? s.name_hi : s.name} · ₹{s.rate_per_kg}/{s.unit}
+                      </button>
+                    );
+                  })}
                 </div>
+              </div>
 
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <Label htmlFor="qty" className="text-xs text-muted-foreground mb-2 block">
-                    {isHi ? "अनुमानित मात्रा (kg)" : "Estimated quantity (kg)"}
+                  <Label htmlFor="stw-qty" className="text-xs text-muted-foreground mb-2 block">
+                    {isHi ? "अनुमानित मात्रा (kg)" : "Quantity (kg)"} *
                   </Label>
                   <Input
-                    id="qty"
+                    id="stw-qty"
                     type="number"
                     min="0"
                     step="0.5"
                     value={qty}
                     onChange={(e) => setQty(e.target.value)}
-                    className="max-w-[160px]"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="stw-phone" className="text-xs text-muted-foreground mb-2 block">
+                    {isHi ? "मोबाइल" : "Phone"} *
+                  </Label>
+                  <Input
+                    id="stw-phone"
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="+91 9876543210"
+                    maxLength={15}
+                    required
                   />
                 </div>
               </div>
+
+              <div>
+                <Label htmlFor="stw-name" className="text-xs text-muted-foreground mb-2 block">
+                  {isHi ? "आपका नाम" : "Your name"} *
+                </Label>
+                <Input
+                  id="stw-name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder={isHi ? "पूरा नाम" : "Full name"}
+                  maxLength={100}
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="stw-address" className="text-xs text-muted-foreground mb-2 block">
+                  {isHi ? "पिकअप पता" : "Pickup address"} *
+                </Label>
+                <Textarea
+                  id="stw-address"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder={isHi ? "घर/दुकान, मोहल्ला, गाँव/शहर, ज़िला, पिनकोड" : "House, street, village/city, district, pincode"}
+                  rows={3}
+                  maxLength={500}
+                  required
+                />
+              </div>
             </div>
 
-            {/* Result + CTA */}
-            <div className="space-y-5 p-6 rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10 border border-primary/20">
+            {/* Right: Result + CTA */}
+            <div className="space-y-5 p-6 rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10 border border-primary/20 self-start">
               <div>
                 <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
                   {isHi ? "अनुमानित वॉलेट क्रेडिट" : "Expected wallet credit"}
@@ -167,21 +316,48 @@ export const ScrapToWalletSection = memo(() => {
                 )}
               </div>
 
-              <Link to="/waste-management" className="block">
-                <Button size="lg" className="w-full gap-2 text-base shadow-lg group">
-                  <Recycle className="h-5 w-5" />
+              {submittedTrackingId ? (
+                <div className="rounded-xl bg-background/60 border border-primary/30 p-4 space-y-2">
+                  <div className="flex items-center gap-2 text-primary font-semibold">
+                    <CheckCircle2 className="h-5 w-5" />
+                    {isHi ? "पिकअप बुक हो गया!" : "Pickup booked!"}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    {isHi ? "ट्रैकिंग ID:" : "Tracking ID:"}{" "}
+                    <span className="font-mono font-semibold text-foreground">{submittedTrackingId}</span>
+                  </div>
+                  <Link to="/track-request" className="text-xs text-primary underline">
+                    {isHi ? "रिक्वेस्ट ट्रैक करें" : "Track your request"}
+                  </Link>
+                </div>
+              ) : (
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="w-full gap-2 text-base shadow-lg group"
+                  disabled={submitting}
+                >
+                  {submitting ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <Recycle className="h-5 w-5" />
+                  )}
                   {isHi ? "मुफ्त पिकअप बुक करो" : "Request Free Pickup"}
                   <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
-              </Link>
+              )}
 
               <p className="text-xs text-muted-foreground text-center">
                 {isHi
                   ? "* अंतिम क्रेडिट कलेक्शन पर वास्तविक वज़न के हिसाब से होगा।"
                   : "* Final credit is based on actual weight measured at pickup."}
               </p>
+
+              <Link to="/waste-management" className="block text-center text-xs text-primary hover:underline">
+                {isHi ? "पूरा फॉर्म खोलें (कई स्क्रैप टाइप)" : "Open full form (multiple scrap types) →"}
+              </Link>
             </div>
-          </div>
+          </form>
         </Card>
       </div>
     </section>
