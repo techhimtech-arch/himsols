@@ -36,7 +36,7 @@ vi.mock("@/integrations/supabase/client", () => {
     if (table === "waste_management_requests") {
       return {
         insert: (row: any) => {
-          insertedRequests.push(row);
+          hoisted.insertedRequests.push(row);
           return {
             select: () => ({
               single: async () => ({ data: { id: "req-1" }, error: null }),
@@ -48,7 +48,7 @@ vi.mock("@/integrations/supabase/client", () => {
             order: async () => ({
               data: [
                 {
-                  tracking_id: TRACKING_ID,
+                  tracking_id: hoisted.TRACKING_ID,
                   status: "pending",
                   address: "Test Address, Shimla",
                   waste_type: "Iron/Steel",
@@ -64,7 +64,7 @@ vi.mock("@/integrations/supabase/client", () => {
     if (table === "scrap_request_items") {
       return {
         insert: (row: any) => {
-          insertedItems.push(row);
+          hoisted.insertedItems.push(row);
           return Promise.resolve({ error: null });
         },
       };
@@ -80,7 +80,7 @@ vi.mock("@/integrations/supabase/client", () => {
   return {
     supabase: {
       from,
-      rpc: vi.fn().mockResolvedValue({ data: TRACKING_ID, error: null }),
+      rpc: vi.fn().mockResolvedValue({ data: hoisted.TRACKING_ID, error: null }),
       auth: { getSession: vi.fn().mockResolvedValue({ data: { session: null } }) },
     },
   };
