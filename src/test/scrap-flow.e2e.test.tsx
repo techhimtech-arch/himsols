@@ -171,13 +171,14 @@ describe("Scrap pickup → Track request E2E flow", () => {
     // Click "Track your request" link → navigates to /track-request
     await user.click(screen.getByRole("link", { name: /Track your request/i }));
 
-    // Tracking page rendered (heading visible)
+    // User's scrap pickup history loads (tab shows count)
     await waitFor(() => {
-      expect(screen.getByRole("heading", { name: /Track Your Request/i })).toBeInTheDocument();
-    });
-    // And the user's pickup history surfaces the tracking ID
+      expect(screen.getByText(/Scrap \(1\)/i)).toBeInTheDocument();
+    }, { timeout: 3000 });
+    // Switch to scrap tab and verify tracking ID is rendered
+    await user.click(screen.getByRole("tab", { name: /Scrap/i }));
     await waitFor(() => {
       expect(screen.getAllByText(TRACKING_ID).length).toBeGreaterThan(0);
-    }, { timeout: 3000 });
+    });
   });
 });
