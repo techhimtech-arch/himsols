@@ -2398,7 +2398,12 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "user" | "land_partner" | "verified_land_partner"
+      app_role:
+        | "admin"
+        | "user"
+        | "land_partner"
+        | "verified_land_partner"
+        | "scrap_vendor"
       campaign_status: "ACTIVE" | "INACTIVE" | "COMPLETED"
       marketplace_category:
         | "farmer_produce"
@@ -2542,7 +2547,13 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "user", "land_partner", "verified_land_partner"],
+      app_role: [
+        "admin",
+        "user",
+        "land_partner",
+        "verified_land_partner",
+        "scrap_vendor",
+      ],
       campaign_status: ["ACTIVE", "INACTIVE", "COMPLETED"],
       marketplace_category: [
         "farmer_produce",
