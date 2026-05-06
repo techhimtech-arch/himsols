@@ -2355,6 +2355,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      credit_scrap_to_wallet: {
+        Args: { p_amount: number; p_note?: string; p_request_id: string }
+        Returns: {
+          new_balance: number
+          transaction_id: string
+        }[]
+      }
       generate_gift_card_code: { Args: never; Returns: string }
       generate_marketplace_order_number: { Args: never; Returns: string }
       generate_referral_code: { Args: never; Returns: string }
