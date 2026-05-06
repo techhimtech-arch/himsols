@@ -2,6 +2,7 @@ import { useEffect, useState, memo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { TreePine, Users, MapPin, TrendingUp, Leaf, LucideIcon } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const AnimatedCounter = ({ end, suffix = "", duration = 2000 }: { end: number; suffix?: string; duration?: number }) => {
   const [count, setCount] = useState(0);
@@ -41,6 +42,8 @@ interface LiveStat {
 }
 
 export const ImpactDashboardSection = memo(() => {
+  const { language } = useLanguage();
+  const isHi = language === "hi";
   const { data: stats, isLoading } = useQuery({
     queryKey: ["live-stats"],
     queryFn: async () => {
@@ -58,13 +61,15 @@ export const ImpactDashboardSection = memo(() => {
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
             <TrendingUp className="h-4 w-4" />
-            Live Impact Overview
+            {isHi ? "लाइव इम्पैक्ट" : "Live Impact Overview"}
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-            Real Work, Real Numbers
+            {isHi ? "असली काम, असली आंकड़े" : "Real Work, Real Numbers"}
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            Verified metrics from our on-ground operations across Himachal Pradesh.
+            {isHi
+              ? "हिमाचल प्रदेश में हमारे ज़मीनी संचालन से सत्यापित मेट्रिक्स। CO₂ आंकड़े अनुमान हैं।"
+              : "Verified metrics from our on-ground operations across Himachal Pradesh. CO₂ figures are estimates."}
           </p>
         </div>
 
