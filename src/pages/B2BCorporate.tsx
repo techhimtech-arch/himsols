@@ -157,6 +157,10 @@ const B2BCorporate = () => {
         </section>
       )}
 
+      {/* Who We Serve - tailored institution pitches */}
+      <WhoWeServeSection />
+
+
       {/* Why Green Gifting */}
       {benefits.length > 0 && (
         <section className="py-16 md:py-24">
