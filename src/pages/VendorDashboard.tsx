@@ -79,6 +79,7 @@ export default function VendorDashboard() {
   const [amountTouched, setAmountTouched] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<{ amount?: string; note?: string }>({});
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   // Auto-calc amount from kg × rate (unless user manually edited amount)
   useEffect(() => {
@@ -100,6 +101,19 @@ export default function VendorDashboard() {
     setCreditNote("");
     setAmountTouched(false);
     setErrors({});
+    setConfirmOpen(false);
+  };
+
+  const handleShowConfirm = () => {
+    if (!validateCredit()) {
+      toast({
+        title: "Please fix the errors",
+        description: "Check the highlighted fields and try again",
+        variant: "destructive",
+      });
+      return;
+    }
+    setConfirmOpen(true);
   };
 
   useEffect(() => {
