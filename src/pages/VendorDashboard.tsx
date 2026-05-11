@@ -477,12 +477,64 @@ export default function VendorDashboard() {
             <Button variant="outline" onClick={resetCreditForm}>
               Cancel
             </Button>
-            <Button onClick={submitCredit} disabled={submitting}>
+            <Button onClick={handleShowConfirm} disabled={submitting}>
               {submitting ? "Crediting..." : "Confirm & Credit"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Confirmation Dialog */}
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Scrap Credit</AlertDialogTitle>
+            <AlertDialogDescription>
+              Please verify the details before crediting the wallet.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="space-y-3 py-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Request</span>
+              <span className="font-medium">{creditFor?.tracking_id}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">User</span>
+              <span className="font-medium">{creditFor?.name}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Weight</span>
+              <span className="font-medium">{creditKg} kg</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Rate</span>
+              <span className="font-medium">₹{creditRate}/kg</span>
+            </div>
+            <div className="flex justify-between border-t pt-2">
+              <span className="text-muted-foreground">Total Credit</span>
+              <span className="font-bold text-lg text-primary">
+                ₹{parseFloat(creditAmount || "0").toFixed(2)}
+              </span>
+            </div>
+            {creditNote && (
+              <div className="pt-1">
+                <span className="text-muted-foreground block mb-1">Note</span>
+                <span className="block text-xs bg-muted/50 p-2 rounded">
+                  {creditNote}
+                </span>
+              </div>
+            )}
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setConfirmOpen(false)}>
+              Go Back
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={submitCredit} disabled={submitting}>
+              {submitting ? "Crediting..." : "Yes, Credit Wallet"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
