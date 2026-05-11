@@ -154,18 +154,41 @@ export default function VendorDashboard() {
     loadRequests();
   };
 
+  const validateCredit = () => {
+    const newErrors: { amount?: string; note?: string } = {};
+    const amount = parseFloat(creditAmount);
+    if (!creditAmount.trim()) {
+      newErrors.amount = "Amount is required";
+    } else if (isNaN(amount)) {
+      newErrors.amount = "Amount must be a valid number";
+    } else if (amount <= 0) {
+      newErrors.amount = "Amount must be greater than 0";
+    } else if (amount > 100000) {
+      newErrors.amount = "Amount cannot exceed ₹1,00,000";
+    }
+    if (creditNote && creditNote.length > 500) {
+      newErrors.note = "Note must be under 500 characters";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const submitCredit = async () => {
     if (!creditFor) return;
-    const amount = parseFloat(creditAmount);
-    if (!amount || amount <= 0) {
-      toast({ title: "Invalid amount", variant: "destructive" });
+    if (!validateCredit()) {
+      toast({
+        title: "Please fix the errors",
+        description: "Check the highlighted fields and try again",
+        variant: "destructive",
+      });
       return;
     }
+    const amount = parseFloat(creditAmount);
     setSubmitting(true);
     const { data, error } = await supabase.rpc("credit_scrap_to_wallet", {
       p_request_id: creditFor.id,
       p_amount: amount,
-      p_note: creditNote || null,
+      p_note: creditNote.trim() || null,
     });
     setSubmitting(false);
     if (error) {
@@ -182,9 +205,7 @@ export default function VendorDashboard() {
       .from("waste_management_requests")
       .update({ status: "completed" as any })
       .eq("id", creditFor.id);
-    setCreditFor(null);
-    setCreditAmount("");
-    setCreditNote("");
+    resetCreditForm();
     loadRequests();
   };
 
