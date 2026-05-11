@@ -138,15 +138,29 @@ describe("Vendor flow E2E: enter actual values → credit wallet", () => {
       expect(screen.getByText(/Credit Amount/i)).toBeInTheDocument();
     });
 
-    // Enter amount + note (12kg × ₹22 = ₹264)
-    await user.type(screen.getByPlaceholderText(/e\.g\. 250/), "264");
+    // Enter kg and rate in the calculator (12kg × ₹22 = ₹264)
+    await user.type(screen.getByPlaceholderText(/e\.g\. 12/), "12");
+    await user.type(screen.getByPlaceholderText(/e\.g\. 22/), "22");
+
+    // Note field
     await user.type(
-      screen.getByPlaceholderText(/Collected 12kg paper/),
+      screen.getByPlaceholderText(/Collected 12kg iron/),
       "Collected 12kg iron @ ₹22/kg"
     );
 
-    // Submit
+    // Open confirmation dialog
     await user.click(screen.getByRole("button", { name: /Confirm & Credit/i }));
+
+    // Confirmation dialog should show summary
+    await waitFor(() => {
+      expect(screen.getByText(/Confirm Scrap Credit/i)).toBeInTheDocument();
+    });
+    expect(screen.getByText(/12 kg/)).toBeInTheDocument();
+    expect(screen.getByText(/₹22\/kg/)).toBeInTheDocument();
+    expect(screen.getByText(/₹264\.00/)).toBeInTheDocument();
+
+    // Confirm from alert dialog
+    await user.click(screen.getByRole("button", { name: /Yes, Credit Wallet/i }));
 
     // Assert RPC called correctly
     await waitFor(() => {
