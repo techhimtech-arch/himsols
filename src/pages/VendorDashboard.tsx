@@ -350,43 +350,115 @@ export default function VendorDashboard() {
       <Footer />
 
       {/* Credit Dialog */}
-      <Dialog open={!!creditFor} onOpenChange={(o) => !o && setCreditFor(null)}>
+      <Dialog open={!!creditFor} onOpenChange={(o) => !o && resetCreditForm()}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Credit Wallet</DialogTitle>
           </DialogHeader>
           {creditFor && (
             <div className="space-y-4">
-              <div className="text-sm space-y-1">
+              <div className="text-sm space-y-1 p-3 rounded-lg bg-muted/50">
                 <p>
                   <strong>Request:</strong> {creditFor.tracking_id}
                 </p>
                 <p>
                   <strong>User:</strong> {creditFor.name} ({creditFor.phone})
                 </p>
+                <p>
+                  <strong>Waste:</strong> {creditFor.waste_type} ·
+                  Est: {creditFor.estimated_quantity || "?"} kg
+                </p>
               </div>
+
+              {/* kg × rate calculator */}
+              <div className="space-y-2 p-3 rounded-lg border border-primary/20 bg-primary/5">
+                <Label className="text-xs uppercase tracking-wider text-primary">
+                  Quick Calculator (kg × rate)
+                </Label>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <Label className="text-xs">Actual Kg</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={creditKg}
+                      onChange={(e) => {
+                        setCreditKg(e.target.value);
+                        setAmountTouched(false);
+                      }}
+                      placeholder="e.g. 12"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Rate (₹/kg)</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={creditRate}
+                      onChange={(e) => {
+                        setCreditRate(e.target.value);
+                        setAmountTouched(false);
+                      }}
+                      placeholder="e.g. 22"
+                    />
+                  </div>
+                </div>
+                {parseFloat(creditKg) > 0 && parseFloat(creditRate) > 0 && (
+                  <p className="text-sm font-semibold text-primary">
+                    = ₹{(parseFloat(creditKg) * parseFloat(creditRate)).toFixed(2)}
+                  </p>
+                )}
+              </div>
+
               <div className="space-y-2">
-                <Label>Credit Amount (₹)</Label>
+                <Label>
+                  Credit Amount (₹) <span className="text-destructive">*</span>
+                </Label>
                 <Input
                   type="number"
                   min="1"
                   value={creditAmount}
-                  onChange={(e) => setCreditAmount(e.target.value)}
-                  placeholder="e.g. 250"
+                  onChange={(e) => {
+                    setCreditAmount(e.target.value);
+                    setAmountTouched(true);
+                    if (errors.amount) setErrors({ ...errors, amount: undefined });
+                  }}
+                  placeholder="Auto-calculated or enter manually"
+                  className={errors.amount ? "border-destructive" : ""}
+                  aria-invalid={!!errors.amount}
                 />
+                {errors.amount && (
+                  <p className="text-xs text-destructive">{errors.amount}</p>
+                )}
               </div>
+
               <div className="space-y-2">
                 <Label>Note (optional)</Label>
                 <Input
                   value={creditNote}
-                  onChange={(e) => setCreditNote(e.target.value)}
-                  placeholder="Collected 12kg paper @ ₹20/kg"
+                  maxLength={500}
+                  onChange={(e) => {
+                    setCreditNote(e.target.value);
+                    if (errors.note) setErrors({ ...errors, note: undefined });
+                  }}
+                  placeholder="Collected 12kg iron @ ₹22/kg"
+                  className={errors.note ? "border-destructive" : ""}
+                  aria-invalid={!!errors.note}
                 />
+                {errors.note ? (
+                  <p className="text-xs text-destructive">{errors.note}</p>
+                ) : (
+                  <p className="text-xs text-muted-foreground">
+                    {creditNote.length}/500
+                  </p>
+                )}
               </div>
             </div>
           )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setCreditFor(null)}>
+            <Button variant="outline" onClick={resetCreditForm}>
               Cancel
             </Button>
             <Button onClick={submitCredit} disabled={submitting}>
