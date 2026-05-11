@@ -199,14 +199,6 @@ export default function VendorDashboard() {
 
   const submitCredit = async () => {
     if (!creditFor) return;
-    if (!validateCredit()) {
-      toast({
-        title: "Please fix the errors",
-        description: "Check the highlighted fields and try again",
-        variant: "destructive",
-      });
-      return;
-    }
     const amount = parseFloat(creditAmount);
     setSubmitting(true);
     const { data, error } = await supabase.rpc("credit_scrap_to_wallet", {
