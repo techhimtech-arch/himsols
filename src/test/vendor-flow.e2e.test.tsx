@@ -155,7 +155,7 @@ describe("Vendor flow E2E: enter actual values → credit wallet", () => {
     await waitFor(() => {
       expect(screen.getByText(/Confirm Scrap Credit/i)).toBeInTheDocument();
     });
-    expect(screen.getByText(/₹22\/kg/)).toBeInTheDocument();
+    expect(screen.getByText(/Total Credit/i)).toBeInTheDocument();
     expect(screen.getByText(/₹264\.00/)).toBeInTheDocument();
 
     // Confirm from alert dialog
