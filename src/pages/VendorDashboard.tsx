@@ -62,9 +62,35 @@ export default function VendorDashboard() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>("all");
   const [creditFor, setCreditFor] = useState<ScrapRequest | null>(null);
+  const [creditKg, setCreditKg] = useState("");
+  const [creditRate, setCreditRate] = useState("");
   const [creditAmount, setCreditAmount] = useState("");
   const [creditNote, setCreditNote] = useState("");
+  const [amountTouched, setAmountTouched] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [errors, setErrors] = useState<{ amount?: string; note?: string }>({});
+
+  // Auto-calc amount from kg × rate (unless user manually edited amount)
+  useEffect(() => {
+    if (amountTouched) return;
+    const kg = parseFloat(creditKg);
+    const rate = parseFloat(creditRate);
+    if (kg > 0 && rate > 0) {
+      setCreditAmount((kg * rate).toFixed(2));
+    } else {
+      setCreditAmount("");
+    }
+  }, [creditKg, creditRate, amountTouched]);
+
+  const resetCreditForm = () => {
+    setCreditFor(null);
+    setCreditKg("");
+    setCreditRate("");
+    setCreditAmount("");
+    setCreditNote("");
+    setAmountTouched(false);
+    setErrors({});
+  };
 
   useEffect(() => {
     if (authLoading) return;
