@@ -148,6 +148,7 @@ const App = () => (
                       <Route path="/track-request" element={<TrackRequest />} />
                       <Route path="/track-request/:trackingId" element={<TrackRequest />} />
                       <Route path="/vendor-dashboard" element={<VendorDashboard />} />
+                      <Route path="/schools" element={<SchoolProgram />} />
                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                       <Route path="*" element={<NotFound />} />
                     </Routes>
