@@ -50,6 +50,9 @@ const Index = () => {
       {/* 7. Partner Farmer Network */}
       <PartnerFarmerSection />
 
+      {/* 7b. Schools & Education Program */}
+      <SchoolProgramSection />
+
       {/* 8. Testimonials */}
       <TestimonialsSection />
 
