@@ -2,7 +2,7 @@ import { memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { TreePine, Recycle, BookOpen, Calendar, ArrowRight, CheckCircle2 } from "lucide-react";
+import { TreePine, Recycle, GraduationCap, Calendar, ArrowRight, CheckCircle2 } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 
 const services = [
