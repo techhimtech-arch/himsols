@@ -59,6 +59,7 @@ const TreeCheckout = lazy(() => import("./pages/TreeCheckout"));
 const SingleTreePack = lazy(() => import("./pages/SingleTreePack"));
 const TrackRequest = lazy(() => import("./pages/TrackRequest"));
 const VendorDashboard = lazy(() => import("./pages/VendorDashboard"));
+const SchoolProgram = lazy(() => import("./pages/SchoolProgram"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
