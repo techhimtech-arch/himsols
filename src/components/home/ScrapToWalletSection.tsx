@@ -203,7 +203,7 @@ export const ScrapToWalletSection = memo(() => {
           {[
             { icon: Recycle, title: isHi ? "1. पिकअप बुक करो" : "1. Book Free Pickup", desc: isHi ? "घर से मुफ्त कलेक्शन" : "We collect from your door" },
             { icon: Wallet, title: isHi ? "2. वॉलेट में क्रेडिट" : "2. Wallet Credited", desc: isHi ? "वज़न के हिसाब से तुरंत" : "Instantly, by actual weight" },
-            { icon: TreePine, title: isHi ? "3. पेड़ लगाओ" : "3. Plant a Tree", desc: isHi ? "₹299 से शुरू" : "Starting at ₹299" },
+            { icon: TreePine, title: isHi ? "3. पेड़ लगाओ" : "3. Plant a Tree", desc: isHi ? `₹${minTreePrice} से शुरू` : `Starting at ₹${minTreePrice}` },
           ].map((step, i) => (
             <div key={i} className="flex items-center gap-3 p-4 rounded-2xl bg-card/60 backdrop-blur border border-border/50">
               <div className="h-12 w-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
