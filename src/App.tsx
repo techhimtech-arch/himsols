@@ -59,6 +59,7 @@ const TreeCheckout = lazy(() => import("./pages/TreeCheckout"));
 const SingleTreePack = lazy(() => import("./pages/SingleTreePack"));
 const TrackRequest = lazy(() => import("./pages/TrackRequest"));
 const VendorDashboard = lazy(() => import("./pages/VendorDashboard"));
+const SchoolProgram = lazy(() => import("./pages/SchoolProgram"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -147,6 +148,7 @@ const App = () => (
                       <Route path="/track-request" element={<TrackRequest />} />
                       <Route path="/track-request/:trackingId" element={<TrackRequest />} />
                       <Route path="/vendor-dashboard" element={<VendorDashboard />} />
+                      <Route path="/schools" element={<SchoolProgram />} />
                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                       <Route path="*" element={<NotFound />} />
                     </Routes>

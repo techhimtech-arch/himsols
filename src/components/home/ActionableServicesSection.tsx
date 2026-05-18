@@ -2,7 +2,7 @@ import { memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { TreePine, Recycle, BookOpen, Calendar, ArrowRight, CheckCircle2 } from "lucide-react";
+import { TreePine, Recycle, GraduationCap, Calendar, ArrowRight, CheckCircle2 } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 
 const services = [
@@ -25,13 +25,13 @@ const services = [
     cta: "Schedule Pickup"
   },
   {
-    icon: BookOpen,
-    title: "Conservation Training",
-    description: "Expert guidance on sustainable practices, water conservation, and eco-friendly living for your community.",
-    features: ["Expert trainers", "Hands-on workshops", "Certificates"],
+    icon: GraduationCap,
+    title: "Schools & Education",
+    description: "Bring sustainability into classrooms — plantation drives, kids' eco-workshops, and eco-club setup for schools, colleges & NGOs.",
+    features: ["Plantation drives", "Kids' workshops", "Eco-club setup"],
     color: "hsl(40, 65%, 50%)",
-    link: "/contact?subject=Conservation Training",
-    cta: "Get Training"
+    link: "/schools",
+    cta: "Apply for Your School"
   },
   {
     icon: Calendar,

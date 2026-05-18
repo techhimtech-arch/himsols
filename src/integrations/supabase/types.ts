@@ -1653,6 +1653,63 @@ export type Database = {
           },
         ]
       }
+      school_partnerships: {
+        Row: {
+          admin_notes: string | null
+          city: string | null
+          contact_person: string
+          created_at: string
+          email: string
+          id: string
+          institution_name: string
+          institution_type: string
+          message: string | null
+          phone: string
+          preferred_date: string | null
+          program_interest: string[]
+          state: string | null
+          status: Database["public"]["Enums"]["school_partnership_status"]
+          student_count: number | null
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          city?: string | null
+          contact_person: string
+          created_at?: string
+          email: string
+          id?: string
+          institution_name: string
+          institution_type?: string
+          message?: string | null
+          phone: string
+          preferred_date?: string | null
+          program_interest?: string[]
+          state?: string | null
+          status?: Database["public"]["Enums"]["school_partnership_status"]
+          student_count?: number | null
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          city?: string | null
+          contact_person?: string
+          created_at?: string
+          email?: string
+          id?: string
+          institution_name?: string
+          institution_type?: string
+          message?: string | null
+          phone?: string
+          preferred_date?: string | null
+          program_interest?: string[]
+          state?: string | null
+          status?: Database["public"]["Enums"]["school_partnership_status"]
+          student_count?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       scrap_request_items: {
         Row: {
           actual_qty_kg: number | null
@@ -2427,6 +2484,12 @@ export type Database = {
         | "in_progress"
         | "completed"
         | "cancelled"
+      school_partnership_status:
+        | "new"
+        | "contacted"
+        | "scheduled"
+        | "completed"
+        | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2576,6 +2639,13 @@ export const Constants = {
         "saplings_arranged",
         "scheduled",
         "in_progress",
+        "completed",
+        "cancelled",
+      ],
+      school_partnership_status: [
+        "new",
+        "contacted",
+        "scheduled",
         "completed",
         "cancelled",
       ],

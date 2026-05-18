@@ -42,6 +42,22 @@ export const ScrapToWalletSection = memo(() => {
     staleTime: 1000 * 60 * 10,
   });
 
+  // Live minimum tree price (no hardcoded ₹299)
+  const { data: minTreePrice = 299 } = useQuery({
+    queryKey: ["tree-min-price-scrap-section"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("trees")
+        .select("price")
+        .eq("is_active", true)
+        .gt("price", 0)
+        .order("price", { ascending: true })
+        .limit(1);
+      return data?.[0]?.price ?? 299;
+    },
+    staleTime: 1000 * 60 * 5,
+  });
+
   const [selectedId, setSelectedId] = useState<string>("");
   const [qty, setQty] = useState<string>("5");
   const [name, setName] = useState("");
@@ -61,7 +77,7 @@ export const ScrapToWalletSection = memo(() => {
     return Math.round(selected.rate_per_kg * q);
   }, [selected, qty]);
 
-  const treesPossible = Math.floor(credit / 299);
+  const treesPossible = minTreePrice > 0 ? Math.floor(credit / minTreePrice) : 0;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -187,7 +203,7 @@ export const ScrapToWalletSection = memo(() => {
           {[
             { icon: Recycle, title: isHi ? "1. पिकअप बुक करो" : "1. Book Free Pickup", desc: isHi ? "घर से मुफ्त कलेक्शन" : "We collect from your door" },
             { icon: Wallet, title: isHi ? "2. वॉलेट में क्रेडिट" : "2. Wallet Credited", desc: isHi ? "वज़न के हिसाब से तुरंत" : "Instantly, by actual weight" },
-            { icon: TreePine, title: isHi ? "3. पेड़ लगाओ" : "3. Plant a Tree", desc: isHi ? "₹299 से शुरू" : "Starting at ₹299" },
+            { icon: TreePine, title: isHi ? "3. पेड़ लगाओ" : "3. Plant a Tree", desc: isHi ? `₹${minTreePrice} से शुरू` : `Starting at ₹${minTreePrice}` },
           ].map((step, i) => (
             <div key={i} className="flex items-center gap-3 p-4 rounded-2xl bg-card/60 backdrop-blur border border-border/50">
               <div className="h-12 w-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
