@@ -8,6 +8,7 @@ import { ScrapToWalletSection } from "@/components/home/ScrapToWalletSection";
 import { TrustProofSection } from "@/components/home/TrustProofSection";
 import { CSRSection } from "@/components/home/CSRSection";
 import { PartnerFarmerSection } from "@/components/home/PartnerFarmerSection";
+import { SchoolProgramSection } from "@/components/home/SchoolProgramSection";
 import { TestimonialsSection } from "@/components/home/TestimonialsSection";
 import { FinalCTASection } from "@/components/home/FinalCTASection";
 import { MobileStickyCTA } from "@/components/home/MobileStickyCTA";
