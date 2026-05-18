@@ -195,6 +195,7 @@ const Admin = () => {
               <Card><CardContent className="p-6"><ExternalAppsTab /></CardContent></Card>
             </TabsContent>
             <TabsContent value="messages"><ContactMessagesTab /></TabsContent>
+            <TabsContent value="schools"><SchoolPartnershipsTab /></TabsContent>
             <TabsContent value="navigation"><NavigationTab /></TabsContent>
             <TabsContent value="footer"><FooterLinksTab /></TabsContent>
             <TabsContent value="about-page"><AboutPageTab /></TabsContent>
