@@ -9,9 +9,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { GraduationCap, Search, Mail, Phone, Calendar, Eye } from "lucide-react";
+import { GraduationCap, Search, Mail, Phone, Calendar, Eye, FileDown, MessageCircle } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { generateSchoolOutreachPdf } from "@/lib/schoolOutreachPdf";
 
 type Status = "new" | "contacted" | "scheduled" | "completed" | "cancelled";
 
@@ -44,10 +46,33 @@ const STATUS_COLOR: Record<Status, string> = {
 export const SchoolPartnershipsTab = () => {
   const { toast } = useToast();
   const qc = useQueryClient();
+  const { settings } = useSiteSettings();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<Status | "all">("all");
   const [selected, setSelected] = useState<SchoolPartnership | null>(null);
   const [notes, setNotes] = useState("");
+
+  const contact = {
+    phone: settings?.contact_phone || settings?.whatsapp_number,
+    email: settings?.contact_email,
+    website: "himsols.com",
+  };
+
+  const downloadKit = (institutionName: string | null) => {
+    const pdf = generateSchoolOutreachPdf(institutionName, contact);
+    const safe = (institutionName || "Himsols-Schools").replace(/[^a-z0-9]+/gi, "-");
+    pdf.save(`${safe}-Outreach-Kit.pdf`);
+  };
+
+  const shareKitOnWhatsApp = (r: SchoolPartnership | null) => {
+    const phone = r?.phone?.replace(/\D/g, "");
+    const text = `Namaste${r?.contact_person ? " " + r.contact_person : ""},\n\nThank you for your interest in the Himsols Schools & Education Program${r?.institution_name ? " for " + r.institution_name : ""}. Please find our outreach kit attached (download from your email or ask us to resend).\n\nApply / details: https://himsols.com/schools\n\n— Himsols Team`;
+    const url = phone
+      ? `https://wa.me/${phone}?text=${encodeURIComponent(text)}`
+      : `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(url, "_blank");
+    toast({ title: "Tip", description: "Download the PDF first, then attach it in WhatsApp." });
+  };
 
   const { data: rows = [], isLoading } = useQuery({
     queryKey: ["admin-school-partnerships"],
