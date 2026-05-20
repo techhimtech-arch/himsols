@@ -5,6 +5,7 @@ import { ArrowRight, TreePine, Building2, Sprout, MapPin, BarChart3, Shield, Lea
 import { useLanguage } from "@/hooks/useLanguage";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { HeroShareReferralBar } from "./HeroShareReferralBar";
 
 const useMinTreePrice = () =>
   useQuery({
@@ -103,6 +104,8 @@ export const HeroSection = memo(() => {
               {isHi ? "CO₂ प्रभाव रिपोर्ट" : "CO₂ impact reports"}
             </span>
           </div>
+
+          <HeroShareReferralBar />
         </div>
       </div>
     </section>

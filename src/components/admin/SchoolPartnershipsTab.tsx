@@ -9,9 +9,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { GraduationCap, Search, Mail, Phone, Calendar, Eye } from "lucide-react";
+import { GraduationCap, Search, Mail, Phone, Calendar, Eye, FileDown, MessageCircle } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { generateSchoolOutreachPdf } from "@/lib/schoolOutreachPdf";
 
 type Status = "new" | "contacted" | "scheduled" | "completed" | "cancelled";
 
@@ -44,10 +46,33 @@ const STATUS_COLOR: Record<Status, string> = {
 export const SchoolPartnershipsTab = () => {
   const { toast } = useToast();
   const qc = useQueryClient();
+  const { settings } = useSiteSettings();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<Status | "all">("all");
   const [selected, setSelected] = useState<SchoolPartnership | null>(null);
   const [notes, setNotes] = useState("");
+
+  const contact = {
+    phone: settings?.contact_phone || settings?.whatsapp_number,
+    email: settings?.contact_email,
+    website: "himsols.com",
+  };
+
+  const downloadKit = (institutionName: string | null) => {
+    const pdf = generateSchoolOutreachPdf(institutionName, contact);
+    const safe = (institutionName || "Himsols-Schools").replace(/[^a-z0-9]+/gi, "-");
+    pdf.save(`${safe}-Outreach-Kit.pdf`);
+  };
+
+  const shareKitOnWhatsApp = (r: SchoolPartnership | null) => {
+    const phone = r?.phone?.replace(/\D/g, "");
+    const text = `Namaste${r?.contact_person ? " " + r.contact_person : ""},\n\nThank you for your interest in the Himsols Schools & Education Program${r?.institution_name ? " for " + r.institution_name : ""}. Please find our outreach kit attached (download from your email or ask us to resend).\n\nApply / details: https://himsols.com/schools\n\n— Himsols Team`;
+    const url = phone
+      ? `https://wa.me/${phone}?text=${encodeURIComponent(text)}`
+      : `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(url, "_blank");
+    toast({ title: "Tip", description: "Download the PDF first, then attach it in WhatsApp." });
+  };
 
   const { data: rows = [], isLoading } = useQuery({
     queryKey: ["admin-school-partnerships"],
@@ -187,9 +212,17 @@ export const SchoolPartnershipsTab = () => {
                       </Select>
                     </TableCell>
                     <TableCell>
-                      <Button size="sm" variant="ghost" onClick={() => { setSelected(r); setNotes(r.admin_notes || ""); }}>
-                        <Eye className="h-4 w-4" />
-                      </Button>
+                      <div className="flex items-center gap-1">
+                        <Button size="sm" variant="ghost" onClick={() => { setSelected(r); setNotes(r.admin_notes || ""); }} title="View">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={() => downloadKit(r.institution_name)} title="Download outreach kit PDF">
+                          <FileDown className="h-4 w-4" />
+                        </Button>
+                        <Button size="sm" variant="ghost" className="text-green-700 hover:bg-green-100/60" onClick={() => shareKitOnWhatsApp(r)} title="WhatsApp">
+                          <MessageCircle className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))
@@ -232,11 +265,17 @@ export const SchoolPartnershipsTab = () => {
                 <p className="text-sm text-muted-foreground mb-1">Admin notes</p>
                 <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} maxLength={1000} placeholder="Internal notes..." />
               </div>
-              <div className="flex gap-2">
-                <Button onClick={saveNotes} className="flex-1">Save notes</Button>
-                <Button asChild variant="outline" className="flex-1">
+              <div className="flex flex-wrap gap-2">
+                <Button onClick={saveNotes} className="flex-1 min-w-[140px]">Save notes</Button>
+                <Button variant="outline" onClick={() => downloadKit(selected.institution_name)} className="gap-2">
+                  <FileDown className="h-4 w-4" /> Outreach kit PDF
+                </Button>
+                <Button variant="outline" onClick={() => shareKitOnWhatsApp(selected)} className="gap-2 text-green-700">
+                  <MessageCircle className="h-4 w-4" /> WhatsApp
+                </Button>
+                <Button asChild variant="outline" className="gap-2">
                   <a href={`mailto:${selected.email}?subject=Re: Himsols School Partnership — ${selected.institution_name}`}>
-                    <Mail className="h-4 w-4 mr-2" /> Reply
+                    <Mail className="h-4 w-4" /> Reply
                   </a>
                 </Button>
               </div>
