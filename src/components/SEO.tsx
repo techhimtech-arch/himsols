@@ -116,12 +116,22 @@ const websiteSchema = {
   }
 };
 
+const SITE_ORIGIN = "https://himsols-web-companion.lovable.app";
+
+const resolveCanonicalUrl = (explicit?: string) => {
+  if (explicit) return explicit;
+  if (typeof window !== "undefined") {
+    return `${SITE_ORIGIN}${window.location.pathname}${window.location.search || ""}`;
+  }
+  return `${SITE_ORIGIN}/`;
+};
+
 export const SEO = ({
-  title = "Himsols - पर्यावरण समाधान | Environmental Solutions",
+  title = "Himsols — पर्यावरण समाधान | Environmental Solutions",
   description = "Himsols - Tree plantation, waste management, and conservation services for rural communities in Himachal Pradesh. पर्यावरण संरक्षण के लिए हमसे जुड़ें।",
   keywords = "tree plantation, waste management, scrap pickup, eco-friendly, Himachal Pradesh, पेड़ लगाओ, कबाड़ बेचो, पर्यावरण",
   image = "https://himsols-web-companion.lovable.app/pwa-512x512.png",
-  url = "https://himsols-web-companion.lovable.app",
+  url,
   type = "website",
   author,
   publishedTime,
@@ -129,6 +139,8 @@ export const SEO = ({
   section,
   noindex = false,
 }: SEOProps) => {
+  const canonicalUrl = resolveCanonicalUrl(url);
+
   useEffect(() => {
     // Update document title
     document.title = title;

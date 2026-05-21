@@ -18,47 +18,26 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <SEO
-        title="Himsols - Plant Trees. Support Rural Communities. Track Your Impact."
+        title="Himsols — Plant Trees, Support Rural Communities"
         description="Sponsor verified tree plantations on farmer land in Himachal Pradesh. Get geo-tagged proof, survival tracking, and carbon impact reports. ₹2,999 for 10 trees."
         keywords="climate impact Himachal, verified tree plantation, CSR plantation India, carbon offset, agroforestry, sustainability platform, plant trees India"
-        url="https://himsols-web-companion.lovable.app"
+        url="https://himsols-web-companion.lovable.app/"
       />
       <SEOSchemas includeServices={true} />
       <Navbar />
-
-      {/* 1. Hero - Clear value proposition */}
-      <HeroSection />
-
-      {/* 2. How It Works - 3 Steps */}
-      <HowItWorksSection />
-
-      {/* 3. Scrap → Wallet → Plant flagship loop */}
-      <ScrapToWalletSection />
-
-      {/* 4. ₹2,999 Plantation Pack */}
-      <ClimateImpactPackSection />
-
-      {/* 4. Live Impact Dashboard */}
-      <ImpactDashboardSection />
-
-      {/* 5. Trust Proof - Photos + Founder Story */}
-      <TrustProofSection />
-
-      {/* 6. CSR & Corporate */}
-      <CSRSection />
-
-      {/* 7. Partner Farmer Network */}
-      <PartnerFarmerSection />
-
-      {/* 7b. Schools & Education Program */}
-      <SchoolProgramSection />
-
-      {/* 8. Testimonials */}
-      <TestimonialsSection />
-
-      {/* 9. Final CTA */}
-      <FinalCTASection />
-
+      <main>
+        <HeroSection />
+        <HowItWorksSection />
+        <ScrapToWalletSection />
+        <ClimateImpactPackSection />
+        <ImpactDashboardSection />
+        <TrustProofSection />
+        <CSRSection />
+        <PartnerFarmerSection />
+        <SchoolProgramSection />
+        <TestimonialsSection />
+        <FinalCTASection />
+      </main>
       <Footer />
       <MobileStickyCTA />
     </div>
