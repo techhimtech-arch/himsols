@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { SEO } from "@/components/SEO";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -65,7 +66,13 @@ const Blog = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Blog — Sustainability & Tree Plantation Stories | Himsols"
+        description="Read stories on agroforestry, carbon credits, climate action, and how Himachal farmers are building India's verified plantation network."
+        url="https://himsols-web-companion.lovable.app/blog"
+      />
       <Navbar />
+
 
       {/* Hero Section */}
       <section className="pt-24 pb-12 bg-gradient-to-br from-primary/10 via-background to-accent/10">
