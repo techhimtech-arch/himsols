@@ -173,7 +173,7 @@ export const SEO = ({
     updateMetaTag('og:title', title, true);
     updateMetaTag('og:description', description, true);
     updateMetaTag('og:image', image, true);
-    updateMetaTag('og:url', url, true);
+    updateMetaTag('og:url', canonicalUrl, true);
     updateMetaTag('og:type', type, true);
     updateMetaTag('og:site_name', 'Himsols', true);
     updateMetaTag('og:locale', 'en_IN', true);
@@ -201,9 +201,9 @@ export const SEO = ({
       canonicalLink.setAttribute('rel', 'canonical');
       document.head.appendChild(canonicalLink);
     }
-    canonicalLink.setAttribute('href', url);
+    canonicalLink.setAttribute('href', canonicalUrl);
 
-  }, [title, description, keywords, image, url, type, author, publishedTime, modifiedTime, section, noindex]);
+  }, [title, description, keywords, image, canonicalUrl, type, author, publishedTime, modifiedTime, section, noindex]);
 
   return null;
 };
