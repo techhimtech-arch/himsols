@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { SEO } from "@/components/SEO";
 import { MarketplaceProductCard } from "@/components/marketplace/MarketplaceProductCard";
 import { MarketplaceCartSheet } from "@/components/marketplace/MarketplaceCartSheet";
 import { CategoryFilter } from "@/components/marketplace/CategoryFilter";
@@ -46,7 +47,13 @@ const Marketplace = () => {
 
   return (
     <div className="min-h-screen">
+      <SEO
+        title="Rural Marketplace — Farmer Produce & Handmade Goods | Himsols"
+        description="Shop directly from Himachal farmers and artisans: fresh produce, handmade crafts, plants, and home essentials. Pan-India delivery."
+        url="https://himsols-web-companion.lovable.app/marketplace"
+      />
       <Navbar />
+
 
       {/* Hero Section */}
       <section className="pt-24 pb-12 relative overflow-hidden">

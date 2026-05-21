@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { SEO, BlogPostSchema } from "@/components/SEO";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -149,9 +150,34 @@ const BlogPost = () => {
     );
   }
 
+  const postUrl = `https://himsols-web-companion.lovable.app/blog/${post.slug}`;
+  const metaDescription = (excerpt || rawContent?.replace(/<[^>]+>/g, "").slice(0, 155)) || "Himsols blog post";
+
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title={`${title} | Himsols Blog`}
+        description={metaDescription}
+        url={postUrl}
+        type="article"
+        image={(post as any).featured_image || undefined}
+        author={(post as any).author || "Himsols"}
+        publishedTime={post.published_at || undefined}
+        modifiedTime={(post as any).updated_at || post.published_at || undefined}
+        section={post.category}
+      />
+      <BlogPostSchema
+        title={title}
+        description={metaDescription}
+        image={(post as any).featured_image || undefined}
+        url={postUrl}
+        author={(post as any).author || "Himsols"}
+        publishedTime={post.published_at || new Date().toISOString()}
+        modifiedTime={(post as any).updated_at || post.published_at || undefined}
+        category={post.category}
+      />
       <Navbar />
+
 
       <article className="pt-24 pb-12">
         <div className="container mx-auto px-4">
