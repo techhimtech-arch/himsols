@@ -34,8 +34,7 @@ const CarbonSettingsTab = () => {
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const allValues = { ...values, plantation_data: plantationData };
-      for (const [key, value] of Object.entries(allValues)) {
+      for (const [key, value] of Object.entries(values)) {
         await supabase.from("carbon_settings").update({ value, updated_at: new Date().toISOString() }).eq("key", key);
       }
     },
