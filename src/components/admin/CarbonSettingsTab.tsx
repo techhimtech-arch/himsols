@@ -11,11 +11,8 @@ import { Save } from "lucide-react";
 
 const FIELDS = [
   { key: "tree_absorption_rate_kg", label: "CO₂ Absorption Rate (kg/tree/year)", type: "number" },
-  { key: "survival_rate_percent", label: "Survival Rate (%)", type: "number" },
-  { key: "target_trees", label: "Target Trees", type: "number" },
-  { key: "current_trees", label: "Current Trees Planted", type: "number" },
-  { key: "active_sites", label: "Active Plantation Sites", type: "number" },
-  { key: "participating_farmers", label: "Participating Farmers", type: "number" },
+  { key: "target_trees", label: "Target Trees (goal)", type: "number" },
+  { key: "survival_rate_percent", label: "Survival Rate Override (%) — leave blank to use field data", type: "number" },
 ];
 
 const CarbonSettingsTab = () => {
