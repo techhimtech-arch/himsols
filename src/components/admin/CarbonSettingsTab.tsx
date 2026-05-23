@@ -26,8 +26,8 @@ const CarbonSettingsTab = () => {
       const { data } = await supabase.from("carbon_settings").select("*");
       const map: Record<string, string> = {};
       data?.forEach((s: any) => { map[s.key] = s.value || ""; });
+      data?.forEach((s: any) => { map[s.key] = s.value || ""; });
       setValues(map);
-      setPlantationData(map["plantation_data"] || "[]");
       return data;
     },
   });
