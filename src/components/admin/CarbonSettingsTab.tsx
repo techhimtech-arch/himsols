@@ -56,6 +56,9 @@ const CarbonSettingsTab = () => {
           <CardTitle>Carbon Dashboard Settings</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          <p className="text-xs text-muted-foreground">
+            Live numbers (verified trees, partners, sites, growth chart) are auto-computed from orders, allocations and partner records — no manual entry required. The fields below only control the carbon formula inputs and the target goal.
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {FIELDS.map(f => (
               <div key={f.key} className="space-y-2">
