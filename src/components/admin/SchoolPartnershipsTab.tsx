@@ -183,7 +183,9 @@ export const SchoolPartnershipsTab = () => {
               {isLoading ? (
                 <TableRow><TableCell colSpan={6} className="text-center py-8">Loading...</TableCell></TableRow>
               ) : filtered.length === 0 ? (
-                <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">No applications found</TableCell></TableRow>
+                <TableRow><TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
+                  No applications yet. Use the <span className="font-medium">Download Outreach Kit</span> button above to start pitching schools.
+                </TableCell></TableRow>
               ) : (
                 filtered.map((r) => (
                   <TableRow key={r.id}>
