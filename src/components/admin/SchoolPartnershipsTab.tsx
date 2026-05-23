@@ -130,7 +130,18 @@ export const SchoolPartnershipsTab = () => {
           <GraduationCap className="h-5 w-5" />
           School Partnerships ({rows.length})
         </h2>
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={() => downloadKit(null)} className="gap-2">
+            <FileDown className="h-4 w-4" /> Download Outreach Kit (PDF)
+          </Button>
+          <Button variant="outline" onClick={() => shareKitOnWhatsApp(null)} className="gap-2 text-green-700">
+            <MessageCircle className="h-4 w-4" /> Share on WhatsApp
+          </Button>
+        </div>
       </div>
+      <p className="text-xs text-muted-foreground">
+        Use the kit to pitch schools, colleges and NGOs. Download the PDF, then open WhatsApp and attach it to the chat.
+      </p>
 
       <div className="flex flex-wrap gap-2">
         <div className="relative flex-1 min-w-[220px]">
