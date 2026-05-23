@@ -5,24 +5,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+
 import { useToast } from "@/hooks/use-toast";
 import { Save } from "lucide-react";
 
 const FIELDS = [
   { key: "tree_absorption_rate_kg", label: "CO₂ Absorption Rate (kg/tree/year)", type: "number" },
-  { key: "survival_rate_percent", label: "Survival Rate (%)", type: "number" },
-  { key: "target_trees", label: "Target Trees", type: "number" },
-  { key: "current_trees", label: "Current Trees Planted", type: "number" },
-  { key: "active_sites", label: "Active Plantation Sites", type: "number" },
-  { key: "participating_farmers", label: "Participating Farmers", type: "number" },
+  { key: "target_trees", label: "Target Trees (goal)", type: "number" },
+  { key: "survival_rate_percent", label: "Survival Rate Override (%) — leave blank to use field data", type: "number" },
 ];
 
 const CarbonSettingsTab = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [values, setValues] = useState<Record<string, string>>({});
-  const [plantationData, setPlantationData] = useState("");
 
   const { isLoading } = useQuery({
     queryKey: ["carbon-settings-admin"],
@@ -30,16 +26,15 @@ const CarbonSettingsTab = () => {
       const { data } = await supabase.from("carbon_settings").select("*");
       const map: Record<string, string> = {};
       data?.forEach((s: any) => { map[s.key] = s.value || ""; });
+      data?.forEach((s: any) => { map[s.key] = s.value || ""; });
       setValues(map);
-      setPlantationData(map["plantation_data"] || "[]");
       return data;
     },
   });
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const allValues = { ...values, plantation_data: plantationData };
-      for (const [key, value] of Object.entries(allValues)) {
+      for (const [key, value] of Object.entries(values)) {
         await supabase.from("carbon_settings").update({ value, updated_at: new Date().toISOString() }).eq("key", key);
       }
     },
@@ -59,6 +54,9 @@ const CarbonSettingsTab = () => {
           <CardTitle>Carbon Dashboard Settings</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          <p className="text-xs text-muted-foreground">
+            Live numbers (verified trees, partners, sites, growth chart) are auto-computed from orders, allocations and partner records — no manual entry required. The fields below only control the carbon formula inputs and the target goal.
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {FIELDS.map(f => (
               <div key={f.key} className="space-y-2">
@@ -68,11 +66,6 @@ const CarbonSettingsTab = () => {
             ))}
           </div>
 
-          <div className="space-y-2">
-            <Label>Plantation Growth Data (JSON array)</Label>
-            <Textarea rows={6} value={plantationData} onChange={e => setPlantationData(e.target.value)} placeholder='[{"month":"Jan","trees":500}]' className="font-mono text-xs" />
-            <p className="text-xs text-muted-foreground">Format: [{"{"}"month":"Jan","trees":500{"}"},...] — used for the line chart</p>
-          </div>
 
           <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending} className="gap-2">
             <Save className="w-4 h-4" /> {saveMutation.isPending ? "Saving..." : "Save Settings"}
