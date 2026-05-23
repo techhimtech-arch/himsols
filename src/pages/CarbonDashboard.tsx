@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,6 +10,7 @@ import { TreeDeciduous, Wind, Users, MapPin, TrendingUp, Info } from "lucide-rea
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const CarbonDashboard = () => {
+  // Admin knobs only — formula inputs / goal, not the headline counts.
   const { data: settings = [] } = useQuery({
     queryKey: ["carbon-settings"],
     queryFn: async () => {
@@ -17,35 +18,77 @@ const CarbonDashboard = () => {
       return data || [];
     },
   });
-
   const get = (key: string, fallback: string) => settings.find((s: any) => s.key === key)?.value || fallback;
 
-  const currentTrees = parseInt(get("current_trees", "15000"));
+  // Live, verified data from the same sources as /impact
+  const { data: live, isLoading } = useQuery({
+    queryKey: ["carbon-dashboard-live"],
+    queryFn: async () => {
+      const [allocRes, survRes, partnersRes, villagesRes, ordersRes] = await Promise.all([
+        supabase.from("tree_allocations").select("tree_count"),
+        supabase.from("survival_updates").select("health_status"),
+        supabase.from("land_partner_applications").select("id").eq("status", "Verified"),
+        (supabase as any).from("villages").select("id").eq("status", "active"),
+        supabase.from("orders").select("quantity, created_at").eq("status", "completed"),
+      ]);
+      const allocs = (allocRes.data as any[]) || [];
+      const survs = (survRes.data as any[]) || [];
+      const partners = (partnersRes.data as any[]) || [];
+      const villages = (villagesRes.data as any[]) || [];
+      const orders = (ordersRes.data as any[]) || [];
+
+      const currentTrees = allocs.reduce((s, a) => s + (a.tree_count || 0), 0);
+      const survivalRate = survs.length > 0
+        ? survs.filter((s) => s.health_status === "healthy").length / survs.length
+        : null;
+      const farmers = partners.length;
+      const activeSites = villages.length || partners.length;
+
+      // Group orders by month for the growth chart
+      const byMonth = new Map<string, number>();
+      orders.forEach((o) => {
+        const d = new Date(o.created_at);
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+        byMonth.set(key, (byMonth.get(key) || 0) + (o.quantity || 0));
+      });
+      const sortedKeys = Array.from(byMonth.keys()).sort();
+      let cumulative = 0;
+      const plantationData = sortedKeys.map((k) => {
+        cumulative += byMonth.get(k) || 0;
+        const [y, m] = k.split("-");
+        const label = new Date(Number(y), Number(m) - 1, 1).toLocaleString("en", { month: "short", year: "2-digit" });
+        return { month: label, trees: cumulative };
+      });
+
+      return { currentTrees, survivalRate, farmers, activeSites, plantationData };
+    },
+  });
+
+  const absorptionRate = parseFloat(get("tree_absorption_rate_kg", "22"));
   const targetTrees = parseInt(get("target_trees", "100000"));
-  const survivalRate = parseFloat(get("survival_rate_percent", "85")) / 100;
-  const absorptionRate = parseFloat(get("tree_absorption_rate_kg", "20"));
-  const activeSites = get("active_sites", "12");
-  const farmers = get("participating_farmers", "250");
+  // Admin can still override survival rate when no field data exists.
+  const survivalOverride = parseFloat(get("survival_rate_percent", "")) / 100;
+  const survivalRate = live?.survivalRate ?? (Number.isFinite(survivalOverride) && survivalOverride > 0 ? survivalOverride : 0.85);
+
+  const currentTrees = live?.currentTrees ?? 0;
+  const farmers = live?.farmers ?? 0;
+  const activeSites = live?.activeSites ?? 0;
+  const plantationData = live?.plantationData ?? [];
 
   const co2Kg = currentTrees * survivalRate * absorptionRate;
   const co2Tonnes = (co2Kg / 1000).toFixed(1);
-  const progressPercent = Math.min((currentTrees / targetTrees) * 100, 100);
-
-  let plantationData: { month: string; trees: number }[] = [];
-  try {
-    plantationData = JSON.parse(get("plantation_data", "[]"));
-  } catch { plantationData = []; }
+  const progressPercent = targetTrees > 0 ? Math.min((currentTrees / targetTrees) * 100, 100) : 0;
 
   const impactCards = [
-    { icon: TreeDeciduous, label: "Total Trees Planted", value: currentTrees.toLocaleString(), color: "text-primary" },
+    { icon: TreeDeciduous, label: "Verified Trees Allocated", value: currentTrees.toLocaleString(), color: "text-primary" },
     { icon: Wind, label: "Estimated CO₂ Offset*", value: `~${co2Tonnes} tonnes`, color: "text-secondary" },
-    { icon: Users, label: "Farmers Participating", value: farmers, color: "text-accent-foreground" },
-    { icon: MapPin, label: "Active Plantation Sites", value: activeSites, color: "text-primary" },
+    { icon: Users, label: "Verified Land Partners", value: farmers.toLocaleString(), color: "text-accent-foreground" },
+    { icon: MapPin, label: "Active Plantation Sites", value: activeSites.toLocaleString(), color: "text-primary" },
   ];
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO title="Carbon Impact Dashboard - Himsols" description="Measurable environmental impact from Himsols tree plantation activities. Track CO₂ offset, trees planted, and more." />
+      <SEO title="Carbon Impact Dashboard - Himsols" description="Verified environmental impact from Himsols tree plantation activities. Live counts of allocated trees, survival, and estimated CO₂ offset." />
       <Navbar />
 
       {/* Hero */}
@@ -57,7 +100,7 @@ const CarbonDashboard = () => {
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Our Environmental Impact</h1>
           <p className="text-lg max-w-2xl mx-auto opacity-90">
-            Estimated environmental contributions from our tree plantation activities in Himachal Pradesh. All figures are indicative and based on standard agroforestry data.
+            Numbers below are computed live from verified orders, allocations and partner records. CO₂ figures are estimates based on standard agroforestry averages.
           </p>
         </div>
       </section>
@@ -67,7 +110,7 @@ const CarbonDashboard = () => {
         <div className="bg-accent/50 backdrop-blur-sm border border-border/50 rounded-xl px-4 py-3 flex items-start gap-3 max-w-3xl mx-auto">
           <Info className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
           <p className="text-xs text-muted-foreground">
-            <strong>Note:</strong> All impact figures shown are estimates based on standard agroforestry averages. These are not certified carbon credits. Actual values may vary by species, soil, and climate conditions.
+            <strong>Note:</strong> Tree, partner and site counts are live from our database. CO₂ values are indicative estimates — not certified carbon credits.
           </p>
         </div>
       </div>
@@ -75,17 +118,28 @@ const CarbonDashboard = () => {
       {/* Impact Cards */}
       <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-            {impactCards.map((card) => (
-              <Card key={card.label} className="text-center border-border/50">
-                <CardContent className="pt-6 pb-4">
-                  <card.icon className={`w-10 h-10 mx-auto mb-3 ${card.color}`} />
-                  <p className="text-3xl md:text-4xl font-bold text-foreground mb-1">{card.value}</p>
-                  <p className="text-sm text-muted-foreground">{card.label}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          {isLoading ? (
+            <p className="text-center text-muted-foreground">Loading live impact…</p>
+          ) : (
+            <>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                {impactCards.map((card) => (
+                  <Card key={card.label} className="text-center border-border/50">
+                    <CardContent className="pt-6 pb-4">
+                      <card.icon className={`w-10 h-10 mx-auto mb-3 ${card.color}`} />
+                      <p className="text-3xl md:text-4xl font-bold text-foreground mb-1">{card.value}</p>
+                      <p className="text-sm text-muted-foreground">{card.label}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              {currentTrees === 0 && (
+                <p className="text-center text-sm text-muted-foreground mt-6">
+                  No verified allocations yet — counters will update automatically as trees are allocated to partner land.
+                </p>
+              )}
+            </>
+          )}
         </div>
       </section>
 
@@ -97,11 +151,11 @@ const CarbonDashboard = () => {
             <Card className="border-border/50">
               <CardContent className="pt-6 space-y-4">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Trees Planted</span>
+                  <span className="text-muted-foreground">Verified Trees Allocated</span>
                   <span className="font-semibold text-foreground">{currentTrees.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Survival Rate</span>
+                  <span className="text-muted-foreground">Survival Rate{live?.survivalRate == null ? " (assumed)" : ""}</span>
                   <span className="font-semibold text-foreground">{(survivalRate * 100).toFixed(0)}%</span>
                 </div>
                 <div className="flex justify-between text-sm">
@@ -186,10 +240,10 @@ const CarbonDashboard = () => {
               <AccordionContent className="text-muted-foreground space-y-3">
                 <p>Our carbon offset estimation is based on the following formula:</p>
                 <div className="bg-muted/50 rounded-lg p-4 font-mono text-sm">
-                  CO₂ Offset = Trees Planted × Survival Rate × {absorptionRate}kg (per tree/year)
+                  CO₂ Offset = Verified Trees × Survival Rate × {absorptionRate} kg (per tree/year)
                 </div>
                 <p>The absorption rate of {absorptionRate} kg CO₂ per tree per year is based on standard agroforestry averages for mixed species plantations in the Himalayan foothills.</p>
-                <p>Survival rate is monitored through regular field audits and updated by our team.</p>
+                <p>Survival rate comes from field health updates uploaded by our partner-network team. When no field data exists yet, an assumed baseline is shown and labelled accordingly.</p>
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="disclaimer">
