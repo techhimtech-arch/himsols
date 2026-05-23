@@ -1,67 +1,56 @@
-# Plan: Dynamic Scrap Pricing + School Partnership Program
 
-## 1. Remove hardcoded prices in Scrap → Wallet section
+## Problem
 
-**File:** `src/components/home/ScrapToWalletSection.tsx`
+**1. Carbon Dashboard (`/carbon-dashboard`) — inflated/misleading figures**
 
-- Currently `treesPossible = Math.floor(credit / 299)` and step 3 shows "Starting at ₹299" — both hardcoded.
-- Fetch the live minimum tree price from `trees` table (same pattern as `HeroSection`) via a small `useMinTreePrice` query.
-- Use it for:
-  - `treesPossible` calculation (`credit / minPrice`)
-  - "Starting at ₹{minPrice}" label in step 3 of the flow
-- Scrap rates per kg already come from `scrap_types` DB — no change there.
+`CarbonDashboard.tsx` reads from `carbon_settings` table with **hardcoded fallbacks** (15,000 trees, 250 farmers, 12 sites). Current DB has manually-entered values (500 trees, 150 farmers, 8 sites) which don't match actual ground truth. The page is "admin-controlled" but the admin has to remember to update it — so it drifts from reality. Real verified data already lives in `orders` + `tree_allocations` + `survival_updates` + `land_partner_applications` (this is exactly what `/impact` page already uses).
 
-## 2. New: School & Education Partnership Program (functional, not just a contact link)
+**2. Schools admin tab — PDF button invisible when list is empty**
 
-Goal: schools, colleges, NGOs can apply to partner with Himsols for plantation drives + kids' sustainability workshops, and admin can manage the leads.
+`SchoolPartnershipsTab.tsx` *does* have PDF buttons, but only inside each table row's Actions column and inside the row-details dialog. If there are **no applications yet** (likely current state), admin sees an empty table and zero PDF entry-point. There's no top-level "Download generic outreach kit" button.
 
-### 2a. Database (migration)
-New table `school_partnerships`:
-- `institution_name`, `institution_type` (school / college / NGO / other)
-- `contact_person`, `email`, `phone`
-- `city`, `state`, `student_count` (int)
-- `program_interest` (text[] — plantation drive, sustainability workshop, scrap drive, eco-club setup)
-- `preferred_date` (date, nullable), `message` (text)
-- `status` enum: new, contacted, scheduled, completed, cancelled (default `new`)
-- standard `id`, `created_at`, `updated_at`
+## Fix
 
-RLS:
-- Public can `INSERT` (so anyone can submit the form)
-- Only `super_admin` / `limited_admin` can `SELECT` / `UPDATE` / `DELETE` (use existing `has_role`)
+### A. Carbon Dashboard — switch to real, verified data (with safe admin overrides)
 
-### 2b. Public page `/schools` (`src/pages/SchoolProgram.tsx`)
-Sections:
-- Hero: "Bring sustainability into your classroom" + bilingual (en/hi)
-- 3-program cards: Plantation Drive · Sustainability Workshop · Eco-Club Setup
-- "How it works" 4-step strip (Apply → Visit → Plant/Teach → Report)
-- Impact strip (live counts: schools onboarded, kids reached, trees planted via schools — sourced from `school_partnerships` count + completed status; if empty show "Be the first")
-- Application form (the table above) with validation, success toast, redirects to track-request style confirmation
-- SEO meta + JSON-LD `EducationalOrganization` schema
+In `src/pages/CarbonDashboard.tsx`:
 
-### 2c. Homepage integration
-- Update `ActionableServicesSection.tsx`: change "Conservation Training" card to **"Schools & Education"** with link `/schools` (keeps grid intact).
-- Add a compact `SchoolProgramSection.tsx` between Partner Farmer and Testimonials on `Index.tsx` with photo + 3 bullets + "Apply for your school" CTA → `/schools`.
+- Fetch live counts in parallel (same pattern as `src/pages/Impact.tsx`):
+  - `currentTrees` = `SUM(tree_allocations.tree_count)` (verified allocated trees, not just sponsored)
+  - `survivalRate` = % of `survival_updates` with `health_status='healthy'` (fallback 85% if no data)
+  - `farmers` = `COUNT(land_partner_applications WHERE status='Verified')`
+  - `activeSites` = `COUNT(DISTINCT villages WHERE status='active')` (or fallback to verified partners count)
+- Keep `carbon_settings` only for two **knobs**, not for inventing numbers:
+  - `tree_absorption_rate_kg` (formula input, default 22)
+  - `target_trees` (admin goal, default 100,000)
+- Remove the inflated hardcoded fallbacks (15000, 250, 12). If real data is 0, show 0 honestly with a "Be the first" style note — never fake numbers.
+- Keep the existing "estimates / not certified credits" disclaimer.
+- Plantation growth chart: derive monthly series from `orders.created_at` grouped by month instead of admin-typed JSON (drop `plantation_data` setting from UI dependency; still allow it as override if present).
 
-### 2d. Admin
-New tab `SchoolPartnershipsTab.tsx` under existing Admin shell:
-- List view (table on desktop, MobileCard on mobile)
-- Filter by status, search by institution
-- Status update dropdown, view full message in dialog
-- Register tab in `src/pages/Admin.tsx` alongside other lead tabs
+In `src/components/admin/CarbonSettingsTab.tsx`:
 
-### 2e. Routing
-Add `/schools` route in `src/App.tsx` (lazy loaded, matching existing pattern).
+- Trim the form to only the **knobs** that still make sense (`tree_absorption_rate_kg`, `target_trees`, `survival_rate_percent` as optional override).
+- Remove the `current_trees`, `participating_farmers`, `active_sites`, `plantation_data` inputs (or label them clearly as "Override only — leave blank to use live data").
+- Add a small note: "Live numbers are auto-computed from verified orders, allocations, and partner data."
 
-## 3. Navigation
-- Add "Schools" link to Navbar's primary menu (via existing dynamic navigation if managed there, otherwise the static fallback list) and the Footer's "Programs" column.
+### B. Schools admin tab — always-visible Outreach Kit PDF + WhatsApp
 
-## 4. Out of scope
-- No payment flow for schools (free program; lead-gen only).
-- No changes to scrap rates logic (already DB-driven).
-- No changes to auth.
+In `src/components/admin/SchoolPartnershipsTab.tsx`:
 
-## Technical notes
-- Reuse `useMinTreePrice` pattern, `useAuthSafe`, `useLanguage`, `useToast`, shadcn Form/Input/Textarea/Select/Card components.
-- Bilingual strings inline (en + hi) per existing convention.
-- Form does not require login — public insert with RLS allowing anon insert, similar to `contact_messages`.
-- Live impact counts on `/schools` use a single supabase count query, cached 5 min.
+- Add a header action bar (right side of the "School Partnerships" heading) with:
+  - **Button**: "Download Outreach Kit (PDF)" → calls `generateSchoolOutreachPdf("")` and saves the generic version.
+  - **Button**: "Share on WhatsApp" → opens `https://wa.me/?text=<pre-filled program intro + link to /schools>` so admin can paste into any school chat after attaching the just-downloaded PDF (with a toast reminder).
+- Keep existing per-row PDF/WhatsApp icons unchanged.
+- Empty-state row: instead of just "No applications found", show a small card explaining the outreach kit usage with the same two buttons inline, so even with zero leads the admin can act.
+
+## Files touched
+
+- `src/pages/CarbonDashboard.tsx` — live data fetch, drop hardcoded fallbacks.
+- `src/components/admin/CarbonSettingsTab.tsx` — slim form, clarify what's a knob vs auto.
+- `src/components/admin/SchoolPartnershipsTab.tsx` — header action bar + better empty state.
+
+## Out of scope
+
+- No DB schema change (existing `carbon_settings` keys stay; we just stop relying on the inflated ones).
+- No changes to `/impact` page, school PDF generator (`schoolOutreachPdf.ts`), or the public `/schools` page.
+- No new admin permissions or RLS changes.
