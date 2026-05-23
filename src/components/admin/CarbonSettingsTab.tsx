@@ -19,7 +19,6 @@ const CarbonSettingsTab = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [values, setValues] = useState<Record<string, string>>({});
-  const [plantationData, setPlantationData] = useState("");
 
   const { isLoading } = useQuery({
     queryKey: ["carbon-settings-admin"],
