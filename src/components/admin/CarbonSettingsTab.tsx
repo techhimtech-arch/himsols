@@ -68,11 +68,6 @@ const CarbonSettingsTab = () => {
             ))}
           </div>
 
-          <div className="space-y-2">
-            <Label>Plantation Growth Data (JSON array)</Label>
-            <Textarea rows={6} value={plantationData} onChange={e => setPlantationData(e.target.value)} placeholder='[{"month":"Jan","trees":500}]' className="font-mono text-xs" />
-            <p className="text-xs text-muted-foreground">Format: [{"{"}"month":"Jan","trees":500{"}"},...] — used for the line chart</p>
-          </div>
 
           <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending} className="gap-2">
             <Save className="w-4 h-4" /> {saveMutation.isPending ? "Saving..." : "Save Settings"}
