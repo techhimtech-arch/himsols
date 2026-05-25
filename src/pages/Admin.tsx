@@ -198,6 +198,7 @@ const Admin = () => {
             </TabsContent>
             <TabsContent value="messages"><ContactMessagesTab /></TabsContent>
             <TabsContent value="schools"><SchoolPartnershipsTab /></TabsContent>
+            <TabsContent value="bulk-plantation"><BulkPlantationInquiriesTab /></TabsContent>
             <TabsContent value="navigation"><NavigationTab /></TabsContent>
             <TabsContent value="footer"><FooterLinksTab /></TabsContent>
             <TabsContent value="about-page"><AboutPageTab /></TabsContent>
