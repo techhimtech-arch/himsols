@@ -96,15 +96,23 @@ const BulkPlantation = () => {
       return;
     }
     setSubmitting(true);
-    const { error } = await supabase.from("bulk_plantation_inquiries").insert({
-      ...parsed.data,
+    const payload = {
+      org_name: parsed.data.org_name,
+      org_type: parsed.data.org_type,
+      contact_person: parsed.data.contact_person,
+      phone: parsed.data.phone,
+      email: parsed.data.email,
+      state: parsed.data.state,
       district: parsed.data.district || null,
       village: parsed.data.village || null,
       pin_code: parsed.data.pin_code || null,
+      tree_quantity: parsed.data.tree_quantity,
       preferred_month: parsed.data.preferred_month || null,
       land_type: parsed.data.land_type || null,
       notes: parsed.data.notes || null,
-    });
+      consent: parsed.data.consent,
+    };
+    const { error } = await supabase.from("bulk_plantation_inquiries").insert(payload);
     setSubmitting(false);
     if (error) {
       toast({ title: "Could not submit", description: error.message, variant: "destructive" });
