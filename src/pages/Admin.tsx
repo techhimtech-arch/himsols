@@ -46,6 +46,7 @@ import { AllocationsTab } from "@/components/admin/AllocationsTab";
 import { UsersTab } from "@/components/admin/UsersTab";
 import { ScrapTypesTab } from "@/components/admin/ScrapTypesTab";
 import { SchoolPartnershipsTab } from "@/components/admin/SchoolPartnershipsTab";
+import { BulkPlantationInquiriesTab } from "@/components/admin/BulkPlantationInquiriesTab";
 
 const Admin = () => {
   const { user } = useAuth();
