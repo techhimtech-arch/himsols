@@ -153,6 +153,7 @@ const Admin = () => {
                 <TabsTrigger value="external-apps" className="text-xs md:text-sm"><Globe className="h-3 w-3 md:h-4 md:w-4 mr-1" />Apps</TabsTrigger>
                 <TabsTrigger value="messages" className="text-xs md:text-sm"><MessageSquare className="h-3 w-3 md:h-4 md:w-4 mr-1" />Messages</TabsTrigger>
                 <TabsTrigger value="schools" className="text-xs md:text-sm">Schools</TabsTrigger>
+                <TabsTrigger value="bulk-plantation" className="text-xs md:text-sm"><TreePine className="h-3 w-3 md:h-4 md:w-4 mr-1" />Bulk</TabsTrigger>
                 <TabsTrigger value="navigation" className="text-xs md:text-sm"><Menu className="h-3 w-3 md:h-4 md:w-4 mr-1" />Navbar</TabsTrigger>
                 <TabsTrigger value="footer" className="text-xs md:text-sm"><Link2 className="h-3 w-3 md:h-4 md:w-4 mr-1" />Footer</TabsTrigger>
                 <TabsTrigger value="about-page" className="text-xs md:text-sm"><Info className="h-3 w-3 md:h-4 md:w-4 mr-1" />About</TabsTrigger>
