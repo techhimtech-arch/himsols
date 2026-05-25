@@ -1,56 +1,95 @@
 
-## Problem
+## Goal
 
-**1. Carbon Dashboard (`/carbon-dashboard`) — inflated/misleading figures**
+Aap chahte ho: koi Panchayat ya CSR wale 500–800+ trees ek saath lagwa lein, subsidised bulk rate par, transport ki gaadi ka alag charge. Himsols ke through ye possible hai — already `ClimateImpactPack` (10 trees ₹2,999) aur `SingleTreePack` (1 tree ₹299) ka pattern hai. Bulk version usi ka bada bhai banega, lekin checkout instant nahi — **inquiry → quote → manual confirm → payment link** flow rahega, kyunki har bulk order mein site visit, species choice, gaadi distance, aur farmer/land allocation alag hota hai.
 
-`CarbonDashboard.tsx` reads from `carbon_settings` table with **hardcoded fallbacks** (15,000 trees, 250 farmers, 12 sites). Current DB has manually-entered values (500 trees, 150 farmers, 8 sites) which don't match actual ground truth. The page is "admin-controlled" but the admin has to remember to update it — so it drifts from reality. Real verified data already lives in `orders` + `tree_allocations` + `survival_updates` + `land_partner_applications` (this is exactly what `/impact` page already uses).
+## What we'll build
 
-**2. Schools admin tab — PDF button invisible when list is empty**
+### 1. Public page — `/bulk-plantation` (Panchayat & CSR Bulk Pack)
 
-`SchoolPartnershipsTab.tsx` *does* have PDF buttons, but only inside each table row's Actions column and inside the row-details dialog. If there are **no applications yet** (likely current state), admin sees an empty table and zero PDF entry-point. There's no top-level "Download generic outreach kit" button.
+A dedicated landing + inquiry page. Sections:
 
-## Fix
+- **Hero**: "Plant 100–10,000 Trees in Your Village / Campus" + 1 line for Panchayat, Schools, RWA, CSR.
+- **Tiered pricing table** (subsidised, indicative — final per quote):
+  - 100–249 trees → ₹249/tree
+  - 250–499 trees → ₹229/tree
+  - 500–999 trees → ₹199/tree
+  - 1000+ trees → ₹179/tree (custom quote)
+- **Transport line item** shown separately: "Transport charged separately based on distance from nearest Himsols nursery (₹/km, quoted after site location confirmed)." No hidden cost.
+- **What's included**: native species selection, delivery to site, planting guidance, geo-tagged photos, 6-month survival report, certificate. (Same trust block as ClimateImpactPack, scaled up.)
+- **Who buys**: Panchayats, Schools/Colleges, CSR teams, Housing societies, Temples/Trusts.
+- **Inquiry form** (the main CTA — no instant checkout):
+  - Organization name + type (Panchayat / CSR / School / NGO / Other)
+  - Contact person, phone, email
+  - State, district, village/area, pin code
+  - Approx. tree quantity (number input, min 100)
+  - Preferred plantation month
+  - Land type (Panchayat land / school campus / private / other)
+  - Notes (species preference, occasion, etc.)
+  - Consent checkbox
+- On submit: insert into a new `bulk_plantation_inquiries` table → toast "Humari team 24 ghante mein quote ke saath contact karegi" → WhatsApp prefilled message option to admin number.
 
-### A. Carbon Dashboard — switch to real, verified data (with safe admin overrides)
+### 2. Admin tab — "Bulk Plantation" (in existing Admin panel)
 
-In `src/pages/CarbonDashboard.tsx`:
+New tab `BulkPlantationInquiriesTab.tsx` (pattern: copy from `SchoolPartnershipsTab`):
 
-- Fetch live counts in parallel (same pattern as `src/pages/Impact.tsx`):
-  - `currentTrees` = `SUM(tree_allocations.tree_count)` (verified allocated trees, not just sponsored)
-  - `survivalRate` = % of `survival_updates` with `health_status='healthy'` (fallback 85% if no data)
-  - `farmers` = `COUNT(land_partner_applications WHERE status='Verified')`
-  - `activeSites` = `COUNT(DISTINCT villages WHERE status='active')` (or fallback to verified partners count)
-- Keep `carbon_settings` only for two **knobs**, not for inventing numbers:
-  - `tree_absorption_rate_kg` (formula input, default 22)
-  - `target_trees` (admin goal, default 100,000)
-- Remove the inflated hardcoded fallbacks (15000, 250, 12). If real data is 0, show 0 honestly with a "Be the first" style note — never fake numbers.
-- Keep the existing "estimates / not certified credits" disclaimer.
-- Plantation growth chart: derive monthly series from `orders.created_at` grouped by month instead of admin-typed JSON (drop `plantation_data` setting from UI dependency; still allow it as override if present).
+- Table: org name, type, location, quantity, status, date.
+- Status pipeline: `new` → `quoted` → `confirmed` → `paid` → `in_progress` → `completed` → `cancelled`.
+- Row actions:
+  - View details dialog.
+  - Edit quote: admin types per-tree price, transport charge, total → status becomes `quoted`.
+  - "Send WhatsApp" — prefilled message with quote summary + payment instructions.
+  - "Mark Paid" — admin records payment_mode (Razorpay link / bank transfer / cheque) + reference id.
+  - Update status.
+  - Admin notes field.
 
-In `src/components/admin/CarbonSettingsTab.tsx`:
+No public checkout for bulk. Payment handled offline / via Razorpay payment link admin shares manually. This matches your existing `csr_partners` + `school_partnerships` workflow exactly — no new payment edge function needed.
 
-- Trim the form to only the **knobs** that still make sense (`tree_absorption_rate_kg`, `target_trees`, `survival_rate_percent` as optional override).
-- Remove the `current_trees`, `participating_farmers`, `active_sites`, `plantation_data` inputs (or label them clearly as "Override only — leave blank to use live data").
-- Add a small note: "Live numbers are auto-computed from verified orders, allocations, and partner data."
+### 3. Homepage discovery
 
-### B. Schools admin tab — always-visible Outreach Kit PDF + WhatsApp
+- Add one card in `ActionableServicesSection.tsx` is too crowded — instead, extend the existing **PartnerFarmerSection** or **CSRSection** area with a small "Bulk Plantation for Panchayat / CSR" tile linking to `/bulk-plantation`.
+- Add `/bulk-plantation` link in footer under "Services".
 
-In `src/components/admin/SchoolPartnershipsTab.tsx`:
+### 4. Database (migration)
 
-- Add a header action bar (right side of the "School Partnerships" heading) with:
-  - **Button**: "Download Outreach Kit (PDF)" → calls `generateSchoolOutreachPdf("")` and saves the generic version.
-  - **Button**: "Share on WhatsApp" → opens `https://wa.me/?text=<pre-filled program intro + link to /schools>` so admin can paste into any school chat after attaching the just-downloaded PDF (with a toast reminder).
-- Keep existing per-row PDF/WhatsApp icons unchanged.
-- Empty-state row: instead of just "No applications found", show a small card explaining the outreach kit usage with the same two buttons inline, so even with zero leads the admin can act.
+New table `bulk_plantation_inquiries`:
 
-## Files touched
+- org_name, org_type, contact_person, phone, email
+- state, district, village, pin_code
+- tree_quantity (int), preferred_month, land_type
+- notes, consent
+- status (default `new`)
+- **quote fields** (admin-filled): quoted_price_per_tree, quoted_transport_charge, quoted_total, quote_sent_at
+- **payment fields** (admin-filled): payment_mode, payment_reference, paid_at
+- admin_notes, reviewed_by, reviewed_at, created_at, updated_at
 
-- `src/pages/CarbonDashboard.tsx` — live data fetch, drop hardcoded fallbacks.
-- `src/components/admin/CarbonSettingsTab.tsx` — slim form, clarify what's a knob vs auto.
-- `src/components/admin/SchoolPartnershipsTab.tsx` — header action bar + better empty state.
+RLS:
+- Anyone (incl. anon) can INSERT (public form, like `csr_partners` / `school_partnerships`).
+- Only admins can SELECT / UPDATE / DELETE.
 
-## Out of scope
+## What we deliberately skip (out of scope for now)
 
-- No DB schema change (existing `carbon_settings` keys stay; we just stop relying on the inflated ones).
-- No changes to `/impact` page, school PDF generator (`schoolOutreachPdf.ts`), or the public `/schools` page.
-- No new admin permissions or RLS changes.
+- **No instant online bulk checkout** — bulk needs a human quote (transport, species, land verification). Trying to auto-price it will mislead buyers.
+- No changes to existing `ClimateImpactPack` (₹2,999 / 10 trees) or `SingleTreePack` (₹299 / 1 tree) — those stay as retail.
+- No new Razorpay edge function — admin shares a Razorpay payment link manually after quote acceptance (same as how CSR partners are handled today).
+- No transport calculator / distance API — admin types transport charge manually per inquiry (can be automated later once we have nursery lat/long).
+- No PDF quote generator in v1 — admin sends quote via WhatsApp text. (Can reuse `schoolOutreachPdf.ts` pattern later.)
+
+## Files to touch
+
+```text
+NEW   src/pages/BulkPlantation.tsx              -- public landing + inquiry form
+NEW   src/components/admin/BulkPlantationInquiriesTab.tsx
+EDIT  src/App.tsx                               -- add /bulk-plantation route
+EDIT  src/pages/Admin.tsx                       -- add new tab
+EDIT  src/components/home/CSRSection.tsx (or PartnerFarmerSection) -- add discovery tile
+EDIT  public/sitemap.xml                        -- add new route
+MIG   bulk_plantation_inquiries table + RLS
+```
+
+## Open question before I build
+
+Confirm karo:
+
+1. **Tiered prices** maine indicative rakhe hain (₹249 / ₹229 / ₹199 / ₹179). Kya ye theek hain, ya aap apne actual subsidised numbers dena chahoge? (Ye sirf public page par display ke liye — actual quote admin manually deta hai.)
+2. **Minimum quantity** — main 100 trees soch raha hoon. Aap chahte ho 500 minimum rakhein (taaki sirf serious Panchayat/CSR inquiries aayein)?

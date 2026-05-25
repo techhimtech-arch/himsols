@@ -36,10 +36,16 @@ export const CSRSection = memo(() => {
           ))}
         </div>
 
-        <div className="text-center">
+        <div className="text-center flex flex-wrap gap-3 justify-center">
           <Link to="/corporate">
             <Button size="lg" variant="outline" className="gap-2 group border-2 px-8 text-base">
               Request CSR Proposal
+              <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </Link>
+          <Link to="/bulk-plantation">
+            <Button size="lg" className="gap-2 group px-8 text-base">
+              Bulk Plantation (Panchayat / CSR)
               <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Button>
           </Link>

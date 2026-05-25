@@ -148,6 +148,99 @@ export type Database = {
         }
         Relationships: []
       }
+      bulk_plantation_inquiries: {
+        Row: {
+          admin_notes: string | null
+          consent: boolean
+          contact_person: string
+          created_at: string
+          district: string | null
+          email: string
+          id: string
+          land_type: string | null
+          notes: string | null
+          org_name: string
+          org_type: string
+          paid_at: string | null
+          payment_mode: string | null
+          payment_reference: string | null
+          phone: string
+          pin_code: string | null
+          preferred_month: string | null
+          quote_sent_at: string | null
+          quoted_price_per_tree: number | null
+          quoted_total: number | null
+          quoted_transport_charge: number | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          state: string | null
+          status: string
+          tree_quantity: number
+          updated_at: string
+          village: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          consent?: boolean
+          contact_person: string
+          created_at?: string
+          district?: string | null
+          email: string
+          id?: string
+          land_type?: string | null
+          notes?: string | null
+          org_name: string
+          org_type?: string
+          paid_at?: string | null
+          payment_mode?: string | null
+          payment_reference?: string | null
+          phone: string
+          pin_code?: string | null
+          preferred_month?: string | null
+          quote_sent_at?: string | null
+          quoted_price_per_tree?: number | null
+          quoted_total?: number | null
+          quoted_transport_charge?: number | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          state?: string | null
+          status?: string
+          tree_quantity: number
+          updated_at?: string
+          village?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          consent?: boolean
+          contact_person?: string
+          created_at?: string
+          district?: string | null
+          email?: string
+          id?: string
+          land_type?: string | null
+          notes?: string | null
+          org_name?: string
+          org_type?: string
+          paid_at?: string | null
+          payment_mode?: string | null
+          payment_reference?: string | null
+          phone?: string
+          pin_code?: string | null
+          preferred_month?: string | null
+          quote_sent_at?: string | null
+          quoted_price_per_tree?: number | null
+          quoted_total?: number | null
+          quoted_transport_charge?: number | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          state?: string | null
+          status?: string
+          tree_quantity?: number
+          updated_at?: string
+          village?: string | null
+        }
+        Relationships: []
+      }
       campaigns: {
         Row: {
           allow_direct_payment: boolean
