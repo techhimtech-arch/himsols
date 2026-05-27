@@ -82,7 +82,8 @@ const FarmerRegistration = () => {
     try {
       let photoUrl: string | null = null;
       if (photoFile) {
-        const path = `farmer-${Date.now()}-${photoFile.name}`;
+        const safeName = photoFile.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const path = `${user.id}/${Date.now()}-${safeName}`;
         const { error: upErr } = await supabase.storage.from("farmer-photos").upload(path, photoFile);
         if (upErr) throw upErr;
         const { data: urlData } = supabase.storage.from("farmer-photos").getPublicUrl(path);
