@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MarketplaceCartSheet } from "@/components/marketplace/MarketplaceCartSheet";
+import { SEO, ProductSchema } from "@/components/SEO";
 
 const categoryLabels: Record<string, string> = {
   farmer_produce: "Farmer Produce",
