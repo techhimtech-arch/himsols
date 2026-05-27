@@ -115,8 +115,26 @@ const MarketplaceProduct = () => {
     );
   }
 
+  const productUrl = `https://himsols-web-companion.lovable.app/marketplace/${product.id}`;
+  const metaDesc = (product.description || `${product.name} from ${product.seller?.name || 'Himsols'} — fresh from rural Himachal.`).slice(0, 155);
+
   return (
     <div className="min-h-screen">
+      <SEO
+        title={`${product.name} — ₹${product.price}/${product.unit} | Himsols Marketplace`}
+        description={metaDesc}
+        url={productUrl}
+        type="product"
+        image={product.image_url || undefined}
+      />
+      <ProductSchema
+        name={product.name}
+        description={metaDesc}
+        image={product.image_url || undefined}
+        price={product.price}
+        availability={product.stock_quantity > 0 ? 'InStock' : 'OutOfStock'}
+        url={productUrl}
+      />
       <Navbar />
 
       <div className="pt-24 pb-12">
