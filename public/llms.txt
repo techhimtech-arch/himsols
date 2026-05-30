@@ -27,6 +27,17 @@ Himsols connects climate-conscious individuals and companies with verified plant
 - [Gallery](/gallery): Photos from plantation drives and field visits.
 - [Contact](/contact): Reach our team.
 
+## Sustainability Days (SEO landing pages)
+- [Sustainability Days Calendar](/days): All major eco-days, one calendar.
+- [World Environment Day](/days/world-environment-day): June 5 — UN flagship environment day.
+- [Earth Day](/days/earth-day): April 22 — global citizen climate movement.
+- [Van Mahotsav](/days/van-mahotsav): July 1–7 — India's national tree festival (since 1950).
+- [International Day of Forests](/days/international-day-of-forests): March 21.
+- [World Water Day](/days/world-water-day): March 22.
+- [World Nature Conservation Day](/days/world-nature-conservation-day): July 28.
+- [World Ozone Day](/days/world-ozone-day): September 16 — Montreal Protocol.
+- [National Pollution Control Day](/days/national-pollution-control-day): December 2 — Bhopal remembrance.
+
 ## Optional
 - [Services Overview](/services): Service summary page.
 - [Terms of Service](/terms)

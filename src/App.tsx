@@ -61,6 +61,8 @@ const TrackRequest = lazy(() => import("./pages/TrackRequest"));
 const VendorDashboard = lazy(() => import("./pages/VendorDashboard"));
 const SchoolProgram = lazy(() => import("./pages/SchoolProgram"));
 const BulkPlantation = lazy(() => import("./pages/BulkPlantation"));
+const SustainabilityDay = lazy(() => import("./pages/SustainabilityDay"));
+const SustainabilityDaysIndex = lazy(() => import("./pages/SustainabilityDaysIndex"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -151,6 +153,8 @@ const App = () => (
                       <Route path="/vendor-dashboard" element={<VendorDashboard />} />
                       <Route path="/schools" element={<SchoolProgram />} />
                       <Route path="/bulk-plantation" element={<BulkPlantation />} />
+                      <Route path="/days" element={<SustainabilityDaysIndex />} />
+                      <Route path="/days/:slug" element={<SustainabilityDay />} />
                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                       <Route path="*" element={<NotFound />} />
                     </Routes>
