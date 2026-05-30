@@ -1,95 +1,125 @@
+# SEO Domination Plan — Himsols ko har sustainability search pe top pe lana
 
-## Goal
+Bhai sach batau — abhi tak hum "success" isliye nahi hain kyunki:
+1. **Content volume kam hai** — Google ko ranking ke liye 50+ quality articles chahiye, abhi humare paas mutthi bhar blog posts hain.
+2. **Koi sustainability-day landing pages nahi hain** — World Environment Day, Earth Day, Van Mahotsav pe log search karte hain, hum kahin nahi dikhte.
+3. **Backlinks zero** — koi authority site humein link nahi karti.
+4. **Local SEO missing** — "tree plantation Himachal", "plant trees Shimla" jaisi local queries optimize nahi.
+5. **Programmatic SEO nahi hai** — har district/species/occasion ke liye alag page hona chahiye.
 
-Aap chahte ho: koi Panchayat ya CSR wale 500–800+ trees ek saath lagwa lein, subsidised bulk rate par, transport ki gaadi ka alag charge. Himsols ke through ye possible hai — already `ClimateImpactPack` (10 trees ₹2,999) aur `SingleTreePack` (1 tree ₹299) ka pattern hai. Bulk version usi ka bada bhai banega, lekin checkout instant nahi — **inquiry → quote → manual confirm → payment link** flow rahega, kyunki har bulk order mein site visit, species choice, gaadi distance, aur farmer/land allocation alag hota hai.
+Yeh plan 3 phases mein full SEO machine banayega.
 
-## What we'll build
+---
 
-### 1. Public page — `/bulk-plantation` (Panchayat & CSR Bulk Pack)
+## Phase 1 — Sustainability Days Landing Pages (Quick Wins)
 
-A dedicated landing + inquiry page. Sections:
+Har major eco-day ke liye dedicated, evergreen landing page. Yeh saal-dar-saal traffic dega.
 
-- **Hero**: "Plant 100–10,000 Trees in Your Village / Campus" + 1 line for Panchayat, Schools, RWA, CSR.
-- **Tiered pricing table** (subsidised, indicative — final per quote):
-  - 100–249 trees → ₹249/tree
-  - 250–499 trees → ₹229/tree
-  - 500–999 trees → ₹199/tree
-  - 1000+ trees → ₹179/tree (custom quote)
-- **Transport line item** shown separately: "Transport charged separately based on distance from nearest Himsols nursery (₹/km, quoted after site location confirmed)." No hidden cost.
-- **What's included**: native species selection, delivery to site, planting guidance, geo-tagged photos, 6-month survival report, certificate. (Same trust block as ClimateImpactPack, scaled up.)
-- **Who buys**: Panchayats, Schools/Colleges, CSR teams, Housing societies, Temples/Trusts.
-- **Inquiry form** (the main CTA — no instant checkout):
-  - Organization name + type (Panchayat / CSR / School / NGO / Other)
-  - Contact person, phone, email
-  - State, district, village/area, pin code
-  - Approx. tree quantity (number input, min 100)
-  - Preferred plantation month
-  - Land type (Panchayat land / school campus / private / other)
-  - Notes (species preference, occasion, etc.)
-  - Consent checkbox
-- On submit: insert into a new `bulk_plantation_inquiries` table → toast "Humari team 24 ghante mein quote ke saath contact karegi" → WhatsApp prefilled message option to admin number.
+**Pages to build** (`src/pages/days/`):
+- `/world-environment-day` — June 5
+- `/earth-day` — April 22
+- `/van-mahotsav` — July 1-7 (India specific, kam competition!)
+- `/world-nature-conservation-day` — July 28
+- `/national-pollution-control-day` — December 2
+- `/international-day-of-forests` — March 21
+- `/world-ozone-day` — September 16
+- `/world-water-day` — March 22
 
-### 2. Admin tab — "Bulk Plantation" (in existing Admin panel)
+**Har page mein:**
+- H1 with year ("World Environment Day 2026 — Plant a Tree in India")
+- History, theme, why it matters (1500+ words, English + Hindi)
+- "Celebrate by planting" CTA → Climate Impact Pack / Single Tree Pack
+- FAQ section (5-7 questions) with FAQPage JSON-LD
+- Article JSON-LD with author, datePublished
+- Auto-update banner: "X days until [Day Name]"
+- Internal links to /blog, /tree-plantation, /corporate
 
-New tab `BulkPlantationInquiriesTab.tsx` (pattern: copy from `SchoolPartnershipsTab`):
+**Routing:** Add to `src/App.tsx`, add to `public/sitemap.xml` + `public/llms.txt`.
 
-- Table: org name, type, location, quantity, status, date.
-- Status pipeline: `new` → `quoted` → `confirmed` → `paid` → `in_progress` → `completed` → `cancelled`.
-- Row actions:
-  - View details dialog.
-  - Edit quote: admin types per-tree price, transport charge, total → status becomes `quoted`.
-  - "Send WhatsApp" — prefilled message with quote summary + payment instructions.
-  - "Mark Paid" — admin records payment_mode (Razorpay link / bank transfer / cheque) + reference id.
-  - Update status.
-  - Admin notes field.
+---
 
-No public checkout for bulk. Payment handled offline / via Razorpay payment link admin shares manually. This matches your existing `csr_partners` + `school_partnerships` workflow exactly — no new payment edge function needed.
+## Phase 2 — Programmatic SEO (Scale)
 
-### 3. Homepage discovery
+**Location pages** — `/plant-trees-in/:city` for top 20 Himachal cities (Shimla, Manali, Dharamshala, Kullu, Mandi, Solan, etc.) — auto-generated from a city list with local context.
 
-- Add one card in `ActionableServicesSection.tsx` is too crowded — instead, extend the existing **PartnerFarmerSection** or **CSRSection** area with a small "Bulk Plantation for Panchayat / CSR" tile linking to `/bulk-plantation`.
-- Add `/bulk-plantation` link in footer under "Services".
+**Species pages** — `/trees/:species-slug` per tree species (Deodar, Oak, Pine, Apple, Walnut) — pulled from existing `trees` table with SEO-optimized templates.
 
-### 4. Database (migration)
+**Use case pages**:
+- `/plant-trees-for-birthday`
+- `/plant-trees-for-wedding`
+- `/plant-trees-in-memory`
+- `/corporate-gifting-trees`
+- `/csr-tree-plantation-india`
 
-New table `bulk_plantation_inquiries`:
+Each generated from a template component with unique H1, intro, CTA, schema.
 
-- org_name, org_type, contact_person, phone, email
-- state, district, village, pin_code
-- tree_quantity (int), preferred_month, land_type
-- notes, consent
-- status (default `new`)
-- **quote fields** (admin-filled): quoted_price_per_tree, quoted_transport_charge, quoted_total, quote_sent_at
-- **payment fields** (admin-filled): payment_mode, payment_reference, paid_at
-- admin_notes, reviewed_by, reviewed_at, created_at, updated_at
+---
 
-RLS:
-- Anyone (incl. anon) can INSERT (public form, like `csr_partners` / `school_partnerships`).
-- Only admins can SELECT / UPDATE / DELETE.
+## Phase 3 — Content & Authority Layer
 
-## What we deliberately skip (out of scope for now)
+**Blog content calendar** — admin tab showing upcoming sustainability days with "Generate draft blog post" button (uses Lovable AI Gateway to draft article). Target: 2 posts/week.
 
-- **No instant online bulk checkout** — bulk needs a human quote (transport, species, land verification). Trying to auto-price it will mislead buyers.
-- No changes to existing `ClimateImpactPack` (₹2,999 / 10 trees) or `SingleTreePack` (₹299 / 1 tree) — those stay as retail.
-- No new Razorpay edge function — admin shares a Razorpay payment link manually after quote acceptance (same as how CSR partners are handled today).
-- No transport calculator / distance API — admin types transport charge manually per inquiry (can be automated later once we have nursery lat/long).
-- No PDF quote generator in v1 — admin sends quote via WhatsApp text. (Can reuse `schoolOutreachPdf.ts` pattern later.)
+**Content templates** to seed:
+- "10 Native Trees of Himachal Pradesh"
+- "CO2 Calculator: How Many Trees to Offset Your Car"
+- "Agroforestry vs Monoculture — Hindi Guide"
+- "How to Start a Plantation Drive in Your School"
 
-## Files to touch
+**Technical SEO fixes:**
+- Add `<link rel="alternate" hreflang="hi-IN">` and `en-IN` for bilingual pages
+- BreadcrumbList JSON-LD on all interior pages
+- `og:image` per page (auto-generated banner per day/page)
+- Internal linking widget: "Related: [Day name], [Species], [City]"
+- RSS feed `/rss.xml` for blog (helps content distribution)
+
+**Off-page (instructions for you, not code):**
+- Submit sitemap to Google Search Console (separate task)
+- List Himsols on: India CSR directories, Better India guest post, LinkedIn company page, Google Business Profile
+- Get backlinks from: partner schools, CSR clients (footer link), local news coverage
+
+---
+
+## Technical implementation
 
 ```text
-NEW   src/pages/BulkPlantation.tsx              -- public landing + inquiry form
-NEW   src/components/admin/BulkPlantationInquiriesTab.tsx
-EDIT  src/App.tsx                               -- add /bulk-plantation route
-EDIT  src/pages/Admin.tsx                       -- add new tab
-EDIT  src/components/home/CSRSection.tsx (or PartnerFarmerSection) -- add discovery tile
-EDIT  public/sitemap.xml                        -- add new route
-MIG   bulk_plantation_inquiries table + RLS
+src/
+  pages/
+    days/
+      WorldEnvironmentDay.tsx
+      EarthDay.tsx
+      VanMahotsav.tsx
+      ... (8 total)
+      _DayPageTemplate.tsx        ← shared layout
+    locations/
+      PlantTreesInCity.tsx        ← dynamic /:city
+    species/
+      TreeSpeciesPage.tsx         ← dynamic /:slug
+  lib/
+    seo/
+      sustainability-days.ts      ← data file (date, theme, copy)
+      himachal-cities.ts          ← city list + local copy
+      faq-schema.ts               ← FAQPage JSON-LD helper
+      breadcrumb-schema.ts        ← BreadcrumbList helper
+  components/
+    seo/
+      FAQSection.tsx              ← renders Q&A + injects schema
+      Breadcrumbs.tsx             ← visible breadcrumbs + schema
+      CountdownBanner.tsx         ← "X days until..."
 ```
 
-## Open question before I build
+- Sitemap generator extended to loop over days + cities + species.
+- `llms.txt` updated with new sections.
+- Each new page wraps existing `<SEO>` + adds FAQ/Breadcrumb schemas.
+- No backend schema changes needed for Phase 1 & 2; Phase 3 admin tab uses existing `blog_posts` table + Lovable AI.
 
-Confirm karo:
+---
 
-1. **Tiered prices** maine indicative rakhe hain (₹249 / ₹229 / ₹199 / ₹179). Kya ye theek hain, ya aap apne actual subsidised numbers dena chahoge? (Ye sirf public page par display ke liye — actual quote admin manually deta hai.)
-2. **Minimum quantity** — main 100 trees soch raha hoon. Aap chahte ho 500 minimum rakhein (taaki sirf serious Panchayat/CSR inquiries aayein)?
+## Suggested execution order
+
+1. **Sprint 1 (now):** Phase 1 — 8 sustainability day pages + sitemap/llms.txt update. Biggest ROI, evergreen traffic.
+2. **Sprint 2:** Phase 2 — location + species programmatic pages.
+3. **Sprint 3:** Phase 3 — content calendar admin + technical polish.
+
+**Mera suggestion:** Sprint 1 se shuru karte hain — 8 day-pages ban jayein toh tu Earth Day, Environment Day, Van Mahotsav pe rank karna shuru karega within 2-3 months. Phir Sprint 2/3 alag-alag turns mein.
+
+**Bata — Sprint 1 se start karun ya teeno ek saath?**
