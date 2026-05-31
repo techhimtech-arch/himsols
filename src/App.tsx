@@ -63,6 +63,9 @@ const SchoolProgram = lazy(() => import("./pages/SchoolProgram"));
 const BulkPlantation = lazy(() => import("./pages/BulkPlantation"));
 const SustainabilityDay = lazy(() => import("./pages/SustainabilityDay"));
 const SustainabilityDaysIndex = lazy(() => import("./pages/SustainabilityDaysIndex"));
+const PlantTreesInCity = lazy(() => import("./pages/PlantTreesInCity"));
+const TreeSpeciesPage = lazy(() => import("./pages/TreeSpeciesPage"));
+const PlantTreesForUseCase = lazy(() => import("./pages/PlantTreesForUseCase"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -155,6 +158,9 @@ const App = () => (
                       <Route path="/bulk-plantation" element={<BulkPlantation />} />
                       <Route path="/days" element={<SustainabilityDaysIndex />} />
                       <Route path="/days/:slug" element={<SustainabilityDay />} />
+                      <Route path="/plant-trees-in/:city" element={<PlantTreesInCity />} />
+                      <Route path="/trees/:slug" element={<TreeSpeciesPage />} />
+                      <Route path="/plant-trees-for/:slug" element={<PlantTreesForUseCase />} />
                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                       <Route path="*" element={<NotFound />} />
                     </Routes>
