@@ -38,6 +38,15 @@ Himsols connects climate-conscious individuals and companies with verified plant
 - [World Ozone Day](/days/world-ozone-day): September 16 — Montreal Protocol.
 - [National Pollution Control Day](/days/national-pollution-control-day): December 2 — Bhopal remembrance.
 
+## Plant Trees In (location landing pages)
+- [Shimla](/plant-trees-in/shimla), [Manali](/plant-trees-in/manali), [Dharamshala](/plant-trees-in/dharamshala), [Kullu](/plant-trees-in/kullu), [Mandi](/plant-trees-in/mandi), [Solan](/plant-trees-in/solan), [Dalhousie](/plant-trees-in/dalhousie), [Palampur](/plant-trees-in/palampur), [Kasauli](/plant-trees-in/kasauli), [Chamba](/plant-trees-in/chamba), [Hamirpur](/plant-trees-in/hamirpur), [Una](/plant-trees-in/una), [Bilaspur](/plant-trees-in/bilaspur), [Kangra](/plant-trees-in/kangra), [Kinnaur](/plant-trees-in/kinnaur), [Sirmaur](/plant-trees-in/sirmaur), [Nahan](/plant-trees-in/nahan), [Spiti](/plant-trees-in/spiti), [Kufri](/plant-trees-in/kufri), [McLeod Ganj](/plant-trees-in/mcleodganj).
+
+## Tree Species Guides
+- [Deodar](/trees/deodar), [Himalayan Oak](/trees/himalayan-oak), [Walnut](/trees/walnut), [Blue Pine](/trees/blue-pine), [Chir Pine](/trees/chir-pine), [Rhododendron](/trees/rhododendron), [Mango](/trees/mango), [Neem](/trees/neem).
+
+## Plant Trees For (occasion / use case pages)
+- [Birthday](/plant-trees-for/birthday), [Wedding](/plant-trees-for/wedding), [In Memory](/plant-trees-for/in-memory), [Corporate Gifting](/plant-trees-for/corporate-gifting), [CSR Plantation](/plant-trees-for/csr-plantation).
+
 ## Optional
 - [Services Overview](/services): Service summary page.
 - [Terms of Service](/terms)
