@@ -1,125 +1,139 @@
-# SEO Domination Plan — Himsols ko har sustainability search pe top pe lana
 
-Bhai sach batau — abhi tak hum "success" isliye nahi hain kyunki:
-1. **Content volume kam hai** — Google ko ranking ke liye 50+ quality articles chahiye, abhi humare paas mutthi bhar blog posts hain.
-2. **Koi sustainability-day landing pages nahi hain** — World Environment Day, Earth Day, Van Mahotsav pe log search karte hain, hum kahin nahi dikhte.
-3. **Backlinks zero** — koi authority site humein link nahi karti.
-4. **Local SEO missing** — "tree plantation Himachal", "plant trees Shimla" jaisi local queries optimize nahi.
-5. **Programmatic SEO nahi hai** — har district/species/occasion ke liye alag page hona chahiye.
+# Monsoon Tree Orders Blitz — Himachal 2026
 
-Yeh plan 3 phases mein full SEO machine banayega.
+Goal: Iss monsoon (July–August 2026, Van Mahotsav window) maximum tree orders Himachal mein. SEO foundation ready hai — ab **conversion + distribution + urgency** pe focus.
+
+## Strategy in one line
+Monsoon = best plantation season. Iska scarcity + Van Mahotsav (July 1–7) + CSR financial year + school reopening — sab ek saath aata hai. Inhe ek campaign mein convert karna hai.
 
 ---
 
-## Phase 1 — Sustainability Days Landing Pages (Quick Wins)
+## Phase 1 — Monsoon Urgency Layer (highest ROI, 2–3 din)
 
-Har major eco-day ke liye dedicated, evergreen landing page. Yeh saal-dar-saal traffic dega.
+### 1.1 Sitewide Monsoon Banner
+- Top sticky banner: **"🌧️ Monsoon Plantation Window Open — Plant by Aug 31 for 90%+ survival"**
+- Countdown to Aug 31 deadline
+- CTA → Climate Impact Pack
+- Dismissible but reappears next session
 
-**Pages to build** (`src/pages/days/`):
-- `/world-environment-day` — June 5
-- `/earth-day` — April 22
-- `/van-mahotsav` — July 1-7 (India specific, kam competition!)
-- `/world-nature-conservation-day` — July 28
-- `/national-pollution-control-day` — December 2
-- `/international-day-of-forests` — March 21
-- `/world-ozone-day` — September 16
-- `/world-water-day` — March 22
+### 1.2 Homepage Monsoon Hero Variant
+- Hero headline swap: "Monsoon hai. Best time to plant in Himachal."
+- Trust line: "July–August plantation = 90% survival vs 60% off-season"
+- Two CTAs: Plant 1 Tree ₹299 | 10-Tree Pack ₹2,999
 
-**Har page mein:**
-- H1 with year ("World Environment Day 2026 — Plant a Tree in India")
-- History, theme, why it matters (1500+ words, English + Hindi)
-- "Celebrate by planting" CTA → Climate Impact Pack / Single Tree Pack
-- FAQ section (5-7 questions) with FAQPage JSON-LD
-- Article JSON-LD with author, datePublished
-- Auto-update banner: "X days until [Day Name]"
-- Internal links to /blog, /tree-plantation, /corporate
+### 1.3 Dedicated Monsoon Landing Page `/monsoon-plantation-himachal`
+- H1: "Monsoon Tree Plantation in Himachal Pradesh 2026"
+- Why monsoon = best season (science + soil moisture data)
+- Van Mahotsav tie-in (July 1–7)
+- Live counter: "X trees already booked for monsoon batch"
+- City picker → routes to existing `/plant-trees-in/:city`
+- FAQ + Article JSON-LD
+- Added to sitemap + llms.txt
 
-**Routing:** Add to `src/App.tsx`, add to `public/sitemap.xml` + `public/llms.txt`.
-
----
-
-## Phase 2 — Programmatic SEO (Scale)
-
-**Location pages** — `/plant-trees-in/:city` for top 20 Himachal cities (Shimla, Manali, Dharamshala, Kullu, Mandi, Solan, etc.) — auto-generated from a city list with local context.
-
-**Species pages** — `/trees/:species-slug` per tree species (Deodar, Oak, Pine, Apple, Walnut) — pulled from existing `trees` table with SEO-optimized templates.
-
-**Use case pages**:
-- `/plant-trees-for-birthday`
-- `/plant-trees-for-wedding`
-- `/plant-trees-in-memory`
-- `/corporate-gifting-trees`
-- `/csr-tree-plantation-india`
-
-Each generated from a template component with unique H1, intro, CTA, schema.
+### 1.4 Scarcity on Pack Pages
+- ClimateImpactPack + SingleTreePack pages: add "Monsoon Batch — limited slots" badge
+- "Next plantation drive: [next Saturday]" auto-calculated
 
 ---
 
-## Phase 3 — Content & Authority Layer
+## Phase 2 — Conversion Lift on Existing Traffic (3–4 din)
 
-**Blog content calendar** — admin tab showing upcoming sustainability days with "Generate draft blog post" button (uses Lovable AI Gateway to draft article). Target: 2 posts/week.
+### 2.1 Exit-Intent Popup
+- On `/days/*`, `/plant-trees-in/*`, `/trees/*` pages
+- Offer: "Pledge ₹299 for monsoon plantation — get free certificate"
+- Email capture for non-converters → drip campaign
 
-**Content templates** to seed:
-- "10 Native Trees of Himachal Pradesh"
-- "CO2 Calculator: How Many Trees to Offset Your Car"
-- "Agroforestry vs Monoculture — Hindi Guide"
-- "How to Start a Plantation Drive in Your School"
+### 2.2 WhatsApp-First Checkout Nudge
+- After 30s on tree pages: floating WA button with pre-filled message: "Hi, monsoon mein 1 tree plant karwana hai"
+- Goes to existing WhatsApp number from site_settings
 
-**Technical SEO fixes:**
-- Add `<link rel="alternate" hreflang="hi-IN">` and `en-IN` for bilingual pages
-- BreadcrumbList JSON-LD on all interior pages
-- `og:image` per page (auto-generated banner per day/page)
-- Internal linking widget: "Related: [Day name], [Species], [City]"
-- RSS feed `/rss.xml` for blog (helps content distribution)
+### 2.3 Group Plantation CTA
+- "Plant 5 trees with friends — split ₹1,495" card on homepage
+- Share link → group checkout (uses existing referral system)
 
-**Off-page (instructions for you, not code):**
-- Submit sitemap to Google Search Console (separate task)
-- List Himsols on: India CSR directories, Better India guest post, LinkedIn company page, Google Business Profile
-- Get backlinks from: partner schools, CSR clients (footer link), local news coverage
+### 2.4 Social Proof Boost
+- "X trees planted this week" live counter on every tree page
+- Recent orders ticker: "Rohan from Delhi just planted 10 trees in Manali" (anonymized from real orders)
 
 ---
 
-## Technical implementation
+## Phase 3 — CSR & Bulk Push (parallel, 5–7 din)
+
+### 3.1 CSR Monsoon Campaign Page `/csr-monsoon-himachal-2026`
+- Target: Indian companies with Q2 CSR budgets
+- "Offset 100 tonnes CO2 this monsoon — verified Himachal plantation"
+- Pricing tiers: 100 / 500 / 1000 / 5000 trees
+- Downloadable monsoon CSR brochure (PDF)
+- Bulk inquiry form (existing flow)
+
+### 3.2 School Van Mahotsav Pack
+- `/schools/van-mahotsav-2026` page
+- "Adopt your school's plantation drive — ₹14,999 for 50 trees"
+- Includes student certificate template, plantation kit
+- Auto-emailed proposal PDF
+
+### 3.3 Corporate Outreach Asset
+- Lovable AI Gateway → generate personalized CSR email drafts in admin
+- Admin tab: paste company name → get tailored pitch + impact projection
+
+---
+
+## Phase 4 — Distribution (ongoing through monsoon)
+
+### 4.1 Bilingual Blog Surge (auto-drafted via Lovable AI)
+- 8 monsoon-themed posts (Hindi + English), seeded in admin:
+  - "Monsoon mein Himachal mein kaunse ped lagaye"
+  - "Van Mahotsav 2026: kaise celebrate kare"
+  - "5 reasons monsoon = best plantation season"
+  - "Himachal landslides aur tree plantation"
+- Each links to `/plant-trees-in/:city` + `/climate-impact-pack`
+
+### 4.2 Shareable Pledge Card
+- `/pledge` page: name + city → generates shareable pledge image
+- "I pledged to plant a tree in Manali this monsoon 🌧️🌱"
+- WhatsApp / Instagram share built-in
+- Viral loop → captures email
+
+### 4.3 Influencer & Press Kit
+- `/press` page with logo, brand colors, founder quote, stats, photos
+- One-click download
+
+---
+
+## Phase 5 — Retention & Repeat Orders (week 2)
+
+- Post-purchase email: "Your tree is part of Monsoon Batch #X. Tracking link in 7 days."
+- Day-15 email with geo-tagged photo → "Plant one more for ₹299?"
+- Wallet bonus: "Plant 5 trees this monsoon → ₹500 wallet credit for next year"
+
+---
+
+## Execution Order (recommended)
 
 ```text
-src/
-  pages/
-    days/
-      WorldEnvironmentDay.tsx
-      EarthDay.tsx
-      VanMahotsav.tsx
-      ... (8 total)
-      _DayPageTemplate.tsx        ← shared layout
-    locations/
-      PlantTreesInCity.tsx        ← dynamic /:city
-    species/
-      TreeSpeciesPage.tsx         ← dynamic /:slug
-  lib/
-    seo/
-      sustainability-days.ts      ← data file (date, theme, copy)
-      himachal-cities.ts          ← city list + local copy
-      faq-schema.ts               ← FAQPage JSON-LD helper
-      breadcrumb-schema.ts        ← BreadcrumbList helper
-  components/
-    seo/
-      FAQSection.tsx              ← renders Q&A + injects schema
-      Breadcrumbs.tsx             ← visible breadcrumbs + schema
-      CountdownBanner.tsx         ← "X days until..."
+Day 1-2  → Phase 1.1, 1.2, 1.3, 1.4    (urgency layer)
+Day 3-4  → Phase 2.1, 2.2, 2.3, 2.4    (conversion lift)
+Day 5-7  → Phase 3.1, 3.2, 3.3         (CSR push)
+Day 8-10 → Phase 4.1, 4.2, 4.3         (distribution)
+Day 11+  → Phase 5                     (retention)
 ```
 
-- Sitemap generator extended to loop over days + cities + species.
-- `llms.txt` updated with new sections.
-- Each new page wraps existing `<SEO>` + adds FAQ/Breadcrumb schemas.
-- No backend schema changes needed for Phase 1 & 2; Phase 3 admin tab uses existing `blog_posts` table + Lovable AI.
+## Technical notes
+
+- All new pages: existing `<SEO>` + Article/FAQ/Breadcrumb JSON-LD
+- Monsoon banner: stored in `site_settings` (admin toggle) so you can disable Sept 1
+- Live counters: pull from existing `live_stats` table — no hardcoding
+- Pledge card image: client-side canvas, no backend cost
+- CSR brochure PDF: reuse existing `Himsols-CSR-Pitch-Deck.pdf` infra
+- Exit-intent + scarcity badges: pure frontend, zero DB impact
+- Admin AI draft tab: Lovable AI Gateway (no API key needed)
+
+## What I will NOT do without your nod
+
+- Discounting (₹299 is already entry price — discounting hurts brand)
+- Paid ads setup (out of code scope; can prep landing pages for it)
+- Sending bulk email/SMS (needs your contact list + Resend domain)
 
 ---
 
-## Suggested execution order
-
-1. **Sprint 1 (now):** Phase 1 — 8 sustainability day pages + sitemap/llms.txt update. Biggest ROI, evergreen traffic.
-2. **Sprint 2:** Phase 2 — location + species programmatic pages.
-3. **Sprint 3:** Phase 3 — content calendar admin + technical polish.
-
-**Mera suggestion:** Sprint 1 se shuru karte hain — 8 day-pages ban jayein toh tu Earth Day, Environment Day, Van Mahotsav pe rank karna shuru karega within 2-3 months. Phir Sprint 2/3 alag-alag turns mein.
-
-**Bata — Sprint 1 se start karun ya teeno ek saath?**
+**Bata — pura plan ek saath chalu karun, ya Phase 1 (monsoon urgency) se start karun jo sabse zyada immediate impact dega?**
