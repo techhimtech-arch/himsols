@@ -9,6 +9,7 @@ import { MarketplaceCartProvider } from "@/hooks/useMarketplaceCart";
 import { LanguageProvider } from "@/hooks/useLanguage";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
+import { MonsoonBanner } from "@/components/MonsoonBanner";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { lazy, Suspense } from "react";
 
@@ -66,6 +67,7 @@ const SustainabilityDaysIndex = lazy(() => import("./pages/SustainabilityDaysInd
 const PlantTreesInCity = lazy(() => import("./pages/PlantTreesInCity"));
 const TreeSpeciesPage = lazy(() => import("./pages/TreeSpeciesPage"));
 const PlantTreesForUseCase = lazy(() => import("./pages/PlantTreesForUseCase"));
+const MonsoonPlantationHimachal = lazy(() => import("./pages/MonsoonPlantationHimachal"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -108,6 +110,7 @@ const App = () => (
               <WhatsAppButton />
               <BrowserRouter>
                 <AnalyticsWrapper>
+                  <MonsoonBanner />
                   <Suspense fallback={<PageLoader />}>
                     <Routes>
                       <Route path="/" element={<Index />} />
@@ -161,6 +164,7 @@ const App = () => (
                       <Route path="/plant-trees-in/:city" element={<PlantTreesInCity />} />
                       <Route path="/trees/:slug" element={<TreeSpeciesPage />} />
                       <Route path="/plant-trees-for/:slug" element={<PlantTreesForUseCase />} />
+                      <Route path="/monsoon-plantation-himachal" element={<MonsoonPlantationHimachal />} />
                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                       <Route path="*" element={<NotFound />} />
                     </Routes>
