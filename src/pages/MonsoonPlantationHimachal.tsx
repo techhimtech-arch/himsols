@@ -22,7 +22,7 @@ import {
   Calendar,
   MapPin,
 } from "lucide-react";
-import { HIMACHAL_CITIES } from "@/lib/seo/himachal-cities";
+import { HP_CITIES } from "@/lib/seo/himachal-cities";
 
 const SITE = "https://himsols-web-companion.lovable.app";
 const YEAR = new Date().getFullYear();
