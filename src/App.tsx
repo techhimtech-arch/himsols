@@ -110,6 +110,7 @@ const App = () => (
               <WhatsAppButton />
               <BrowserRouter>
                 <AnalyticsWrapper>
+                  <MonsoonBanner />
                   <Suspense fallback={<PageLoader />}>
                     <Routes>
                       <Route path="/" element={<Index />} />
