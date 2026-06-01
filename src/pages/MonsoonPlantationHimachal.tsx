@@ -175,7 +175,7 @@ const MonsoonPlantationHimachal = () => {
     return () => clearInterval(id);
   }, []);
 
-  const featuredCities = useMemo(() => HIMACHAL_CITIES.slice(0, 8), []);
+  const featuredCities = useMemo(() => HP_CITIES.slice(0, 8), []);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -305,7 +305,7 @@ const MonsoonPlantationHimachal = () => {
               Pick where to plant
             </h2>
             <p className="text-muted-foreground">
-              Verified plantation sites across {HIMACHAL_CITIES.length}+ Himachal cities.
+              Verified plantation sites across {HP_CITIES.length}+ Himachal cities.
             </p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-w-4xl mx-auto">
