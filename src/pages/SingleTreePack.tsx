@@ -17,6 +17,7 @@ import {
   TreePine, Check, Shield, Camera, MapPin,
   Wallet, CreditCard, Gift, ArrowRight, Loader2, Leaf, BarChart3
 } from "lucide-react";
+import { MonsoonScarcityBadge } from "@/components/MonsoonScarcityBadge";
 
 const PACK_PRICE = 299;
 
@@ -170,9 +171,12 @@ const SingleTreePack = () => {
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-start">
             {/* Left - Product Details */}
             <div>
-              <Badge className="mb-4 bg-primary/10 text-primary border-primary/20 hover:bg-primary/15">
-                <Leaf className="h-3 w-3 mr-1" /> Start Your Impact
-              </Badge>
+              <div className="flex flex-wrap items-center gap-2 mb-4">
+                <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/15">
+                  <Leaf className="h-3 w-3 mr-1" /> Start Your Impact
+                </Badge>
+                <MonsoonScarcityBadge variant="compact" />
+              </div>
 
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 leading-tight">
                 ₹299 Single Tree Pack

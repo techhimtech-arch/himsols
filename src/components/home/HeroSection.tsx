@@ -1,11 +1,12 @@
 import { memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, TreePine, Building2, Sprout, MapPin, BarChart3, Shield, Leaf } from "lucide-react";
+import { ArrowRight, TreePine, Building2, Sprout, MapPin, BarChart3, Shield, Leaf, CloudRain } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { HeroShareReferralBar } from "./HeroShareReferralBar";
+import { isMonsoonWindow } from "@/components/MonsoonScarcityBadge";
 
 const useMinTreePrice = () =>
   useQuery({
@@ -27,6 +28,7 @@ export const HeroSection = memo(() => {
   const { language } = useLanguage();
   const isHi = language === "hi";
   const { data: minPrice = 299 } = useMinTreePrice();
+  const monsoon = isMonsoonWindow();
 
   return (
     <section className="pt-24 md:pt-32 pb-20 md:pb-28 px-4 relative overflow-hidden">
@@ -37,14 +39,27 @@ export const HeroSection = memo(() => {
       <div className="container mx-auto relative z-10">
         <div className="max-w-3xl mx-auto text-center space-y-8 animate-slide-up">
           {/* Tag */}
-          <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase px-4 py-2 rounded-full border border-primary/20 bg-primary/5 text-primary">
-            <Shield className="h-3.5 w-3.5" />
-            {isHi ? "पर्यावरण प्रभाव प्लेटफ़ॉर्म" : "Environmental Impact Platform"}
-          </div>
+          {monsoon ? (
+            <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase px-4 py-2 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300">
+              <CloudRain className="h-3.5 w-3.5" />
+              {isHi ? "मानसून प्लांटेशन विंडो खुली है" : "Monsoon Plantation Window Open"}
+            </div>
+          ) : (
+            <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase px-4 py-2 rounded-full border border-primary/20 bg-primary/5 text-primary">
+              <Shield className="h-3.5 w-3.5" />
+              {isHi ? "पर्यावरण प्रभाव प्लेटफ़ॉर्म" : "Environmental Impact Platform"}
+            </div>
+          )}
 
           {/* Headline */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.08] tracking-tight text-foreground">
-            {isHi ? (
+            {monsoon ? (
+              isHi ? (
+                <>मानसून आ गया।{" "}<span className="text-primary">हिमाचल में पेड़ लगाने का सबसे अच्छा समय।</span></>
+              ) : (
+                <>Monsoon is here.{" "}<span className="text-primary">Best time to plant in Himachal.</span></>
+              )
+            ) : isHi ? (
               <>पेड़ लगाओ। गांवों को सशक्त करो।{" "}<span className="text-primary">अपना प्रभाव ट्रैक करो।</span></>
             ) : (
               <>Plant Trees. Support Rural Communities.{" "}<span className="text-primary">Track Your Impact.</span></>
@@ -53,9 +68,13 @@ export const HeroSection = memo(() => {
 
           {/* Subheadline */}
           <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-            {isHi
-              ? "हिमाचल प्रदेश में किसानों की ज़मीन पर सत्यापित वृक्षारोपण को प्रायोजित करें। जियो-टैग फ़ोटो, सर्वाइवल ट्रैकिंग और कार्बन रिपोर्ट पाएं।"
-              : "Sponsor verified tree plantations on farmer land in Himachal Pradesh. Get geo-tagged proof, survival tracking, and carbon impact reports."}
+            {monsoon
+              ? isHi
+                ? "जुलाई–अगस्त की मानसून विंडो में लगाए गए पेड़ों की सर्वाइवल दर 90%+ है। अभी प्रायोजित करें, जियो-टैग प्रमाण पाएं।"
+                : "Trees planted in the July–Aug monsoon window have 90%+ survival rates. Sponsor now, get geo-tagged proof."
+              : isHi
+                ? "हिमाचल प्रदेश में किसानों की ज़मीन पर सत्यापित वृक्षारोपण को प्रायोजित करें। जियो-टैग फ़ोटो, सर्वाइवल ट्रैकिंग और कार्बन रिपोर्ट पाएं।"
+                : "Sponsor verified tree plantations on farmer land in Himachal Pradesh. Get geo-tagged proof, survival tracking, and carbon impact reports."}
           </p>
 
           {/* Action Buttons — ₹299 tree prominent + Quiz CTA */}
