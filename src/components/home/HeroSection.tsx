@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { HeroShareReferralBar } from "./HeroShareReferralBar";
 import { isMonsoonWindow } from "@/components/MonsoonScarcityBadge";
+import { Link as RouterLink } from "react-router-dom";
 
 const useMinTreePrice = () =>
   useQuery({
