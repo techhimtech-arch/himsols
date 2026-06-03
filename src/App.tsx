@@ -8,6 +8,7 @@ import { CartProvider } from "@/hooks/useCart";
 import { MarketplaceCartProvider } from "@/hooks/useMarketplaceCart";
 import { LanguageProvider } from "@/hooks/useLanguage";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
+import { PWAUpdatePrompt } from "@/components/PWAUpdatePrompt";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { MonsoonBanner } from "@/components/MonsoonBanner";
 import { useAnalytics } from "@/hooks/useAnalytics";
@@ -107,6 +108,7 @@ const App = () => (
               <Toaster />
               <Sonner />
               <PWAInstallPrompt />
+              <PWAUpdatePrompt />
               <WhatsAppButton />
               <BrowserRouter>
                 <AnalyticsWrapper>
