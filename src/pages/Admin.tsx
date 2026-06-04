@@ -47,6 +47,7 @@ import { UsersTab } from "@/components/admin/UsersTab";
 import { ScrapTypesTab } from "@/components/admin/ScrapTypesTab";
 import { SchoolPartnershipsTab } from "@/components/admin/SchoolPartnershipsTab";
 import { BulkPlantationInquiriesTab } from "@/components/admin/BulkPlantationInquiriesTab";
+import { LiveVisitorsTab } from "@/components/admin/LiveVisitorsTab";
 
 const Admin = () => {
   const { user } = useAuth();
@@ -142,6 +143,7 @@ const Admin = () => {
                 <TabsTrigger value="testimonials" className="text-xs md:text-sm"><Quote className="h-3 w-3 md:h-4 md:w-4 mr-1" />Reviews</TabsTrigger>
                 <TabsTrigger value="activities" className="text-xs md:text-sm"><Activity className="h-3 w-3 md:h-4 md:w-4 mr-1" />Activities</TabsTrigger>
                 <TabsTrigger value="live-stats" className="text-xs md:text-sm"><BarChart3 className="h-3 w-3 md:h-4 md:w-4 mr-1" />Stats</TabsTrigger>
+                <TabsTrigger value="live-visitors" className="text-xs md:text-sm"><Activity className="h-3 w-3 md:h-4 md:w-4 mr-1" />Live</TabsTrigger>
                 <TabsTrigger value="partners" className="text-xs md:text-sm"><Handshake className="h-3 w-3 md:h-4 md:w-4 mr-1" />Partners</TabsTrigger>
                 <TabsTrigger value="campaigns" className="text-xs md:text-sm"><Heart className="h-3 w-3 md:h-4 md:w-4 mr-1" />Campaigns</TabsTrigger>
                 <TabsTrigger value="donations" className="text-xs md:text-sm">Donations</TabsTrigger>
@@ -183,6 +185,7 @@ const Admin = () => {
             <TabsContent value="testimonials"><TestimonialsTab /></TabsContent>
             <TabsContent value="activities"><ActivitiesTab /></TabsContent>
             <TabsContent value="live-stats"><LiveStatsTab /></TabsContent>
+            <TabsContent value="live-visitors"><LiveVisitorsTab /></TabsContent>
             <TabsContent value="partners"><PartnerTypesTab /></TabsContent>
             <TabsContent value="users"><UsersTab /></TabsContent>
             <TabsContent value="corporate"><CorporateTab /></TabsContent>
