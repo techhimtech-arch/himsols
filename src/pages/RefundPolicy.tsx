@@ -9,7 +9,7 @@ const RefundPolicy = () => {
       <SEO
         title="Refund & Cancellation Policy - Himsols"
         description="Understand Himsols' refund and cancellation policy for tree plantation orders, marketplace purchases, donations, and gift cards."
-        url="https://himsols-web-companion.lovable.app/refund-policy"
+        url="https://himsols.com/refund-policy"
       />
       <Navbar />
 

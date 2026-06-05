@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, ArrowRight } from "lucide-react";
 import { SUSTAINABILITY_DAYS } from "@/lib/seo/sustainability-days";
 
-const SITE = "https://himsols-web-companion.lovable.app";
+const SITE = "https://himsols.com";
 
 const SustainabilityDaysIndex = () => {
   // sort by upcoming

@@ -20,8 +20,8 @@ const organizationSchema = {
   "@type": "Organization",
   "name": "Himsols",
   "alternateName": "हिमसोल्स",
-  "url": "https://himsols-web-companion.lovable.app",
-  "logo": "https://himsols-web-companion.lovable.app/favicon.png",
+  "url": "https://himsols.com",
+  "logo": "https://himsols.com/favicon.png",
   "description": "Himsols provides tree plantation, waste management, and conservation services for rural communities in Himachal Pradesh. पर्यावरण संरक्षण के लिए हमसे जुड़ें।",
   "foundingDate": "2024",
   "areaServed": {
@@ -42,9 +42,9 @@ const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
   "name": "Himsols",
-  "@id": "https://himsols-web-companion.lovable.app",
-  "url": "https://himsols-web-companion.lovable.app",
-  "image": "https://himsols-web-companion.lovable.app/favicon.png",
+  "@id": "https://himsols.com",
+  "url": "https://himsols.com",
+  "image": "https://himsols.com/favicon.png",
   "description": "Tree plantation, waste management, and eco-friendly products for Himachal Pradesh communities",
   "address": {
     "@type": "PostalAddress",
@@ -108,15 +108,15 @@ const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   "name": "Himsols",
-  "url": "https://himsols-web-companion.lovable.app",
+  "url": "https://himsols.com",
   "potentialAction": {
     "@type": "SearchAction",
-    "target": "https://himsols-web-companion.lovable.app/blog?search={search_term_string}",
+    "target": "https://himsols.com/blog?search={search_term_string}",
     "query-input": "required name=search_term_string"
   }
 };
 
-const SITE_ORIGIN = "https://himsols-web-companion.lovable.app";
+const SITE_ORIGIN = "https://himsols.com";
 
 const resolveCanonicalUrl = (explicit?: string) => {
   if (explicit) return explicit;
@@ -130,7 +130,7 @@ export const SEO = ({
   title = "Himsols — पर्यावरण समाधान | Environmental Solutions",
   description = "Himsols - Tree plantation, waste management, and conservation services for rural communities in Himachal Pradesh. पर्यावरण संरक्षण के लिए हमसे जुड़ें।",
   keywords = "tree plantation, waste management, scrap pickup, eco-friendly, Himachal Pradesh, पेड़ लगाओ, कबाड़ बेचो, पर्यावरण",
-  image = "https://himsols-web-companion.lovable.app/pwa-512x512.png",
+  image = "https://himsols.com/pwa-512x512.png",
   url,
   type = "website",
   author,
@@ -278,7 +278,7 @@ export const BlogPostSchema = ({
       "@type": "Article",
       "headline": title,
       "description": description,
-      "image": image || "https://himsols-web-companion.lovable.app/pwa-512x512.png",
+      "image": image || "https://himsols.com/pwa-512x512.png",
       "url": url,
       "datePublished": publishedTime,
       "dateModified": modifiedTime || publishedTime,
@@ -291,7 +291,7 @@ export const BlogPostSchema = ({
         "name": "Himsols",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://himsols-web-companion.lovable.app/favicon.png"
+          "url": "https://himsols.com/favicon.png"
         }
       },
       "articleSection": category,

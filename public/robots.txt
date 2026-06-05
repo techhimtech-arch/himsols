@@ -1,11 +1,11 @@
 # Himsols Robots.txt
-# https://himsols-web-companion.lovable.app
+# https://himsols.com
 
 User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://himsols-web-companion.lovable.app/sitemap.xml
+Sitemap: https://himsols.com/sitemap.xml
 
 # Crawl delay for polite crawling
 Crawl-delay: 1

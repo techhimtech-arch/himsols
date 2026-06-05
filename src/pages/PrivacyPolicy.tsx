@@ -8,7 +8,7 @@ const PrivacyPolicy = () => {
       <SEO
         title="Privacy Policy - Himsols"
         description="Learn how Himsols collects, uses, and protects your personal information. Your privacy and data security are our priority."
-        url="https://himsols-web-companion.lovable.app/privacy"
+        url="https://himsols.com/privacy"
       />
       <Navbar />
 
