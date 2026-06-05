@@ -143,58 +143,33 @@ export const Footer = () => {
             </div>
           </div>
 
-          {/* Services Links (Dynamic) */}
-          <div>
-            <h3 className="font-semibold text-foreground text-sm md:text-base mb-3 md:mb-4">
-              {servicesLinks.length > 0 ? (language === "hi" ? "सेवाएं" : "Services") : t("footer.quickLinks")}
-            </h3>
-            <ul className="space-y-1.5 md:space-y-2">
-              {servicesLinks.length > 0 ? (
-                servicesLinks.map((link) => (
+          {/* Services Links (Dynamic only) */}
+          {servicesLinks.length > 0 && (
+            <div>
+              <h3 className="font-semibold text-foreground text-sm md:text-base mb-3 md:mb-4">
+                {language === "hi" ? "सेवाएं" : "Services"}
+              </h3>
+              <ul className="space-y-1.5 md:space-y-2">
+                {servicesLinks.map((link) => (
                   <li key={link.id}>{renderLink(link)}</li>
-                ))
-              ) : (
-                <>
-                  <li>
-                    <Link to="/" className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm">
-                      {t("nav.home")}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/services" className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm">
-                      {t("nav.services")}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/tree-plantation" className="text-muted-foreground hover:text-primary transition-colors text-xs md:text-sm">
-                      {t("nav.treePlantation")}
-                    </Link>
-                  </li>
-                </>
-              )}
-            </ul>
-          </div>
+                ))}
+              </ul>
+            </div>
+          )}
 
-          {/* Company/Support Links (Dynamic) */}
-          <div className="hidden md:block">
-            <h3 className="font-semibold text-foreground mb-4">
-              {companyLinks.length > 0 ? (language === "hi" ? "कंपनी" : "Company") : t("services.title")}
-            </h3>
-            <ul className="space-y-2">
-              {companyLinks.length > 0 ? (
-                companyLinks.map((link) => (
+          {/* Company Links (Dynamic only) */}
+          {companyLinks.length > 0 && (
+            <div className="hidden md:block">
+              <h3 className="font-semibold text-foreground mb-4">
+                {language === "hi" ? "कंपनी" : "Company"}
+              </h3>
+              <ul className="space-y-2">
+                {companyLinks.map((link) => (
                   <li key={link.id}>{renderLink(link)}</li>
-                ))
-              ) : (
-                <>
-                  <li className="text-muted-foreground text-sm">{t("services.treePlantation")}</li>
-                  <li className="text-muted-foreground text-sm">{t("services.wasteManagement")}</li>
-                  <li className="text-muted-foreground text-sm">{t("services.conservation")}</li>
-                  <li className="text-muted-foreground text-sm">{t("services.ecoEvents")}</li>
-                </>
-              )}
-            </ul>
-          </div>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {/* Contact */}
           <div>
