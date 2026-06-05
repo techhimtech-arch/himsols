@@ -20,6 +20,16 @@
     <meta name="keywords" content="tree plantation, waste management, scrap pickup, Himachal Pradesh, eco-friendly, पेड़ लगाओ, कबाड़ बेचो, पर्यावरण" />
     <meta name="author" content="Himsols" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <script>
+      // Block indexing of preview/staging subdomains so only himsols.com appears in Google
+      (function () {
+        var h = location.hostname;
+        if (h.indexOf('lovable.app') !== -1 || h.indexOf('lovable.dev') !== -1) {
+          var m = document.querySelector('meta[name="robots"]');
+          if (m) m.setAttribute('content', 'noindex, nofollow');
+        }
+      })();
+    </script>
     <meta name="theme-color" content="#16a34a" />
     <meta name="geo.region" content="IN-HP" />
     <meta name="geo.placename" content="Himachal Pradesh" />
