@@ -14,7 +14,7 @@ import {
 import { Gift, CheckCircle, ArrowRight, Sparkles } from "lucide-react";
 import { getUseCaseBySlug, USE_CASES } from "@/lib/seo/use-cases";
 
-const SITE = "https://himsols-web-companion.lovable.app";
+const SITE = "https://himsols.com";
 
 const PlantTreesForUseCase = () => {
   const { slug } = useParams<{ slug: string }>();

@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { HP_CITIES } from "@/lib/seo/himachal-cities";
 
-const SITE = "https://himsols-web-companion.lovable.app";
+const SITE = "https://himsols.com";
 const YEAR = new Date().getFullYear();
 
 const REASONS = [

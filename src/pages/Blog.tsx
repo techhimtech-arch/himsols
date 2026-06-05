@@ -69,7 +69,7 @@ const Blog = () => {
       <SEO
         title="Blog — Sustainability & Tree Plantation Stories | Himsols"
         description="Read stories on agroforestry, carbon credits, climate action, and how Himachal farmers are building India's verified plantation network."
-        url="https://himsols-web-companion.lovable.app/blog"
+        url="https://himsols.com/blog"
       />
       <Navbar />
 

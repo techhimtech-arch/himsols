@@ -8,7 +8,7 @@ const TermsOfService = () => {
       <SEO
         title="Terms of Service - Himsols"
         description="Read the Terms of Service for Himsols. Understand the rules and guidelines for using our tree plantation, marketplace, and environmental services."
-        url="https://himsols-web-companion.lovable.app/terms"
+        url="https://himsols.com/terms"
       />
       <Navbar />
 

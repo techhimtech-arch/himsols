@@ -20,7 +20,7 @@ import {
   type SustainabilityDay,
 } from "@/lib/seo/sustainability-days";
 
-const SITE = "https://himsols-web-companion.lovable.app";
+const SITE = "https://himsols.com";
 
 function daysUntil(mmdd: string): number {
   const [m, d] = mmdd.split("-").map(Number);

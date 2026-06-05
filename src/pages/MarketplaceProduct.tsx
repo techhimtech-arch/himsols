@@ -115,7 +115,7 @@ const MarketplaceProduct = () => {
     );
   }
 
-  const productUrl = `https://himsols-web-companion.lovable.app/marketplace/${product.id}`;
+  const productUrl = `https://himsols.com/marketplace/${product.id}`;
   const metaDesc = (product.description || `${product.name} from ${product.seller?.name || 'Himsols'} — fresh from rural Himachal.`).slice(0, 155);
 
   return (

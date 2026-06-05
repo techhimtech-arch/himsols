@@ -50,7 +50,7 @@ const Marketplace = () => {
       <SEO
         title="Rural Marketplace — Farmer Produce & Handmade Goods | Himsols"
         description="Shop directly from Himachal farmers and artisans: fresh produce, handmade crafts, plants, and home essentials. Pan-India delivery."
-        url="https://himsols-web-companion.lovable.app/marketplace"
+        url="https://himsols.com/marketplace"
       />
       <Navbar />
 

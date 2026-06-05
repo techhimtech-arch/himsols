@@ -21,7 +21,7 @@ const Index = () => {
         title="Himsols — Plant Trees, Support Rural Communities"
         description="Sponsor verified tree plantations on farmer land in Himachal Pradesh. Get geo-tagged proof, survival tracking, and carbon impact reports. ₹2,999 for 10 trees."
         keywords="climate impact Himachal, verified tree plantation, CSR plantation India, carbon offset, agroforestry, sustainability platform, plant trees India"
-        url="https://himsols-web-companion.lovable.app/"
+        url="https://himsols.com/"
       />
       <SEOSchemas includeServices={true} />
       <Navbar />
