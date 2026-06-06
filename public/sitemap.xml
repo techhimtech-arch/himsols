@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://himsols.com/</loc>
-    <lastmod>2026-06-05</lastmod>
+    <lastmod>2026-06-06</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -358,8 +358,20 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://himsols.com/blog/how-to-prevent-forest-fires-in-himachal-pradesh</loc>
+    <lastmod>2026-06-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://himsols.com/blog/himsols-sustainable-future-tree-plantation</loc>
     <lastmod>2026-06-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://himsols.com/blog/why-tree-plantation-is-important-in-2026</loc>
+    <lastmod>2026-06-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -376,6 +388,18 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://himsols.com/blog/agroforestry-benefits-for-farmers-in-himachal-pradesh</loc>
+    <lastmod>2026-06-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://himsols.com/blog/forest-fires-in-himachal-pradesh-causes-impact-and-challenges</loc>
+    <lastmod>2026-06-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://himsols.com/campaign/99f787eb-2b9e-43fc-889c-367f9600c3a8</loc>
     <lastmod>2026-01-31</lastmod>
     <changefreq>weekly</changefreq>
@@ -388,12 +412,6 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://himsols.com/marketplace/b836d9a6-b881-497a-bfdc-acc5751f5c10</loc>
-    <lastmod>2026-02-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.55</priority>
-  </url>
-  <url>
     <loc>https://himsols.com/marketplace/8687909c-df2d-48de-ad8a-1b20ca112ec3</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>weekly</changefreq>
@@ -401,7 +419,13 @@
   </url>
   <url>
     <loc>https://himsols.com/marketplace/fbb6ce36-1c9c-4245-93fa-56e774c0e27f</loc>
-    <lastmod>2026-02-23</lastmod>
+    <lastmod>2026-06-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.55</priority>
+  </url>
+  <url>
+    <loc>https://himsols.com/marketplace/b836d9a6-b881-497a-bfdc-acc5751f5c10</loc>
+    <lastmod>2026-06-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.55</priority>
   </url>
