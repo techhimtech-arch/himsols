@@ -1,55 +1,51 @@
-## Good news — Fix 4 is already done
 
-Project mein already `src/components/SEO.tsx` hai jo per-route title, description, canonical, OG tags, aur JSON-LD set karta hai. `BlogPost.tsx` mein `BlogPostSchema` aur `MarketplaceProduct.tsx` mein `ProductSchema` already use ho rahe hain. Toh per-route meta + schemas — done.
+## Goal
+Create a polished, ready-to-email **CSR Plantation Proposal PDF** (Himsols branded, Forest Green #2e8b57) that you can attach when reaching out to companies for Monsoon 2026 plantation drives.
 
-So sirf **Fix 3** baaki hai: dynamic sitemap.
+This is a **one-off downloadable artifact** — not a code change to the app.
 
-## Current problem
+## Deliverable
+`Himsols-CSR-Monsoon-2026-Proposal.pdf` saved to `/mnt/documents/` — you download it and email it to CSR contacts.
 
-`public/sitemap.xml` hand-edited static file hai. Jab kal Env Day pe naye blog posts, photos, ya campaigns add karoge, woh sitemap mein nahi aayenge → Google ko discover nahi honge.
+## Proposal Structure (8–10 pages)
 
-Database mein abhi 4 blogs, 2 campaigns, 3 products, 1 plant published hain. Sitemap mein in mein se kuch already hain par stale — naye add hone par sync nahi honge.
+1. **Cover** — "Monsoon 2026 CSR Plantation Proposal", Himsols logo, contact details, date
+2. **Why Monsoon 2026** — Why July–Sept is the optimal plantation window in Himachal (survival rate, soil moisture, native sapling readiness)
+3. **About Himsols** — 1-page company intro, mission, Himachal farmer network, ESG alignment
+4. **What You Get (CSR Deliverables)** —
+   - Geo-tagged plantation photos with GPS proof
+   - 1-year survival monitoring & updates
+   - Plantation certificate (PDF)
+   - CO₂ offset impact report (clearly labelled as estimate, 22kg/tree/yr)
+   - CSR-1 / 80G documentation support
+   - Optional employee engagement drive
+5. **Plantation Packages & Pricing** — table with 4 tiers:
+   - **Starter** — 500 trees, ~₹1.5L
+   - **Growth** — 1,000 trees, ~₹3L
+   - **Impact** — 5,000 trees, ~₹15L
+   - **Village Adoption** — 10,000+ trees, custom quote
+   Each row shows: trees, villages covered, employee event included Y/N, reporting cadence
+6. **Our Process** — 5-step workflow: Inquiry → MoU → Plantation → Monitoring → Impact Report
+7. **Why Himsols** — 250+ farmer network, transparent tracking, ESG-aligned, local community impact
+8. **Compliance & Trust** — Schedule VII CSR alignment, documentation, audit-ready reports
+9. **Call to Action** — "Reserve your Monsoon 2026 slot before June 30" + contact details (email, phone, WhatsApp from site_settings)
+10. **Annexure** — sample certificate preview + sample impact report screenshot
 
-## Plan
+## Design
+- Forest Green (#2e8b57) primary, white/cream backgrounds, clean SaaS-style typography
+- No NGO / charity aesthetic — corporate-credible
+- Inline branded headers/footers on each page
+- All CO₂ numbers explicitly labelled as "estimate"
 
-### 1. Create `scripts/generate-sitemap.ts`
+## Technical Approach
+- Python + ReportLab (Platypus) → generates the PDF in `/mnt/documents/`
+- Pull contact details (email/phone/WhatsApp) from `site_settings` table so proposal stays in sync with live site
+- Run visual QA: convert PDF → JPEGs → inspect each page for overflow/contrast/layout issues, fix, re-render
+- Deliver as `<presentation-artifact>` so you can download directly
 
-Node script (runs via `bunx tsx`) jo:
+## Out of Scope
+- School outreach proposal (you said you'll handle that yourself)
+- Sending emails from the app — this is just the attachment PDF
+- Any code changes to the Himsols web app
 
-- Saare **static routes** include kare (current sitemap ke saare 30+ entries — homepage, services, climate-pack, single-tree-pack, gift-cards, blog index, etc.)
-- **Programmatic SEO arrays** import kare aur include kare:
-  - `src/lib/seo/sustainability-days.ts` → `/days/:slug`
-  - `src/lib/seo/himachal-cities.ts` → `/plant-trees-in/:slug`
-  - `src/lib/seo/tree-species.ts` → `/trees/:slug`
-  - `src/lib/seo/use-cases.ts` → `/plant-trees-for/:slug`
-- **Live DB content** fetch kare PostgREST + anon key se (public data, no service role):
-  - `blog_posts` jahaan `is_published = true` → `/blog/:slug` (+ lastmod from `updated_at`)
-  - `campaigns` → `/campaign/:id`
-  - `marketplace_products` jahaan `is_active = true` → `/marketplace/:id`
-  - `plants` jahaan `is_active = true` → `/plants/:id`
-- `public/sitemap.xml` overwrite kare with proper `<lastmod>` tags
-
-### 2. Wire in `package.json`
-
-```json
-"predev": "bunx tsx scripts/generate-sitemap.ts || true",
-"prebuild": "bunx tsx scripts/generate-sitemap.ts"
-```
-
-- `predev` failure-tolerant (network down ho to dev server still start ho)
-- `prebuild` strict (production build mein sitemap refresh mandatory)
-
-### 3. Run once now
-
-Script ko abhi execute karke `public/sitemap.xml` regenerate karenge, taaki kal publish karne se pehle sitemap up-to-date ho.
-
-## Technical details
-
-- Supabase URL aur anon key script mein hardcode honge (yeh public values hain, already client.ts mein hain — koi secret leak nahi).
-- No new dependencies — `tsx` `bunx` ke through chalega (already available).
-- `BASE_URL` = `https://himsols-web-companion.lovable.app` (project domain).
-- Robots.txt untouched — already correct hai.
-
-## Kal ke baad
-
-Jab bhi tum admin se new blog/product/campaign add karoge aur project publish karoge, prebuild hook automatically sitemap refresh kar dega — GSC mein naye URLs index hone lagenge bina kuch manual karne ke.
+Ready to generate this PDF on approval.
