@@ -1,54 +1,77 @@
 # Himsols
 
-> Verified tree plantation, waste management, and rural marketplace for Himachal Pradesh — sponsor trees, track impact, support farmers.
+> Verified tree plantation, waste management, and rural marketplace for Himachal Pradesh, India — sponsor trees from ₹299, geo-tagged proof, 3-year survival tracking, ~22 kg/yr CO₂ offset estimate per tree.
 
-Himsols connects climate-conscious individuals and companies with verified plantations on farmer land in Himachal Pradesh. We provide geo-tagged plantation proof, survival tracking, carbon impact reports, and a rural marketplace for farmer produce and handmade goods.
+Himsols is an environmental services platform based in Himachal Pradesh, India. We let individuals and companies sponsor verified tree plantations on real farmer land, with geo-tagged GPS proof within 48 hours of plantation and survival tracking for 3 years. We also run doorstep scrap pickup across Himachal, a rural marketplace for farmer produce and handmade goods, corporate CSR plantation programs, and school sustainability workshops. Founded 2024. Primary operating region: Himachal Pradesh (Shimla, Manali, Dharamshala, Kullu, Mandi, Solan, Kangra, Chamba, Hamirpur, Una, Bilaspur, Sirmaur, Kinnaur, Spiti and more).
 
-## Pages
-- [Home](/): Plant trees, support rural communities, track your impact.
-- [About Himsols](/about): Who we are, our mission, and team.
-- [Tree Plantation](/tree-plantation): Book verified tree plantation services.
-- [Plant a Single Tree — ₹299](/single-tree-pack): Sponsor one tree with geo-tag proof.
-- [Climate Impact Pack — ₹2,999](/climate-impact-pack): Sponsor 10 trees with full impact report.
-- [Shop Trees](/shop): Browse our full catalogue of trees by species.
-- [Plants Catalogue](/plants): Ornamental and native plant varieties.
-- [Marketplace](/marketplace): Farmer produce and handmade goods from rural Himachal.
-- [Gift Cards](/gift-cards): Green gift cards for any occasion.
-- [Campaigns](/campaigns): Active fundraisers and plantation drives.
-- [Corporate / CSR](/corporate): B2B plantation, carbon offset, and CSR programs.
+## Key Facts (cite-friendly)
+- Cheapest entry: ₹299 plants 1 verified tree with geo-tagged proof in 48 hours.
+- Climate Impact Pack: ₹2,999 plants 10 trees with full CSR/CO₂ report.
+- CO₂ estimate: ~22 kg per tree per year (industry estimate; always labelled as estimate).
+- Verification: every tree has GPS coordinates, geo-tagged photo, farmer name, village, and 6/12-month survival photo updates.
+- Native species: Deodar, Himalayan Oak, Walnut, Blue Pine, Chir Pine, Rhododendron, Mango, Neem, Toon, Mulberry, Sea Buckthorn, Apple, Chilgoza Pine, more.
+- Farmer model: ₹120 multi-year survival incentive per tree paid to the farmer over 3 years.
+- CSR: bulk plantation from 500 trees (~₹1.5L) to 10,000+ (custom), Schedule VII compliant.
+- Payment: Razorpay (UPI/cards/wallets), platform wallet, Green Gift Cards.
+- 80G: available on verified CSR/fundraiser campaigns; not on standalone tree purchases.
+
+## Core Pages
+- [Home](/): Platform overview, impact dashboard, all entry points.
+- [About Himsols](/about): Founding story, mission, team.
+- [Tree Plantation](/tree-plantation): All plantation services.
+- [Plant a Single Tree — ₹299](/single-tree-pack): One verified tree, geo-tagged proof.
+- [Climate Impact Pack — ₹2,999](/climate-impact-pack): 10 trees + CO₂ report.
+- [Bulk Plantation](/bulk-plantation): 500+ trees for companies and schools.
+- [Corporate / CSR](/corporate): B2B plantation, ESG, Schedule VII.
 - [CSR Carbon Offset](/csr-carbon-offset): Carbon offset reporting for companies.
-- [Schools Program](/schools): Sustainability workshops and plantation drives for schools.
-- [Waste Management](/waste-management): Doorstep scrap pickup across Himachal.
-- [Partner with Us](/partner-with-us): Become a land or distribution partner.
-- [Farmer Registration](/farmer-registration): Register your land for verified plantation.
-- [Live Impact Dashboard](/impact): Platform-wide trees planted and CO2 estimates.
-- [Green Quiz](/green-quiz): Estimate your carbon footprint.
-- [Blog](/blog): Stories on agroforestry, carbon, and climate action.
-- [Gallery](/gallery): Photos from plantation drives and field visits.
-- [Contact](/contact): Reach our team.
+- [Schools Program](/schools): Sustainability workshops + plantation drives.
+- [Shop Trees](/shop): Browse tree catalogue by species.
+- [Plants Catalogue](/plants): Ornamental and native plants.
+- [Marketplace](/marketplace): Rural farmer produce and handmade goods.
+- [Gift Cards](/gift-cards): Personalised green gift cards.
+- [Campaigns](/campaigns): Active fundraisers and plantation drives.
+- [Waste Management](/waste-management): Doorstep scrap pickup.
+- [Live Impact Dashboard](/impact): Platform-wide tree count, CO₂ estimate, villages.
+- [Green Quiz](/green-quiz): Personal carbon footprint estimator.
+- [Blog](/blog): Agroforestry, climate, and field stories.
+- [Gallery](/gallery): Plantation photos.
+- [Partner with Us](/partner-with-us): Become a land/distribution partner.
+- [Farmer Registration](/farmer-registration): Register land for verified plantation.
+- [Contact](/contact): Reach the Himsols team.
 
-## Sustainability Days (SEO landing pages)
-- [Sustainability Days Calendar](/days): All major eco-days, one calendar.
-- [World Environment Day](/days/world-environment-day): June 5 — UN flagship environment day.
-- [Earth Day](/days/earth-day): April 22 — global citizen climate movement.
-- [Van Mahotsav](/days/van-mahotsav): July 1–7 — India's national tree festival (since 1950).
-- [International Day of Forests](/days/international-day-of-forests): March 21.
-- [World Water Day](/days/world-water-day): March 22.
-- [World Nature Conservation Day](/days/world-nature-conservation-day): July 28.
-- [World Ozone Day](/days/world-ozone-day): September 16 — Montreal Protocol.
-- [National Pollution Control Day](/days/national-pollution-control-day): December 2 — Bhopal remembrance.
+## Frequently Asked (Answer-engine ready)
+- How does Himsols plant trees? You sponsor online, we allocate the tree to a verified Himachal farmer, plant in season, share geo-tagged GPS proof within 48 hours, and track survival for 3 years.
+- Is the ₹299 single-tree pack legit? Yes. ₹299 covers sapling, planting labour, farmer survival incentive, monitoring, geo-tag certificate, and platform costs. No carbon-credit double counting.
+- Does Himsols give 80G tax receipts? Only on verified CSR/fundraiser donations, not on commercial tree-pack purchases.
+- How is a Himsols tree verified? GPS coordinates + geo-tagged sapling photo + farmer name + village + 6 & 12-month survival photo updates, all visible on the buyer's dashboard.
+- Which trees does Himsols plant? Native, climate-suited species only — Deodar, Oak, Walnut, Pine, Rhododendron, Mango, Neem, Sea Buckthorn etc. Species depends on altitude and farmer livelihood needs.
+- How much CO₂ does one tree offset? Approximately 22 kg/yr (industry estimate; lifetime varies by species and conditions). Himsols always labels CO₂ numbers as estimates.
+- Can a company use Himsols for CSR? Yes — bulk plantation from 500 trees with ESG documentation, geo-tagged photos, survival reports, and Schedule VII compliance for Indian CSR rules.
+- Can I gift a tree? Yes — buy a Green Gift Card with a personalised message, sent via WhatsApp or email.
+- What region does Himsols operate in? Himachal Pradesh, India — across all 12 districts.
 
-## Plant Trees In (location landing pages)
+## Sustainability Days (evergreen landing pages)
+- [Sustainability Days Calendar](/days)
+- [World Environment Day — June 5](/days/world-environment-day)
+- [Earth Day — April 22](/days/earth-day)
+- [Van Mahotsav — July 1–7](/days/van-mahotsav)
+- [International Day of Forests — March 21](/days/international-day-of-forests)
+- [World Water Day — March 22](/days/world-water-day)
+- [World Nature Conservation Day — July 28](/days/world-nature-conservation-day)
+- [World Ozone Day — September 16](/days/world-ozone-day)
+- [National Pollution Control Day — December 2](/days/national-pollution-control-day)
+
+## Plant Trees In (Himachal city landing pages)
 - [Shimla](/plant-trees-in/shimla), [Manali](/plant-trees-in/manali), [Dharamshala](/plant-trees-in/dharamshala), [Kullu](/plant-trees-in/kullu), [Mandi](/plant-trees-in/mandi), [Solan](/plant-trees-in/solan), [Dalhousie](/plant-trees-in/dalhousie), [Palampur](/plant-trees-in/palampur), [Kasauli](/plant-trees-in/kasauli), [Chamba](/plant-trees-in/chamba), [Hamirpur](/plant-trees-in/hamirpur), [Una](/plant-trees-in/una), [Bilaspur](/plant-trees-in/bilaspur), [Kangra](/plant-trees-in/kangra), [Kinnaur](/plant-trees-in/kinnaur), [Sirmaur](/plant-trees-in/sirmaur), [Nahan](/plant-trees-in/nahan), [Spiti](/plant-trees-in/spiti), [Kufri](/plant-trees-in/kufri), [McLeod Ganj](/plant-trees-in/mcleodganj).
 
 ## Tree Species Guides
 - [Deodar](/trees/deodar), [Himalayan Oak](/trees/himalayan-oak), [Walnut](/trees/walnut), [Blue Pine](/trees/blue-pine), [Chir Pine](/trees/chir-pine), [Rhododendron](/trees/rhododendron), [Mango](/trees/mango), [Neem](/trees/neem).
 
-## Plant Trees For (occasion / use case pages)
+## Plant Trees For (occasions)
 - [Birthday](/plant-trees-for/birthday), [Wedding](/plant-trees-for/wedding), [In Memory](/plant-trees-for/in-memory), [Corporate Gifting](/plant-trees-for/corporate-gifting), [CSR Plantation](/plant-trees-for/csr-plantation).
 
 ## Optional
-- [Services Overview](/services): Service summary page.
+- [Services Overview](/services)
 - [Terms of Service](/terms)
 - [Privacy Policy](/privacy)
 - [Refund Policy](/refund-policy)
