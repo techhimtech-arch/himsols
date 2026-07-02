@@ -24,6 +24,8 @@ const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Auth = lazy(() => import("./pages/Auth"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Admin = lazy(() => import("./pages/Admin"));
 const Shop = lazy(() => import("./pages/Shop"));
 const Gallery = lazy(() => import("./pages/Gallery"));
@@ -132,6 +134,8 @@ const App = () => (
                       <Route path="/redeem-gift-card" element={<RedeemGiftCard />} />
                       <Route path="/contact" element={<Contact />} />
                       <Route path="/auth" element={<Auth />} />
+                      <Route path="/forgot-password" element={<ForgotPassword />} />
+                      <Route path="/reset-password" element={<ResetPassword />} />
                       <Route path="/admin" element={<Admin />} />
                       <Route path="/shop" element={<Shop />} />
                       <Route path="/shop/:id" element={<TreeCheckout />} />
