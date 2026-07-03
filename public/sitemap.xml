@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://himsols.com/</loc>
-    <lastmod>2026-07-02</lastmod>
+    <lastmod>2026-07-03</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -382,6 +382,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://himsols.com/blog/agroforestry-benefits-for-farmers-in-himachal-pradesh</loc>
+    <lastmod>2026-07-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://himsols.com/blog/him-evergreen-project-himachal-carbon-credit</loc>
     <lastmod>2026-06-30</lastmod>
     <changefreq>monthly</changefreq>
@@ -394,8 +400,14 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://himsols.com/blog/agroforestry-benefits-for-farmers-in-himachal-pradesh</loc>
-    <lastmod>2026-06-28</lastmod>
+    <loc>https://himsols.com/blog/proclime-him-evergreen-project-himachal</loc>
+    <lastmod>2026-07-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://himsols.com/blog/van-mahotsav-2026-tree-plantation-himachal</loc>
+    <lastmod>2026-07-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
