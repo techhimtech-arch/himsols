@@ -38,6 +38,7 @@ interface Tree {
   description: string;
   description_hi: string | null;
   price: number;
+  mrp: number | null;
   image_url: string | null;
   stock_quantity: number;
   category: string;

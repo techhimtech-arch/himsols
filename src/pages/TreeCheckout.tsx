@@ -31,6 +31,7 @@ interface TreeData {
   scientific_name: string | null;
   description: string;
   price: number;
+  mrp: number | null;
   image_url: string | null;
   stock_quantity: number;
   category: string;
