@@ -19,7 +19,7 @@ const useTreePricing = () => {
         .limit(1);
       
       if (error) throw error;
-      return data?.[0]?.price || 299;
+      return data?.[0]?.price || 269;
     },
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   });
@@ -65,7 +65,7 @@ const getOffers = (minTreePrice: number) => [
 ];
 
 export const KeyOffersSection = memo(() => {
-  const { data: minTreePrice = 299 } = useTreePricing();
+  const { data: minTreePrice = 269 } = useTreePricing();
   const offers = getOffers(minTreePrice);
 
   return (

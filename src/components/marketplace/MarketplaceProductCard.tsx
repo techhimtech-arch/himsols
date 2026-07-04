@@ -13,6 +13,7 @@ interface MarketplaceProductCardProps {
     category: string;
     subcategory?: string | null;
     price: number;
+    mrp?: number | null;
     unit: string;
     stock_quantity: number;
     image_url?: string | null;
@@ -127,9 +128,12 @@ export const MarketplaceProductCard = ({ product }: MarketplaceProductCardProps)
 
           {/* Price & Add to Cart */}
           <div className="flex items-center justify-between pt-2 border-t border-border/50">
-            <div>
+            <div className="flex items-baseline gap-1.5 flex-wrap">
+              {product.mrp && product.mrp > product.price && (
+                <span className="text-xs text-muted-foreground line-through">₹{product.mrp}</span>
+              )}
               <span className="text-lg font-bold text-primary">₹{product.price}</span>
-              <span className="text-sm text-muted-foreground">/{product.unit}</span>
+              <span className="text-xs text-muted-foreground">/{product.unit}</span>
             </div>
             <Button
               size="sm"
