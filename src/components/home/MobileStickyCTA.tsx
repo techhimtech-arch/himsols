@@ -19,7 +19,8 @@ export const MobileStickyCTA = () => {
       <Link to="/single-tree-pack" className="block">
         <Button size="lg" className="w-full gap-2">
           <TreePine className="h-5 w-5" />
-          Plant a Tree – ₹299
+          Plant a Tree – ₹269
+          <span className="text-xs opacity-80 line-through">₹299</span>
           <ArrowRight className="h-4 w-4" />
         </Button>
       </Link>
