@@ -424,20 +424,20 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://himsols.com/marketplace/8687909c-df2d-48de-ad8a-1b20ca112ec3</loc>
-    <lastmod>2026-02-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.55</priority>
-  </url>
-  <url>
     <loc>https://himsols.com/marketplace/fbb6ce36-1c9c-4245-93fa-56e774c0e27f</loc>
     <lastmod>2026-06-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.55</priority>
   </url>
   <url>
+    <loc>https://himsols.com/marketplace/8687909c-df2d-48de-ad8a-1b20ca112ec3</loc>
+    <lastmod>2026-07-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.55</priority>
+  </url>
+  <url>
     <loc>https://himsols.com/marketplace/b836d9a6-b881-497a-bfdc-acc5751f5c10</loc>
-    <lastmod>2026-06-05</lastmod>
+    <lastmod>2026-07-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.55</priority>
   </url>

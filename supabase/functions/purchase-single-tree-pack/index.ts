@@ -7,7 +7,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const PACK_PRICE = 299;
+const PACK_PRICE = 269;
 const PACK_QUANTITY = 1;
 const PACK_NAME = "Single Tree Pack";
 

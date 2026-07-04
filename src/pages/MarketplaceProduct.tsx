@@ -182,9 +182,15 @@ const MarketplaceProduct = () => {
               </div>
 
               {/* Price */}
-              <div className="flex items-baseline gap-2">
+              <div className="flex items-baseline gap-3 flex-wrap">
+                {product.mrp && product.mrp > product.price && (
+                  <span className="text-2xl text-muted-foreground line-through">₹{product.mrp}</span>
+                )}
                 <span className="text-4xl font-bold text-primary">₹{product.price}</span>
                 <span className="text-lg text-muted-foreground">per {product.unit}</span>
+                {product.mrp && product.mrp > product.price && (
+                  <span className="text-xs font-semibold bg-primary/10 text-primary px-2 py-0.5 rounded-full">Save ₹{product.mrp - product.price}</span>
+                )}
               </div>
 
               {/* Description */}

@@ -1270,6 +1270,7 @@ export type Database = {
           is_active: boolean | null
           is_featured: boolean | null
           is_seasonal: boolean | null
+          mrp: number | null
           name: string
           name_hi: string | null
           origin_location: string | null
@@ -1292,6 +1293,7 @@ export type Database = {
           is_active?: boolean | null
           is_featured?: boolean | null
           is_seasonal?: boolean | null
+          mrp?: number | null
           name: string
           name_hi?: string | null
           origin_location?: string | null
@@ -1314,6 +1316,7 @@ export type Database = {
           is_active?: boolean | null
           is_featured?: boolean | null
           is_seasonal?: boolean | null
+          mrp?: number | null
           name?: string
           name_hi?: string | null
           origin_location?: string | null
@@ -2238,6 +2241,7 @@ export type Database = {
           is_active: boolean | null
           is_featured: boolean | null
           max_height: string | null
+          mrp: number | null
           name: string
           name_hi: string | null
           price: number
@@ -2257,6 +2261,7 @@ export type Database = {
           is_active?: boolean | null
           is_featured?: boolean | null
           max_height?: string | null
+          mrp?: number | null
           name: string
           name_hi?: string | null
           price: number
@@ -2276,6 +2281,7 @@ export type Database = {
           is_active?: boolean | null
           is_featured?: boolean | null
           max_height?: string | null
+          mrp?: number | null
           name?: string
           name_hi?: string | null
           price?: number

@@ -1,40 +1,61 @@
-
 ## Goal
-Users ko login screen se apna password reset karne ka option de. Google Sign-In skip, current email/phone auth flow untouched.
+Sabhi trees + marketplace products pe **₹30 flat off** as permanent price drop, strike-through MRP ke saath dikhayenge (jaise `~~₹299~~ ₹269`). Discount **display-only** with real DB price reduced.
 
-## User Flow
-1. Login tab pe "Forgot password?" link (email/phone input ke neeche).
-2. Click → `/forgot-password` page. User email daale → "Send reset link" button.
-3. Branded email inbox mein aata hai (Himsols template) with reset link.
-4. Link click → `/reset-password` page. Naya password + confirm password fields.
-5. Submit → password update → success toast → auto-redirect to login.
+## Approach
+DB me `mrp` (original) column add karenge dono product tables mein. `price` field actual paid price rahega (already integrated with checkout, wallet, Razorpay — kuch nahi todega). UI mein jab `mrp > price` ho tab strike-through + savings badge dikhayenge.
 
-## Scope
+## Changes
 
-### New files
-- `src/pages/ForgotPassword.tsx` — email input form, calls `supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/reset-password' })`. Success message: "Reset link sent, check your inbox."
-- `src/pages/ResetPassword.tsx` — detects `type=recovery` in URL hash, shows new-password form, calls `supabase.auth.updateUser({ password })`. Validates min 6 chars + confirm match. On success → toast + navigate to `/auth`.
-- `supabase/functions/send-password-reset-email/index.ts` — branded reset email via Resend (mirrors existing `send-verification-email` pattern) so the reset mail comes from `noreply@himsols.com` with Himsols branding instead of the default Supabase template.
+### 1. Database migration
+- `trees` table: `mrp NUMERIC` column add
+- `marketplace_products` table: `mrp NUMERIC` column add
+- Backfill: `UPDATE ... SET mrp = price, price = GREATEST(price - 30, 1)` for all active rows where price > 30
+- Special packs handled separately:
+  - Single Tree Pack tree: `mrp=299, price=269`
+  - Climate Impact Pack (10 trees): pack ka effective mrp 2999, naya price 2699 (₹300 off — 10 × ₹30 logic)
 
-### Edits
-- `src/pages/Auth.tsx` — add "Forgot password?" link inside Login tab, right-aligned below password field, routing to `/forgot-password`. Only UI addition; existing login/signup logic untouched.
-- `src/App.tsx` — register two new public routes (`/forgot-password`, `/reset-password`) outside any auth guard.
-- `src/hooks/useAuth.tsx` — add helper `sendPasswordResetEmail(email)` that calls the new edge function (keeps pattern consistent with `resendVerificationEmail`).
+### 2. Hardcoded constants update
+- `supabase/functions/purchase-single-tree-pack/index.ts` → `PACK_PRICE = 269`
+- `supabase/functions/purchase-climate-pack/index.ts` → `PACK_PRICE = 2699`
+- `src/pages/SingleTreePack.tsx` → `PACK_PRICE = 269`, MRP badge `₹299` strike-through, all copy updates (title, meta, hero, CTA button "Pay ₹269")
+- `src/pages/ClimateImpactPack.tsx` → `PACK_PRICE = 2699` + strike MRP `₹2999`
+- `src/components/home/HeroSection.tsx` → button text pulls from query (already dynamic-ish, will show ₹269), add small strike `₹299` next to it
+- `src/components/home/MobileStickyCTA.tsx` → `"Plant a Tree – ₹269"` + strike `₹299`
+- `src/components/home/KeyOffersSection.tsx` → show `~~₹299~~ ₹269 onwards`
+- Update `useMinTreePrice` hero query fallback: `299 → 269`
 
-### Not changing
-- Existing email/password + phone auth flows.
-- Verification email flow.
-- Google Sign-In (skipping per user choice).
-- Any RLS / DB schema.
+### 3. Product card MRP display
+Add strike-through MRP + "Save ₹X" pill wherever `mrp > price`:
+- `src/components/home/FeaturedTreesSection.tsx`
+- `src/components/home/FeaturedProductsSection.tsx`
+- `src/components/marketplace/MarketplaceProductCard.tsx`
+- `src/pages/Shop.tsx` (tree list)
+- `src/pages/Marketplace.tsx` / `src/pages/MarketplaceProduct.tsx`
+- `src/pages/TreeCheckout.tsx` (line item shows mrp cut)
 
-## Technical Notes
-- `/reset-password` must be a public route (no auth guard), because Supabase logs the user in with a recovery session when they click the email link — the page then calls `updateUser({ password })`.
-- Phone-only users (accounts using `@phone.himsols.local` placeholder emails) can't use email reset. `ForgotPassword.tsx` will show a helpful message: "Phone-registered users, please contact support" (or ignore silently — Supabase won't send mail to that fake domain anyway). No SMS OTP infra added.
-- Edge function uses existing `RESEND_API_KEY` secret — no new secret needed.
-- Reset email template will match the Himsols brand (Forest Green #2e8b57, same styling as verification email).
+Small reusable presentation snippet inline (no new component needed unless duplication grows):
+```tsx
+{mrp && mrp > price && (
+  <span className="text-sm text-muted-foreground line-through mr-2">₹{mrp}</span>
+)}
+<span className="font-bold">₹{price}</span>
+{mrp && mrp > price && (
+  <span className="ml-2 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">Save ₹{mrp - price}</span>
+)}
+```
 
-## Deliverables
-1. Working "Forgot password?" link on `/auth`.
-2. `/forgot-password` and `/reset-password` pages.
-3. Branded reset email sent from `noreply@himsols.com`.
-4. Deployed edge function.
+### 4. Types
+After migration approval, `src/integrations/supabase/types.ts` regenerates automatically. Then TS reads `mrp` cleanly.
+
+## Not changing
+- Checkout logic, wallet, Razorpay, gift-card flows (they all use `price`, unchanged behavior)
+- Admin panel: `mrp` field can be edited later — for now admins edit `price` as usual. (Add admin `mrp` input if you want — say the word.)
+- Gift cards / donations / campaigns
+- RLS, roles, auth
+
+## Notes
+- Permanent drop = no expiry/scheduling logic needed
+- Discount purely visual via `mrp` column — future promotions ka same infra reuse hoga
+- Bulk plantation quotes: unaffected (custom pricing)
+
+Confirm karo to migration + code edits ek saath push kar deta hun.

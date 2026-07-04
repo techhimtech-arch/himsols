@@ -19,7 +19,8 @@ import {
 } from "lucide-react";
 import { MonsoonScarcityBadge } from "@/components/MonsoonScarcityBadge";
 
-const PACK_PRICE = 2999;
+const PACK_PRICE = 2699;
+const PACK_MRP = 2999;
 
 const features = [
   { icon: TreePine, text: "10 Native Trees Planted" },
@@ -177,8 +178,8 @@ const ClimateImpactPack = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEO
-        title="Climate Impact Pack – ₹2,999 for 10 Verified Trees | Himsols"
-        description="Sponsor 10 native trees on verified farmer land. Get geo-tagged photos, survival tracking, and CO₂ offset certificate."
+        title="Climate Impact Pack – ₹2,699 for 10 Verified Trees | Himsols"
+        description="Sponsor 10 native trees on verified farmer land for ₹2,699 (MRP ₹2,999). Get geo-tagged photos, survival tracking, and CO₂ offset certificate."
       />
       <Navbar />
 
@@ -195,7 +196,8 @@ const ClimateImpactPack = () => {
               </div>
 
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 leading-tight">
-                ₹2,999 Climate Impact Pack
+                <span className="text-2xl md:text-3xl text-muted-foreground line-through mr-3">₹2,999</span>
+                ₹2,699 Climate Impact Pack
               </h1>
               <p className="text-muted-foreground text-lg mb-8 max-w-lg">
                 A complete, verified tree sponsorship package with measurable environmental outcomes.
@@ -234,7 +236,11 @@ const ClimateImpactPack = () => {
               <Card className="border-2 border-primary/20">
                 <CardContent className="p-6 md:p-8">
                   <div className="text-center mb-6">
-                    <div className="text-4xl font-bold text-foreground mb-1">₹2,999</div>
+                    <div className="flex items-baseline justify-center gap-2 mb-1 flex-wrap">
+                      <span className="text-xl text-muted-foreground line-through">₹{PACK_MRP.toLocaleString()}</span>
+                      <span className="text-4xl font-bold text-foreground">₹{PACK_PRICE.toLocaleString()}</span>
+                      <span className="text-xs font-semibold bg-primary/10 text-primary px-2 py-0.5 rounded-full">Save ₹{PACK_MRP - PACK_PRICE}</span>
+                    </div>
                     <div className="text-sm text-muted-foreground">One-time · No recurring fees</div>
                   </div>
 
@@ -268,7 +274,7 @@ const ClimateImpactPack = () => {
                           size="lg"
                         >
                           {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
-                          Pay ₹2,999
+                          Pay ₹{PACK_PRICE.toLocaleString()}
                         </Button>
                       </TabsContent>
 
