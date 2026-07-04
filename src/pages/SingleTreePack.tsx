@@ -19,7 +19,8 @@ import {
 } from "lucide-react";
 import { MonsoonScarcityBadge } from "@/components/MonsoonScarcityBadge";
 
-const PACK_PRICE = 299;
+const PACK_PRICE = 269;
+const PACK_MRP = 299;
 
 const features = [
   { icon: TreePine, text: "1 Native Tree Planted on Farmer Land" },
@@ -161,8 +162,8 @@ const SingleTreePack = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEO
-        title="Plant a Tree – ₹299 Single Tree Pack | Himsols"
-        description="Plant one verified native tree on farmer land for just ₹299. Get geo-tagged photo proof, GPS location, and CO₂ tracking."
+        title="Plant a Tree – ₹269 Single Tree Pack | Himsols"
+        description="Plant one verified native tree on farmer land for just ₹269 (MRP ₹299). Get geo-tagged photo proof, GPS location, and CO₂ tracking."
       />
       <Navbar />
 
@@ -179,7 +180,8 @@ const SingleTreePack = () => {
               </div>
 
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 leading-tight">
-                ₹299 Single Tree Pack
+                <span className="text-2xl md:text-3xl text-muted-foreground line-through mr-3">₹{PACK_MRP}</span>
+                ₹{PACK_PRICE} Single Tree Pack
               </h1>
               <p className="text-muted-foreground text-lg mb-8 max-w-lg">
                 The simplest way to make a real climate impact. One tree, fully verified, planted on farmer land in Himachal Pradesh.
@@ -200,7 +202,7 @@ const SingleTreePack = () => {
               <div className="bg-muted/30 rounded-xl p-6 border border-border/50">
                 <div className="flex items-center gap-3 mb-4">
                   <Shield className="h-5 w-5 text-primary" />
-                  <span className="font-semibold text-foreground">Why ₹299?</span>
+                  <span className="font-semibold text-foreground">Why ₹{PACK_PRICE}?</span>
                 </div>
                 <p className="text-sm text-muted-foreground mb-4">
                   Every rupee goes directly to planting and maintaining a verified sapling. No middlemen, no hidden costs.
@@ -225,7 +227,11 @@ const SingleTreePack = () => {
               <Card className="border-2 border-primary/20">
                 <CardContent className="p-6 md:p-8">
                   <div className="text-center mb-6">
-                    <div className="text-4xl font-bold text-foreground mb-1">₹299</div>
+                    <div className="flex items-baseline justify-center gap-2 mb-1">
+                      <span className="text-xl text-muted-foreground line-through">₹{PACK_MRP}</span>
+                      <span className="text-4xl font-bold text-foreground">₹{PACK_PRICE}</span>
+                      <span className="text-xs font-semibold bg-primary/10 text-primary px-2 py-0.5 rounded-full">Save ₹{PACK_MRP - PACK_PRICE}</span>
+                    </div>
                     <div className="text-sm text-muted-foreground">One tree · One-time · Full transparency</div>
                   </div>
 
@@ -254,7 +260,7 @@ const SingleTreePack = () => {
                         <p className="text-sm text-muted-foreground">Pay securely via UPI, Card, or Net Banking.</p>
                         <Button onClick={handleRazorpayPayment} disabled={isProcessing} className="w-full gap-2" size="lg">
                           {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
-                          Pay ₹299
+                          Pay ₹{PACK_PRICE}
                         </Button>
                       </TabsContent>
 
