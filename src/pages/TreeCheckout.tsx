@@ -300,7 +300,12 @@ const TreeCheckout = () => {
                   <div className="flex items-center justify-between mb-6">
                     <div>
                       <div className="text-sm text-muted-foreground">Price per tree</div>
-                      <div className="text-2xl font-bold text-foreground">₹{tree.price}</div>
+                      <div className="flex items-baseline gap-2 flex-wrap">
+                        {tree.mrp && tree.mrp > tree.price && (
+                          <span className="text-base text-muted-foreground line-through">₹{tree.mrp}</span>
+                        )}
+                        <div className="text-2xl font-bold text-foreground">₹{tree.price}</div>
+                      </div>
                     </div>
                     <div className="flex items-center gap-3">
                       <Button variant="outline" size="icon" onClick={() => setQuantity(Math.max(1, quantity - 1))} disabled={quantity <= 1}>

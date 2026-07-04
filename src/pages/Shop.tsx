@@ -525,7 +525,12 @@ const Shop = () => {
                       <CardFooter className="flex flex-col gap-2 p-3 sm:p-4 pt-0 border-t border-border mt-2">
                         <div className="flex items-center justify-between w-full">
                           <div>
-                            <span className="text-xl sm:text-2xl font-bold text-primary">₹{tree.price}</span>
+                            <div className="flex items-baseline gap-1.5 flex-wrap">
+                              {tree.mrp && tree.mrp > tree.price && (
+                                <span className="text-xs sm:text-sm text-muted-foreground line-through">₹{tree.mrp}</span>
+                              )}
+                              <span className="text-xl sm:text-2xl font-bold text-primary">₹{tree.price}</span>
+                            </div>
                             <p className="text-xs text-muted-foreground">{tree.stock_quantity} {t("common.inStock")}</p>
                           </div>
                           <Button
