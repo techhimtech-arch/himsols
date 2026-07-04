@@ -7,7 +7,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const PACK_PRICE = 2999;
+const PACK_PRICE = 2699;
 const PACK_QUANTITY = 10;
 
 async function createHmacSha256(key: string, message: string): Promise<string> {
