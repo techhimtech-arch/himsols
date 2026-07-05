@@ -38,6 +38,7 @@ const Index = () => {
         <PartnerFarmerSection />
         <SchoolProgramSection />
         <TestimonialsSection />
+        <LearnHubStripSection />
         <HomepageFAQSection />
         <FinalCTASection />
       </main>
