@@ -71,6 +71,11 @@ const PlantTreesInCity = lazy(() => import("./pages/PlantTreesInCity"));
 const TreeSpeciesPage = lazy(() => import("./pages/TreeSpeciesPage"));
 const PlantTreesForUseCase = lazy(() => import("./pages/PlantTreesForUseCase"));
 const MonsoonPlantationHimachal = lazy(() => import("./pages/MonsoonPlantationHimachal"));
+const Learn = lazy(() => import("./pages/Learn"));
+const LearnLessons = lazy(() => import("./pages/LearnLessons"));
+const LearnLessonDetail = lazy(() => import("./pages/LearnLessonDetail"));
+const LearnDaily = lazy(() => import("./pages/LearnDaily"));
+const LearnVideos = lazy(() => import("./pages/LearnVideos"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -171,6 +176,11 @@ const App = () => (
                       <Route path="/trees/:slug" element={<TreeSpeciesPage />} />
                       <Route path="/plant-trees-for/:slug" element={<PlantTreesForUseCase />} />
                       <Route path="/monsoon-plantation-himachal" element={<MonsoonPlantationHimachal />} />
+                      <Route path="/learn" element={<Learn />} />
+                      <Route path="/learn/lessons" element={<LearnLessons />} />
+                      <Route path="/learn/lessons/:slug" element={<LearnLessonDetail />} />
+                      <Route path="/learn/daily" element={<LearnDaily />} />
+                      <Route path="/learn/videos" element={<LearnVideos />} />
                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                       <Route path="*" element={<NotFound />} />
                     </Routes>

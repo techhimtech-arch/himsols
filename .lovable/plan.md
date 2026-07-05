@@ -1,61 +1,101 @@
-## Goal
-Sabhi trees + marketplace products pe **₹30 flat off** as permanent price drop, strike-through MRP ke saath dikhayenge (jaise `~~₹299~~ ₹269`). Discount **display-only** with real DB price reduced.
 
-## Approach
-DB me `mrp` (original) column add karenge dono product tables mein. `price` field actual paid price rahega (already integrated with checkout, wallet, Razorpay — kuch nahi todega). UI mein jab `mrp > price` ho tab strike-through + savings badge dikhayenge.
+# Learn Hub — Add-on Plan (no pivot, only additions)
 
-## Changes
+Existing tree-sales + marketplace model stays exactly as-is. We add a **free learning layer** on top to bring organic traffic and repeat visits. Monetization unchanged — every learn page ends with a soft "Plant a tree ₹269" CTA.
 
-### 1. Database migration
-- `trees` table: `mrp NUMERIC` column add
-- `marketplace_products` table: `mrp NUMERIC` column add
-- Backfill: `UPDATE ... SET mrp = price, price = GREATEST(price - 30, 1)` for all active rows where price > 30
-- Special packs handled separately:
-  - Single Tree Pack tree: `mrp=299, price=269`
-  - Climate Impact Pack (10 trees): pack ka effective mrp 2999, naya price 2699 (₹300 off — 10 × ₹30 logic)
+---
 
-### 2. Hardcoded constants update
-- `supabase/functions/purchase-single-tree-pack/index.ts` → `PACK_PRICE = 269`
-- `supabase/functions/purchase-climate-pack/index.ts` → `PACK_PRICE = 2699`
-- `src/pages/SingleTreePack.tsx` → `PACK_PRICE = 269`, MRP badge `₹299` strike-through, all copy updates (title, meta, hero, CTA button "Pay ₹269")
-- `src/pages/ClimateImpactPack.tsx` → `PACK_PRICE = 2699` + strike MRP `₹2999`
-- `src/components/home/HeroSection.tsx` → button text pulls from query (already dynamic-ish, will show ₹269), add small strike `₹299` next to it
-- `src/components/home/MobileStickyCTA.tsx` → `"Plant a Tree – ₹269"` + strike `₹299`
-- `src/components/home/KeyOffersSection.tsx` → show `~~₹299~~ ₹269 onwards`
-- Update `useMinTreePrice` hero query fallback: `299 → 269`
+## What we add
 
-### 3. Product card MRP display
-Add strike-through MRP + "Save ₹X" pill wherever `mrp > price`:
-- `src/components/home/FeaturedTreesSection.tsx`
-- `src/components/home/FeaturedProductsSection.tsx`
-- `src/components/marketplace/MarketplaceProductCard.tsx`
-- `src/pages/Shop.tsx` (tree list)
-- `src/pages/Marketplace.tsx` / `src/pages/MarketplaceProduct.tsx`
-- `src/pages/TreeCheckout.tsx` (line item shows mrp cut)
+### 1. `/learn` — new hub page
+Single entry point linking four sub-sections below. Added as a new navbar item ("Learn"). Homepage untouched except one small "Explore Learn Hub" strip near the FAQ section.
 
-Small reusable presentation snippet inline (no new component needed unless duplication grows):
-```tsx
-{mrp && mrp > price && (
-  <span className="text-sm text-muted-foreground line-through mr-2">₹{mrp}</span>
-)}
-<span className="font-bold">₹{price}</span>
-{mrp && mrp > price && (
-  <span className="ml-2 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">Save ₹{mrp - price}</span>
-)}
-```
+### 2. Tree Species Encyclopedia (expand existing `/trees/:slug`)
+Already have basic species pages. Upgrade each with:
+- Care guide (watering, soil, spacing, pruning)
+- Climate fit (altitude, rainfall, best season)
+- Ecological benefits (CO₂ estimate, wildlife, soil)
+- "Plant this species" CTA → checkout
+- Related species carousel
 
-### 4. Types
-After migration approval, `src/integrations/supabase/types.ts` regenerates automatically. Then TS reads `mrp` cleanly.
+New index page `/learn/trees` browsable by climate/use-case.
 
-## Not changing
-- Checkout logic, wallet, Razorpay, gift-card flows (they all use `price`, unchanged behavior)
-- Admin panel: `mrp` field can be edited later — for now admins edit `price` as usual. (Add admin `mrp` input if you want — say the word.)
-- Gift cards / donations / campaigns
-- RLS, roles, auth
+### 3. Short Lessons — `/learn/lessons`
+5–10 min read+quiz lessons. Seed with 10:
+- Composting at home, Rainwater harvesting, Kitchen garden basics, Reading a carbon footprint, Monsoon planting guide, Native vs exotic trees, Soil health 101, Zero-waste kitchen, Plastic-free swaps, Climate change basics (India lens)
 
-## Notes
-- Permanent drop = no expiry/scheduling logic needed
-- Discount purely visual via `mrp` column — future promotions ka same infra reuse hoga
-- Bulk plantation quotes: unaffected (custom pricing)
+Each lesson: markdown-style content + 3-question quiz + completion badge (stored per user). Anonymous users can read; badge requires login.
 
-Confirm karo to migration + code edits ek saath push kar deta hun.
+**DB:** `lessons` (slug, title, body, category, read_minutes, quiz_json), `lesson_completions` (user_id, lesson_id, score, completed_at). Admin tab to add/edit lessons.
+
+### 4. Daily Eco-Tip + Streak — `/learn/daily`
+- One tip per day (deterministic by date from a pool of 100+ tips)
+- Logged-in users get a streak counter (consecutive days visited)
+- Share-as-image card (reuse ShareButtons)
+- Streak of 7 → auto-credit ₹10 wallet bonus (drives retention → tree purchase)
+
+**DB:** `eco_tips` (id, title, body, category, image_url), `user_streaks` (user_id, current_streak, longest_streak, last_visit_date).
+
+### 5. Reels/Videos — `/learn/videos`
+Vertical video grid (YouTube Shorts / hosted mp4 embeds). Admin curates.
+- Farmer stories, plantation site walkthroughs, DIY sustainability
+- Each video: title, description, embed_url, category
+- No upload infra — admins paste YouTube/Vimeo URLs
+
+**DB:** `videos` (id, title, description, embed_url, thumbnail_url, category, order).
+
+---
+
+## Small connective changes
+
+- **Navbar:** add "Learn" dropdown (Trees Wiki, Lessons, Daily Tip, Videos)
+- **Homepage:** one lightweight strip after FAQ — "New: Learn Hub" card grid (4 tiles). No hero/section rewrite.
+- **Profile page:** new "My Learning" tab — badges earned, streak, quiz scores
+- **SEO:** each lesson + tip + video page gets its own metadata, JSON-LD `Article`/`VideoObject`; add to sitemap generator
+- **llms.txt:** add `/learn/*` routes
+
+---
+
+## What we do NOT touch
+- Auth, payments, wallet logic (except the streak-bonus wallet credit which reuses existing wallet infra)
+- Homepage hero, existing sections, existing pricing
+- Marketplace, gift cards, campaigns, farmer/vendor flows
+- RBAC (admin edits new tables via existing admin panel pattern)
+
+---
+
+## Delivery order (sprints)
+
+**Sprint 1 — Foundation (build first)**
+- `/learn` hub page + navbar entry + homepage strip
+- Migration for `lessons`, `lesson_completions`, `eco_tips`, `user_streaks`, `videos` tables with RLS + GRANTs
+- Admin tabs for Lessons, Eco-Tips, Videos (reuse existing admin pattern)
+
+**Sprint 2 — Lessons + Daily Tip**
+- `/learn/lessons`, `/learn/lessons/:slug` with quiz + completion badge
+- `/learn/daily` with streak tracker + 7-day wallet bonus
+- Seed 10 lessons + 30 tips
+
+**Sprint 3 — Trees Wiki upgrade + Videos**
+- Expand `/trees/:slug` sections (care, climate, benefits)
+- `/learn/trees` index with filters
+- `/learn/videos` grid + admin curation
+
+**Sprint 4 — Polish**
+- Profile "My Learning" tab
+- SEO metadata + sitemap + llms.txt
+- Share cards for daily tip + badge earned
+
+---
+
+## Technical notes
+- All new tables in `public` schema with `service_role` ALL + `authenticated` SELECT (public reads via `anon` SELECT for lessons/tips/videos content; completions/streaks scoped to `auth.uid()`)
+- Streak calc via edge function `update-streak` called on `/learn/daily` visit for logged-in users
+- Wallet bonus at 7-day streak reuses existing wallet transaction pattern with source `streak_bonus`
+- Content edited via existing TipTap RichTextEditor in admin
+- Language toggle (EN/HI) supported via existing `useLanguage` pattern — content fields have `_hi` variants
+
+---
+
+## Confirm before I build
+Tell me which sprint to start (default: **Sprint 1**), or if you want to reorder / drop any of the four learn modules (Encyclopedia / Lessons / Daily Tip / Videos).

@@ -696,6 +696,45 @@ export type Database = {
           },
         ]
       }
+      eco_tips: {
+        Row: {
+          body: string
+          body_hi: string | null
+          category: string
+          created_at: string
+          id: string
+          image_url: string | null
+          is_active: boolean
+          title: string
+          title_hi: string | null
+          updated_at: string
+        }
+        Insert: {
+          body: string
+          body_hi?: string | null
+          category?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          title: string
+          title_hi?: string | null
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          body_hi?: string | null
+          category?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          title?: string
+          title_hi?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       external_apps: {
         Row: {
           created_at: string
@@ -1168,6 +1207,143 @@ export type Database = {
           updated_at?: string
           user_id?: string
           village?: string
+        }
+        Relationships: []
+      }
+      learn_videos: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          description_hi: string | null
+          display_order: number
+          embed_url: string
+          id: string
+          is_active: boolean
+          thumbnail_url: string | null
+          title: string
+          title_hi: string | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          description_hi?: string | null
+          display_order?: number
+          embed_url: string
+          id?: string
+          is_active?: boolean
+          thumbnail_url?: string | null
+          title: string
+          title_hi?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          description_hi?: string | null
+          display_order?: number
+          embed_url?: string
+          id?: string
+          is_active?: boolean
+          thumbnail_url?: string | null
+          title?: string
+          title_hi?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      lesson_completions: {
+        Row: {
+          completed_at: string
+          id: string
+          lesson_id: string
+          score: number
+          total_questions: number
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          id?: string
+          lesson_id: string
+          score?: number
+          total_questions?: number
+          user_id: string
+        }
+        Update: {
+          completed_at?: string
+          id?: string
+          lesson_id?: string
+          score?: number
+          total_questions?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_completions_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lessons: {
+        Row: {
+          body: string
+          body_hi: string | null
+          category: string
+          cover_image_url: string | null
+          created_at: string
+          display_order: number
+          id: string
+          is_published: boolean
+          quiz_json: Json
+          read_minutes: number
+          slug: string
+          summary: string | null
+          summary_hi: string | null
+          title: string
+          title_hi: string | null
+          updated_at: string
+        }
+        Insert: {
+          body: string
+          body_hi?: string | null
+          category?: string
+          cover_image_url?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_published?: boolean
+          quiz_json?: Json
+          read_minutes?: number
+          slug: string
+          summary?: string | null
+          summary_hi?: string | null
+          title: string
+          title_hi?: string | null
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          body_hi?: string | null
+          category?: string
+          cover_image_url?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_published?: boolean
+          quiz_json?: Json
+          read_minutes?: number
+          slug?: string
+          summary?: string | null
+          summary_hi?: string | null
+          title?: string
+          title_hi?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -2318,6 +2494,33 @@ export type Database = {
         }
         Relationships: []
       }
+      user_streaks: {
+        Row: {
+          current_streak: number
+          last_visit_date: string | null
+          longest_streak: number
+          total_bonus_awarded: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          current_streak?: number
+          last_visit_date?: string | null
+          longest_streak?: number
+          total_bonus_awarded?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          current_streak?: number
+          last_visit_date?: string | null
+          longest_streak?: number
+          total_bonus_awarded?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       villages: {
         Row: {
           approved_at: string | null
@@ -2532,6 +2735,14 @@ export type Database = {
         Returns: boolean
       }
       increment_blog_views: { Args: { post_id: string }; Returns: undefined }
+      record_daily_visit: {
+        Args: { p_user_id: string }
+        Returns: {
+          bonus_awarded: number
+          current_streak: number
+          longest_streak: number
+        }[]
+      }
       record_visit: {
         Args: { p_page_path?: string; p_visitor_id: string }
         Returns: undefined
