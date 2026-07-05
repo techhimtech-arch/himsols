@@ -11,6 +11,7 @@ import { PartnerFarmerSection } from "@/components/home/PartnerFarmerSection";
 import { SchoolProgramSection } from "@/components/home/SchoolProgramSection";
 import { TestimonialsSection } from "@/components/home/TestimonialsSection";
 import { HomepageFAQSection } from "@/components/home/HomepageFAQSection";
+import { LearnHubStripSection } from "@/components/home/LearnHubStripSection";
 import { FinalCTASection } from "@/components/home/FinalCTASection";
 import { MobileStickyCTA } from "@/components/home/MobileStickyCTA";
 import { SEO, SEOSchemas } from "@/components/SEO";
