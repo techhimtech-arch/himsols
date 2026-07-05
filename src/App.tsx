@@ -176,6 +176,11 @@ const App = () => (
                       <Route path="/trees/:slug" element={<TreeSpeciesPage />} />
                       <Route path="/plant-trees-for/:slug" element={<PlantTreesForUseCase />} />
                       <Route path="/monsoon-plantation-himachal" element={<MonsoonPlantationHimachal />} />
+                      <Route path="/learn" element={<Learn />} />
+                      <Route path="/learn/lessons" element={<LearnLessons />} />
+                      <Route path="/learn/lessons/:slug" element={<LearnLessonDetail />} />
+                      <Route path="/learn/daily" element={<LearnDaily />} />
+                      <Route path="/learn/videos" element={<LearnVideos />} />
                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                       <Route path="*" element={<NotFound />} />
                     </Routes>
