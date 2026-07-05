@@ -71,6 +71,11 @@ const PlantTreesInCity = lazy(() => import("./pages/PlantTreesInCity"));
 const TreeSpeciesPage = lazy(() => import("./pages/TreeSpeciesPage"));
 const PlantTreesForUseCase = lazy(() => import("./pages/PlantTreesForUseCase"));
 const MonsoonPlantationHimachal = lazy(() => import("./pages/MonsoonPlantationHimachal"));
+const Learn = lazy(() => import("./pages/Learn"));
+const LearnLessons = lazy(() => import("./pages/LearnLessons"));
+const LearnLessonDetail = lazy(() => import("./pages/LearnLessonDetail"));
+const LearnDaily = lazy(() => import("./pages/LearnDaily"));
+const LearnVideos = lazy(() => import("./pages/LearnVideos"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
