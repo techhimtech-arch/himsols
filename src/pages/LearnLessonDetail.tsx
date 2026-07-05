@@ -12,7 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuthSafe } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useToast } from "@/hooks/use-toast";
-import DOMPurify from "isomorphic-dompurify";
+import DOMPurify from "dompurify";
 
 interface QuizQ { question: string; question_hi?: string; options: string[]; options_hi?: string[]; correct_index: number }
 
