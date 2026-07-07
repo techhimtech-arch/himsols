@@ -99,15 +99,15 @@ export const HeroSection = memo(() => {
             </span>
           </div>
 
-          {/* Trust indicators */}
-          <div className="flex flex-wrap items-center justify-center gap-6 pt-4 text-sm text-muted-foreground">
+          {/* What CSR teams get */}
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 pt-2 text-xs md:text-sm text-muted-foreground">
             <span className="flex items-center gap-1.5">
               <MapPin className="h-4 w-4 text-primary" />
-              {isHi ? "जियो-टैग वृक्षारोपण" : "Geo-tagged plantations"}
+              {isHi ? "जियो-टैग फ़ोटो" : "Geo-tagged photos"}
             </span>
             <span className="flex items-center gap-1.5">
               <BarChart3 className="h-4 w-4 text-primary" />
-              {isHi ? "सर्वाइवल ट्रैकिंग" : "Survival tracking"}
+              {isHi ? "सर्वाइवल ऑडिट" : "Survival audits"}
             </span>
             <span className="flex items-center gap-1.5">
               <Shield className="h-4 w-4 text-primary" />
