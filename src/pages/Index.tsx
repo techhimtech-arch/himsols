@@ -30,11 +30,11 @@ const Index = () => {
       <main>
         <HeroSection />
         <HowItWorksSection />
-        <ScrapToWalletSection />
-        <ClimateImpactPackSection />
+        <CSRSection />
         <ImpactDashboardSection />
         <TrustProofSection />
-        <CSRSection />
+        <ClimateImpactPackSection />
+        <ScrapToWalletSection />
         <PartnerFarmerSection />
         <SchoolProgramSection />
         <TestimonialsSection />
