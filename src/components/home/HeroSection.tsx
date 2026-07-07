@@ -9,26 +9,13 @@ import { HeroShareReferralBar } from "./HeroShareReferralBar";
 import { isMonsoonWindow } from "@/components/MonsoonScarcityBadge";
 import { Link as RouterLink } from "react-router-dom";
 
-const useMinTreePrice = () =>
-  useQuery({
-    queryKey: ["tree-min-price-hero"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("trees")
-        .select("price")
-        .eq("is_active", true)
-        .gt("price", 0)
-        .order("price", { ascending: true })
-        .limit(1);
-      return data?.[0]?.price ?? 269;
-    },
-    staleTime: 1000 * 60 * 5,
-  });
+const SINGLE_TREE_PRICE = 269;
+const SINGLE_TREE_MRP = 299;
 
 export const HeroSection = memo(() => {
   const { language } = useLanguage();
   const isHi = language === "hi";
-  const { data: minPrice = 269 } = useMinTreePrice();
+  const minPrice = SINGLE_TREE_PRICE;
   const monsoon = isMonsoonWindow();
 
   return (
@@ -81,7 +68,7 @@ export const HeroSection = memo(() => {
               <Button size="lg" className="w-full sm:w-auto gap-2 shadow-lg hover:shadow-xl transition-all group px-8 text-base">
                 <TreePine className="h-4 w-4" />
                 {isHi ? `पेड़ लगाओ – ₹${minPrice}` : `Plant a Tree – ₹${minPrice}`}
-                <span className="text-xs opacity-80 line-through ml-1">₹299</span>
+                <span className="text-xs opacity-80 line-through ml-1">₹{SINGLE_TREE_MRP}</span>
                 <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
