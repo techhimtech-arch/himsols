@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, TreePine, Building2, Sprout, MapPin, BarChart3, Shield, Leaf, CloudRain } from "lucide-react";
+import { ArrowRight, TreePine, Building2, Sprout, MapPin, BarChart3, Shield, CloudRain } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
