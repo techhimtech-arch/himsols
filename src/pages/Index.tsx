@@ -20,9 +20,9 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <SEO
-        title="Himsols — Plant Trees, Support Rural Communities"
-        description="Sponsor verified tree plantations on farmer land in Himachal Pradesh. Get geo-tagged proof, survival tracking, and carbon impact reports. ₹2,999 for 10 trees."
-        keywords="climate impact Himachal, verified tree plantation, CSR plantation India, carbon offset, agroforestry, sustainability platform, plant trees India"
+        title="Himsols — Verified CSR Plantation Partner in Himachal Pradesh"
+        description="Report-ready CSR & ESG tree plantation in Himachal Pradesh. Geo-tagged photos, survival tracking, CO₂ impact reports. Trusted by CSR teams. Get a proposal."
+        keywords="CSR tree plantation India, ESG plantation partner, carbon offset Himachal, corporate tree planting, Section 135 CSR, verified plantation vendor, geo-tagged plantation"
         url="https://himsols.com/"
       />
       <SEOSchemas includeServices={true} />
@@ -30,11 +30,11 @@ const Index = () => {
       <main>
         <HeroSection />
         <HowItWorksSection />
-        <ScrapToWalletSection />
-        <ClimateImpactPackSection />
+        <CSRSection />
         <ImpactDashboardSection />
         <TrustProofSection />
-        <CSRSection />
+        <ClimateImpactPackSection />
+        <ScrapToWalletSection />
         <PartnerFarmerSection />
         <SchoolProgramSection />
         <TestimonialsSection />
