@@ -26,29 +26,29 @@ export const HeroSection = memo(() => {
 
       <div className="container mx-auto relative z-10">
         <div className="max-w-3xl mx-auto text-center space-y-8 animate-slide-up">
-          {/* Tag */}
+          {/* Tag — CSR-first positioning */}
           <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase px-4 py-2 rounded-full border border-primary/20 bg-primary/5 text-primary">
-            <Shield className="h-3.5 w-3.5" />
-            {isHi ? "पर्यावरण प्रभाव प्लेटफ़ॉर्म" : "Environmental Impact Platform"}
+            <Building2 className="h-3.5 w-3.5" />
+            {isHi ? "CSR और ESG के लिए वृक्षारोपण पार्टनर" : "Plantation Partner for CSR & ESG Teams"}
           </div>
 
-          {/* Headline */}
+          {/* Headline — CSR-first */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.08] tracking-tight text-foreground">
             {isHi ? (
-              <>पेड़ लगाओ। गांवों को सशक्त करो।{" "}<span className="text-primary">अपना प्रभाव ट्रैक करो।</span></>
+              <>हिमाचल में <span className="text-primary">सत्यापित वृक्षारोपण।</span> रिपोर्ट-रेडी CSR प्रभाव।</>
             ) : (
-              <>Plant Trees. Support Rural Communities.{" "}<span className="text-primary">Track Your Impact.</span></>
+              <>Verified plantation in Himachal.{" "}<span className="text-primary">Report-ready CSR impact.</span></>
             )}
           </h1>
 
           {/* Subheadline */}
           <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
             {isHi
-              ? "हिमाचल प्रदेश में किसानों की ज़मीन पर सत्यापित वृक्षारोपण को प्रायोजित करें। जियो-टैग फ़ोटो, सर्वाइवल ट्रैकिंग और कार्बन रिपोर्ट पाएं।"
-              : "Sponsor verified tree plantations on farmer land in Himachal Pradesh. Get geo-tagged proof, survival tracking, and carbon impact reports."}
+              ? "हर पेड़ जियो-टैग किया गया, सर्वाइवल ट्रैक किया गया, और आपकी ESG रिपोर्ट के लिए तैयार। किसानों की ज़मीन पर, पारदर्शी दस्तावेज़ों के साथ।"
+              : "Every tree geo-tagged, survival-tracked, and documented for your ESG report. Planted on farmer land across Himachal Pradesh with full transparency."}
           </p>
 
-          {/* Monsoon strip — shown only during monsoon, links to dedicated page */}
+          {/* Monsoon strip — shown only during monsoon */}
           {monsoon && (
             <RouterLink
               to="/monsoon-plantation-himachal"
@@ -62,36 +62,41 @@ export const HeroSection = memo(() => {
             </RouterLink>
           )}
 
-          {/* Action Buttons — ₹299 tree prominent + Quiz CTA */}
+          {/* Primary CTA: CSR proposal.  Secondary: single tree. */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-2">
-            <Link to="/single-tree-pack">
+            <Link to="/csr-carbon-offset">
               <Button size="lg" className="w-full sm:w-auto gap-2 shadow-lg hover:shadow-xl transition-all group px-8 text-base">
-                <TreePine className="h-4 w-4" />
-                {isHi ? `पेड़ लगाओ – ₹${minPrice}` : `Plant a Tree – ₹${minPrice}`}
-                <span className="text-xs opacity-80 line-through ml-1">₹{SINGLE_TREE_MRP}</span>
+                <Building2 className="h-4 w-4" />
+                {isHi ? "CSR प्रस्ताव प्राप्त करें" : "Get CSR Proposal"}
                 <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
-            <Link to="/green-quiz">
+            <Link to="/single-tree-pack">
               <Button
                 size="lg"
                 variant="outline"
                 className="w-full sm:w-auto gap-2 border-2 text-base px-8"
               >
-                <Leaf className="h-4 w-4" />
-                {isHi ? "ग्रीन क्विज़ खेलो" : "Take Green Quiz"}
+                <TreePine className="h-4 w-4" />
+                {isHi ? `एक पेड़ लगाओ – ₹${minPrice}` : `Plant a single tree – ₹${minPrice}`}
               </Button>
             </Link>
-            <Link to="/corporate">
-              <Button
-                size="lg"
-                variant="outline"
-                className="w-full sm:w-auto gap-2 border-2 text-base px-8"
-              >
-                <Building2 className="h-4 w-4" />
-                {isHi ? "CSR प्रोजेक्ट्स" : "CSR Projects"}
-              </Button>
-            </Link>
+          </div>
+
+          {/* Trust bar — registered, farmer-backed */}
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 pt-2 text-xs md:text-sm text-muted-foreground">
+            <span className="flex items-center gap-1.5">
+              <Shield className="h-4 w-4 text-primary" />
+              {isHi ? "पंजीकृत संस्था, GST" : "Registered entity · GST"}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <MapPin className="h-4 w-4 text-primary" />
+              {isHi ? "हिमाचल में स्थित" : "Based in Himachal Pradesh"}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Sprout className="h-4 w-4 text-primary" />
+              {isHi ? "250+ किसान नेटवर्क" : "250+ farmer network"}
+            </span>
           </div>
 
           {/* Trust indicators */}
