@@ -155,10 +155,10 @@ const FarmerRegistrationsTab = () => {
               </div>
               <div><span className="text-muted-foreground">Tree Types:</span> {(viewFarmer.interested_tree_types || []).join(", ") || "-"}</div>
               <div><span className="text-muted-foreground">Registered:</span> {new Date(viewFarmer.created_at).toLocaleString()}</div>
-              {viewFarmer.land_photo_url && (
+              {viewFarmer.land_photo_url && signedPhotoUrl && (
                 <div>
                   <span className="text-muted-foreground block mb-1">Land Photo:</span>
-                  <img src={viewFarmer.land_photo_url} alt="Land" className="w-full max-h-48 object-cover rounded-lg" />
+                  <img src={signedPhotoUrl} alt="Land" className="w-full max-h-48 object-cover rounded-lg" />
                 </div>
               )}
             </div>
