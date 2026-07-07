@@ -18,6 +18,20 @@ const FarmerRegistrationsTab = () => {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [viewFarmer, setViewFarmer] = useState<any>(null);
+  const [signedPhotoUrl, setSignedPhotoUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const raw = viewFarmer?.land_photo_url;
+    if (!raw) { setSignedPhotoUrl(null); return; }
+    // Backward-compat: older rows stored full public URLs. Extract the object path.
+    const path = raw.includes("/farmer-photos/") ? raw.split("/farmer-photos/")[1] : raw;
+    supabase.storage.from("farmer-photos").createSignedUrl(path, 3600).then(({ data }) => {
+      if (!cancelled) setSignedPhotoUrl(data?.signedUrl ?? null);
+    });
+    return () => { cancelled = true; };
+  }, [viewFarmer]);
+
 
   const { data: farmers = [], isLoading } = useQuery({
     queryKey: ["farmer-registrations"],
