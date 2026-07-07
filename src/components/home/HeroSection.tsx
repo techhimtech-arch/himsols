@@ -87,7 +87,7 @@ export const HeroSection = memo(() => {
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 pt-2 text-xs md:text-sm text-muted-foreground">
             <span className="flex items-center gap-1.5">
               <Shield className="h-4 w-4 text-primary" />
-              {isHi ? "पंजीकृत संस्था, GST" : "Registered entity · GST"}
+              {isHi ? "हिमाचल आधारित टीम" : "Himachal-based team"}
             </span>
             <span className="flex items-center gap-1.5">
               <MapPin className="h-4 w-4 text-primary" />
