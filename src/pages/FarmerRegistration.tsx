@@ -86,8 +86,8 @@ const FarmerRegistration = () => {
         const path = `${user.id}/${Date.now()}-${safeName}`;
         const { error: upErr } = await supabase.storage.from("farmer-photos").upload(path, photoFile);
         if (upErr) throw upErr;
-        const { data: urlData } = supabase.storage.from("farmer-photos").getPublicUrl(path);
-        photoUrl = urlData.publicUrl;
+        // Bucket is private — store the object path; admins generate signed URLs on read
+        photoUrl = path;
       }
 
       const { error } = await supabase.from("farmer_registrations").insert({

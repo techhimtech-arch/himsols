@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +18,20 @@ const FarmerRegistrationsTab = () => {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [viewFarmer, setViewFarmer] = useState<any>(null);
+  const [signedPhotoUrl, setSignedPhotoUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const raw = viewFarmer?.land_photo_url;
+    if (!raw) { setSignedPhotoUrl(null); return; }
+    // Backward-compat: older rows stored full public URLs. Extract the object path.
+    const path = raw.includes("/farmer-photos/") ? raw.split("/farmer-photos/")[1] : raw;
+    supabase.storage.from("farmer-photos").createSignedUrl(path, 3600).then(({ data }) => {
+      if (!cancelled) setSignedPhotoUrl(data?.signedUrl ?? null);
+    });
+    return () => { cancelled = true; };
+  }, [viewFarmer]);
+
 
   const { data: farmers = [], isLoading } = useQuery({
     queryKey: ["farmer-registrations"],
@@ -141,10 +155,10 @@ const FarmerRegistrationsTab = () => {
               </div>
               <div><span className="text-muted-foreground">Tree Types:</span> {(viewFarmer.interested_tree_types || []).join(", ") || "-"}</div>
               <div><span className="text-muted-foreground">Registered:</span> {new Date(viewFarmer.created_at).toLocaleString()}</div>
-              {viewFarmer.land_photo_url && (
+              {viewFarmer.land_photo_url && signedPhotoUrl && (
                 <div>
                   <span className="text-muted-foreground block mb-1">Land Photo:</span>
-                  <img src={viewFarmer.land_photo_url} alt="Land" className="w-full max-h-48 object-cover rounded-lg" />
+                  <img src={signedPhotoUrl} alt="Land" className="w-full max-h-48 object-cover rounded-lg" />
                 </div>
               )}
             </div>
