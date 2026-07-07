@@ -9,26 +9,13 @@ import { HeroShareReferralBar } from "./HeroShareReferralBar";
 import { isMonsoonWindow } from "@/components/MonsoonScarcityBadge";
 import { Link as RouterLink } from "react-router-dom";
 
-const useMinTreePrice = () =>
-  useQuery({
-    queryKey: ["tree-min-price-hero"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("trees")
-        .select("price")
-        .eq("is_active", true)
-        .gt("price", 0)
-        .order("price", { ascending: true })
-        .limit(1);
-      return data?.[0]?.price ?? 269;
-    },
-    staleTime: 1000 * 60 * 5,
-  });
+const SINGLE_TREE_PRICE = 269;
+const SINGLE_TREE_MRP = 299;
 
 export const HeroSection = memo(() => {
   const { language } = useLanguage();
   const isHi = language === "hi";
-  const { data: minPrice = 269 } = useMinTreePrice();
+  const minPrice = SINGLE_TREE_PRICE;
   const monsoon = isMonsoonWindow();
 
   return (
