@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, Building2, Users, TreePine, BarChart3, Briefcase } from "lucide-react";
+import { ArrowRight, Building2, Users, TreePine, BarChart3, Briefcase, Download, ShieldCheck } from "lucide-react";
 
 const programs = [
   { icon: TreePine, title: "Bulk Plantation Drives", desc: "Large-scale verified plantation projects across multiple villages." },
