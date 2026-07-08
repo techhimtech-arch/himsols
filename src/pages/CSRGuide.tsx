@@ -87,8 +87,10 @@ const CSRGuide = () => {
       toast({ title: "Could not submit", description: error.message, variant: "destructive" });
       return;
     }
-    setSubmitted(true);
-    toast({ title: "Proposal request received", description: "Our team will share a proposal within 24 hours." });
+    navigate(
+      `/csr/guide-to-csr-plantation-india/thank-you?org=${encodeURIComponent(parsed.data.org_name)}&email=${encodeURIComponent(parsed.data.email)}`,
+      { replace: true }
+    );
   };
 
   const articleJsonLd = {
