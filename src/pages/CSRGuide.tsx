@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
@@ -13,7 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { INDIAN_STATES } from "@/lib/constants";
 import {
-  TreePine, Loader2, CheckCircle2, MapPin, Camera, FileText,
+  TreePine, Loader2, MapPin, Camera, FileText,
   ShieldCheck, BarChart3, Users, Building2, ArrowRight, Download, AlertTriangle
 } from "lucide-react";
 import { z } from "zod";
