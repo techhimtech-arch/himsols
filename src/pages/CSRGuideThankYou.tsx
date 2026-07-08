@@ -5,16 +5,19 @@ import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import {
   CheckCircle2,
-  Calendar,
   Download,
   ArrowRight,
   Mail,
   Clock,
   FileText,
   MessageCircle,
+  Calendar,
+  Phone,
 } from "lucide-react";
+
 
 const CANONICAL = "https://himsols.com/csr/guide-to-csr-plantation-india/thank-you";
 
