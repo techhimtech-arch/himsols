@@ -48,8 +48,8 @@ const FormSchema = z.object({
 
 const CSRGuide = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({
     org_name: "",
     contact_person: "",
