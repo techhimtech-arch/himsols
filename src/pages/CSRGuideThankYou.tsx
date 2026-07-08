@@ -89,13 +89,9 @@ const CSRGuideThankYou = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <a
-                href="https://cal.com/himsols-csr"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
                 <Button size="lg" className="gap-2 w-full sm:w-auto">
-                  <Calendar className="h-4 w-4" /> Book a 15-min intro call <ArrowRight className="h-4 w-4" />
+                  <Phone className="h-4 w-4" /> Book a 15-min call on WhatsApp <ArrowRight className="h-4 w-4" />
                 </Button>
               </a>
               <a href="/Himsols-CSR-Pitch-Deck.pdf" target="_blank" rel="noopener noreferrer">
@@ -106,7 +102,7 @@ const CSRGuideThankYou = () => {
             </div>
 
             <p className="text-sm text-muted-foreground mt-4">
-              No sales calls unless you ask. Prefer email? Reply directly to the proposal we send.
+              No sales calls unless you ask. We will also email a written proposal within 24 hours.
             </p>
           </div>
         </section>
