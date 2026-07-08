@@ -54,6 +54,7 @@ const PartnerWithUs = lazy(() => import("./pages/PartnerWithUs"));
 const CarbonDashboard = lazy(() => import("./pages/CarbonDashboard"));
 const FarmerRegistration = lazy(() => import("./pages/FarmerRegistration"));
 const CSRCarbonOffset = lazy(() => import("./pages/CSRCarbonOffset"));
+const CSRGuide = lazy(() => import("./pages/CSRGuide"));
 
 const PartnerDashboard = lazy(() => import("./pages/PartnerDashboard"));
 const Impact = lazy(() => import("./pages/Impact"));
