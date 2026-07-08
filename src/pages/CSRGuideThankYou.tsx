@@ -157,11 +157,7 @@ const CSRGuideThankYou = () => {
               For urgent CSR reporting deadlines or budget approvals, message us on WhatsApp and we will
               prioritise your proposal.
             </p>
-            <a
-              href="https://wa.me/918219522575?text=Hi%20Himsols%20%E2%80%94%20I%20just%20submitted%20a%20CSR%20proposal%20request%20and%20have%20an%20urgent%20deadline."
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
               <Button size="lg" variant="outline" className="gap-2 border-2">
                 <MessageCircle className="h-4 w-4" /> Message on WhatsApp
               </Button>
