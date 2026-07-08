@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
@@ -13,7 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { INDIAN_STATES } from "@/lib/constants";
 import {
-  TreePine, Loader2, CheckCircle2, MapPin, Camera, FileText,
+  TreePine, Loader2, MapPin, Camera, FileText,
   ShieldCheck, BarChart3, Users, Building2, ArrowRight, Download, AlertTriangle
 } from "lucide-react";
 import { z } from "zod";
@@ -47,8 +48,8 @@ const FormSchema = z.object({
 
 const CSRGuide = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({
     org_name: "",
     contact_person: "",
@@ -86,8 +87,10 @@ const CSRGuide = () => {
       toast({ title: "Could not submit", description: error.message, variant: "destructive" });
       return;
     }
-    setSubmitted(true);
-    toast({ title: "Proposal request received", description: "Our team will share a proposal within 24 hours." });
+    navigate(
+      `/csr/guide-to-csr-plantation-india/thank-you?org=${encodeURIComponent(parsed.data.org_name)}&email=${encodeURIComponent(parsed.data.email)}`,
+      { replace: true }
+    );
   };
 
   const articleJsonLd = {
@@ -420,73 +423,63 @@ const CSRGuide = () => {
         {/* Inquiry form */}
         <section id="inquiry-form" className="py-14 md:py-20 px-4">
           <div className="container mx-auto max-w-2xl">
-            {submitted ? (
-              <div className="rounded-2xl border border-primary/30 bg-primary/5 p-8 md:p-10 text-center">
-                <CheckCircle2 className="h-12 w-12 text-primary mx-auto mb-4" />
-                <h2 className="text-2xl font-bold mb-2">Proposal request received</h2>
-                <p className="text-muted-foreground">
-                  Our team will email a written proposal within 24 hours. For anything urgent, reach us via WhatsApp.
+            <div className="rounded-2xl border border-border p-6 md:p-10 bg-background shadow-sm">
+              <div className="mb-6">
+                <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase px-3 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary mb-3">
+                  <ShieldCheck className="h-3.5 w-3.5" /> No sales calls unless you ask
+                </div>
+                <h2 className="text-2xl md:text-3xl font-bold mb-2">Get a written CSR proposal</h2>
+                <p className="text-muted-foreground text-sm">
+                  Pricing, deliverable schedule and a sample impact report — in your inbox within 24 hours.
                 </p>
               </div>
-            ) : (
-              <div className="rounded-2xl border border-border p-6 md:p-10 bg-background shadow-sm">
-                <div className="mb-6">
-                  <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase px-3 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary mb-3">
-                    <ShieldCheck className="h-3.5 w-3.5" /> No sales calls unless you ask
-                  </div>
-                  <h2 className="text-2xl md:text-3xl font-bold mb-2">Get a written CSR proposal</h2>
-                  <p className="text-muted-foreground text-sm">
-                    Pricing, deliverable schedule and a sample impact report — in your inbox within 24 hours.
-                  </p>
-                </div>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="org_name">Company name *</Label>
-                      <Input id="org_name" value={form.org_name} onChange={(e) => upd("org_name", e.target.value)} maxLength={150} required />
-                    </div>
-                    <div>
-                      <Label htmlFor="contact_person">Your name *</Label>
-                      <Input id="contact_person" value={form.contact_person} onChange={(e) => upd("contact_person", e.target.value)} maxLength={100} required />
-                    </div>
-                    <div>
-                      <Label htmlFor="phone">Phone *</Label>
-                      <Input id="phone" type="tel" value={form.phone} onChange={(e) => upd("phone", e.target.value)} required />
-                    </div>
-                    <div>
-                      <Label htmlFor="email">Work email *</Label>
-                      <Input id="email" type="email" value={form.email} onChange={(e) => upd("email", e.target.value)} maxLength={255} required />
-                    </div>
-                    <div>
-                      <Label htmlFor="tree_quantity">Target trees *</Label>
-                      <Input id="tree_quantity" type="number" min={100} value={form.tree_quantity} onChange={(e) => upd("tree_quantity", e.target.value)} required />
-                    </div>
-                    <div>
-                      <Label>Preferred state *</Label>
-                      <Select value={form.state} onValueChange={(v) => upd("state", v)}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          {INDIAN_STATES.map((s) => (<SelectItem key={s} value={s}>{s}</SelectItem>))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="org_name">Company name *</Label>
+                    <Input id="org_name" value={form.org_name} onChange={(e) => upd("org_name", e.target.value)} maxLength={150} required />
                   </div>
                   <div>
-                    <Label htmlFor="notes">Anything specific? (CSR budget, reporting deadline, ESG framework)</Label>
-                    <Textarea id="notes" rows={3} maxLength={1000} value={form.notes} onChange={(e) => upd("notes", e.target.value)} />
+                    <Label htmlFor="contact_person">Your name *</Label>
+                    <Input id="contact_person" value={form.contact_person} onChange={(e) => upd("contact_person", e.target.value)} maxLength={100} required />
                   </div>
-                  <div className="flex items-start gap-2">
-                    <Checkbox id="consent" checked={form.consent} onCheckedChange={(v) => upd("consent", Boolean(v))} />
-                    <Label htmlFor="consent" className="text-sm text-muted-foreground font-normal leading-relaxed">
-                      I agree to be contacted about this CSR proposal. Himsols will not spam or share my details.
-                    </Label>
+                  <div>
+                    <Label htmlFor="phone">Phone *</Label>
+                    <Input id="phone" type="tel" value={form.phone} onChange={(e) => upd("phone", e.target.value)} required />
                   </div>
-                  <Button type="submit" size="lg" className="w-full gap-2" disabled={submitting}>
-                    {submitting ? (<><Loader2 className="h-4 w-4 animate-spin" /> Sending…</>) : (<><TreePine className="h-4 w-4" /> Request Proposal</>)}
-                  </Button>
-                </form>
-              </div>
-            )}
+                  <div>
+                    <Label htmlFor="email">Work email *</Label>
+                    <Input id="email" type="email" value={form.email} onChange={(e) => upd("email", e.target.value)} maxLength={255} required />
+                  </div>
+                  <div>
+                    <Label htmlFor="tree_quantity">Target trees *</Label>
+                    <Input id="tree_quantity" type="number" min={100} value={form.tree_quantity} onChange={(e) => upd("tree_quantity", e.target.value)} required />
+                  </div>
+                  <div>
+                    <Label>Preferred state *</Label>
+                    <Select value={form.state} onValueChange={(v) => upd("state", v)}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {INDIAN_STATES.map((s) => (<SelectItem key={s} value={s}>{s}</SelectItem>))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="notes">Anything specific? (CSR budget, reporting deadline, ESG framework)</Label>
+                  <Textarea id="notes" rows={3} maxLength={1000} value={form.notes} onChange={(e) => upd("notes", e.target.value)} />
+                </div>
+                <div className="flex items-start gap-2">
+                  <Checkbox id="consent" checked={form.consent} onCheckedChange={(v) => upd("consent", Boolean(v))} />
+                  <Label htmlFor="consent" className="text-sm text-muted-foreground font-normal leading-relaxed">
+                    I agree to be contacted about this CSR proposal. Himsols will not spam or share my details.
+                  </Label>
+                </div>
+                <Button type="submit" size="lg" className="w-full gap-2" disabled={submitting}>
+                  {submitting ? (<><Loader2 className="h-4 w-4 animate-spin" /> Sending…</>) : (<><TreePine className="h-4 w-4" /> Request Proposal</>)}
+                </Button>
+              </form>
+            </div>
           </div>
         </section>
 
