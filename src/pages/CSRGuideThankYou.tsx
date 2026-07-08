@@ -25,6 +25,11 @@ const CSRGuideThankYou = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
+  const { settings } = useSiteSettings();
+  const whatsappNumber = settings?.whatsapp_number;
+  const whatsappUrl = whatsappNumber
+    ? `https://wa.me/${whatsappNumber}?text=Hi%20Himsols%20%E2%80%94%20I%20just%20submitted%20a%20CSR%20proposal%20request%20and%20would%20like%20to%20book%20a%2015-min%20call.`
+    : "https://wa.me/918219522575?text=Hi%20Himsols%20%E2%80%94%20I%20just%20submitted%20a%20CSR%20proposal%20request%20and%20would%20like%20to%20book%20a%2015-min%20call.";
 
   const org = searchParams.get("org") || "";
   const email = searchParams.get("email") || "";
