@@ -54,6 +54,7 @@ const PartnerWithUs = lazy(() => import("./pages/PartnerWithUs"));
 const CarbonDashboard = lazy(() => import("./pages/CarbonDashboard"));
 const FarmerRegistration = lazy(() => import("./pages/FarmerRegistration"));
 const CSRCarbonOffset = lazy(() => import("./pages/CSRCarbonOffset"));
+const CSRGuide = lazy(() => import("./pages/CSRGuide"));
 
 const PartnerDashboard = lazy(() => import("./pages/PartnerDashboard"));
 const Impact = lazy(() => import("./pages/Impact"));
@@ -159,6 +160,7 @@ const App = () => (
                       <Route path="/carbon-dashboard" element={<CarbonDashboard />} />
                       <Route path="/farmer-registration" element={<FarmerRegistration />} />
                       <Route path="/csr-carbon-offset" element={<CSRCarbonOffset />} />
+                      <Route path="/csr/guide-to-csr-plantation-india" element={<CSRGuide />} />
                       <Route path="/apply-land-partner" element={<Navigate to="/farmer-registration" replace />} />
                       <Route path="/partner-dashboard" element={<PartnerDashboard />} />
                       <Route path="/impact" element={<Impact />} />
