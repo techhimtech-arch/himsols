@@ -33,7 +33,7 @@ export const LearnHubStripSection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
           {tiles.map((t) => (
             <Link key={t.to} to={t.to}>
               <Card className="h-full transition-all hover:shadow-md hover:-translate-y-0.5 hover:border-primary/40">
