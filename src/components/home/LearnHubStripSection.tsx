@@ -8,6 +8,7 @@ export const LearnHubStripSection = () => {
   const isHi = language === "hi";
 
   const tiles = [
+    { to: "/learn/why-trees-matter", icon: Sparkles, label: isHi ? "क्यों पेड़?" : "Why Trees?" },
     { to: "/learn/lessons", icon: BookOpen, label: isHi ? "छोटे पाठ" : "Lessons" },
     { to: "/learn/daily", icon: Flame, label: isHi ? "आज की टिप" : "Daily Tip" },
     { to: "/learn/videos", icon: Video, label: isHi ? "वीडियो" : "Videos" },
