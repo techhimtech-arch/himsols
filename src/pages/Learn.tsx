@@ -3,7 +3,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { Card, CardContent } from "@/components/ui/card";
-import { BookOpen, Flame, Video, TreePine, ArrowRight } from "lucide-react";
+import { BookOpen, Flame, Video, TreePine, ArrowRight, Sparkles } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 
 const Learn = () => {
