@@ -3,7 +3,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { Card, CardContent } from "@/components/ui/card";
-import { BookOpen, Flame, Video, TreePine, ArrowRight } from "lucide-react";
+import { BookOpen, Flame, Video, TreePine, ArrowRight, Sparkles } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 
 const Learn = () => {
@@ -91,6 +91,31 @@ const Learn = () => {
               </Link>
             ))}
           </div>
+
+          <Link to="/learn/why-trees-matter" className="group block mt-8">
+            <Card className="overflow-hidden border-emerald-500/30 bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-800 text-white hover:shadow-2xl transition-all hover:-translate-y-0.5">
+              <CardContent className="p-8 md:p-10 flex flex-col md:flex-row items-start md:items-center gap-6">
+                <div className="w-14 h-14 rounded-2xl bg-emerald-400/20 flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="h-7 w-7 text-emerald-300" />
+                </div>
+                <div className="flex-1">
+                  <div className="text-[11px] tracking-[0.3em] uppercase text-emerald-300 mb-2">
+                    {isHi ? "विशेष अनुभव" : "Featured experience"}
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-bold mb-2">
+                    {isHi ? "पेड़ क्यों मायने रखते हैं" : "Why trees matter"}
+                  </h2>
+                  <p className="text-sm text-white/70 max-w-xl">
+                    {isHi
+                      ? "एक सिनेमैटिक स्क्रॉल कहानी — विज़ुअल्स, एनिमेशन और असली प्रभाव."
+                      : "A cinematic scrollytelling story — visuals, motion, and real impact."}
+                  </p>
+                </div>
+                <ArrowRight className="h-6 w-6 text-emerald-300 group-hover:translate-x-1 transition-transform" />
+              </CardContent>
+            </Card>
+          </Link>
+
         </div>
       </main>
       <Footer />
