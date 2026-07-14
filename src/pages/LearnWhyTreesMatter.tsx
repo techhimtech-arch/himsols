@@ -308,7 +308,7 @@ const Himachal = ({ isHi }: { isHi: boolean }) => {
     { icon: Mountain, l: isHi ? "68% वन आवरण लक्ष्य" : "68% forest cover goal" },
     { icon: Droplets, l: isHi ? "मानसून जुलाई-अगस्त" : "Monsoon Jul–Aug" },
     { icon: Sprout, l: isHi ? "देशी प्रजातियाँ" : "Native species" },
-    { icon: Heart, l: isHi ? "250+ किसान पार्टनर" : "250+ farmer partners" },
+    { icon: Heart, l: isHi ? "पायलट किसान कोहोर्ट" : "Pilot farmer cohort" },
   ];
 
   return (
