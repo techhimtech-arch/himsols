@@ -353,12 +353,15 @@ const CSRGuide = () => {
               </p>
               <ul>
                 <li><strong>Monsoon reliability</strong> — the July–September window gives young saplings a natural establishment period without needing extensive irrigation.</li>
-                <li><strong>Smallholder farmer network</strong> — most plantation happens on marginal farmer land, which means every tree comes with a landholder who has skin in the game.</li>
+                <li><strong>Smallholder farmer partners</strong> — plantation happens on marginal farmer land, so every tree has a landholder with skin in the game.</li>
                 <li><strong>Ecological need</strong> — landslide-prone slopes and degraded forest fringe respond well to native mixed-species plantation, and impact per tree is genuinely high.</li>
               </ul>
               <p>
-                We plant across districts in Himachal — Kangra, Mandi, Hamirpur, Bilaspur, Una, Solan and
-                Shimla — with a 250+ farmer network and verified land agreements. See our{" "}
+                <strong>A note on our stage:</strong> Himsols is in an early pilot phase. We are actively onboarding
+                our first cohort of 50 verified farmer partners across Kangra, Mandi, Hamirpur, Bilaspur, Una, Solan
+                and Shimla for Monsoon 2026. This means founding CSR partners get direct founder access,
+                site-visit priority, and the ability to shape the programme — not a slot inside a large anonymous
+                pipeline. See our{" "}
                 <Link to="/monsoon-plantation-himachal" className="text-primary underline">monsoon plantation plan</Link>{" "}
                 for how the timing works.
               </p>

@@ -95,7 +95,7 @@ export const HeroSection = memo(() => {
             </span>
             <span className="flex items-center gap-1.5">
               <Sprout className="h-4 w-4 text-primary" />
-              {isHi ? "250+ किसान नेटवर्क" : "250+ farmer network"}
+              {isHi ? "पायलट कोहोर्ट · मानसून 2026" : "Pilot cohort · Monsoon 2026"}
             </span>
           </div>
 

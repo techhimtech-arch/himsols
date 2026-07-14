@@ -152,9 +152,9 @@ const Step1Land = ({ isHi }: { isHi: boolean }) => (
         </p>
         <div className="grid grid-cols-3 gap-6 pt-4 border-t border-white/10">
           {[
-            { icon: Users, n: 250, s: "+", l: isHi ? "किसान नेटवर्क" : "Farmer network" },
-            { icon: MapPin, n: 18, s: "", l: isHi ? "गाँव" : "Villages" },
-            { icon: ShieldCheck, n: 100, s: "%", l: isHi ? "वेरिफ़ाइड" : "Verified" },
+            { icon: Users, n: 50, s: "", l: isHi ? "पायलट किसान (मानसून 2026)" : "Pilot farmers (Monsoon 2026)" },
+            { icon: MapPin, n: 7, s: "", l: isHi ? "ज़िले" : "Districts" },
+            { icon: ShieldCheck, n: 100, s: "%", l: isHi ? "आधार + ज़मीन वेरिफ़ाई" : "Aadhaar + land verified" },
           ].map((s, i) => (
             <div key={i}>
               <s.icon className="h-5 w-5 text-emerald-400 mb-2" />

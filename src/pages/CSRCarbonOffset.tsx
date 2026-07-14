@@ -36,7 +36,7 @@ const offerings = [
 ];
 
 const whyPartner = [
-  { icon: Users, title: "Local Farmer Network", desc: "Direct collaboration with 250+ farmers across Himachal Pradesh." },
+  { icon: Users, title: "Local Farmer Partners", desc: "Direct collaboration with our pilot cohort of farmer partners across Himachal Pradesh — onboarding 50 for Monsoon 2026." },
   { icon: Leaf, title: "Community-Driven Approach", desc: "Programs rooted in local communities for lasting environmental impact." },
   { icon: Globe, title: "Transparent Impact Tracking", desc: "Real-time dashboards showing your plantation's progress and carbon offset." },
   { icon: ShieldCheck, title: "ESG-Aligned Initiatives", desc: "Programs designed to support your company's ESG goals and sustainability commitments." },
