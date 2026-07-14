@@ -79,6 +79,7 @@ const LearnLessonDetail = lazy(() => import("./pages/LearnLessonDetail"));
 const LearnDaily = lazy(() => import("./pages/LearnDaily"));
 const LearnVideos = lazy(() => import("./pages/LearnVideos"));
 const LearnWhyTreesMatter = lazy(() => import("./pages/LearnWhyTreesMatter"));
+const LearnHowWePlant = lazy(() => import("./pages/LearnHowWePlant"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -187,6 +188,7 @@ const App = () => (
                       <Route path="/learn/daily" element={<LearnDaily />} />
                       <Route path="/learn/videos" element={<LearnVideos />} />
                       <Route path="/learn/why-trees-matter" element={<LearnWhyTreesMatter />} />
+                      <Route path="/learn/how-we-plant" element={<LearnHowWePlant />} />
 
                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                       <Route path="*" element={<NotFound />} />

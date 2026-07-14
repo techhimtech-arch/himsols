@@ -116,6 +116,30 @@ const Learn = () => {
             </Card>
           </Link>
 
+          <Link to="/learn/how-we-plant" className="group block mt-4">
+            <Card className="overflow-hidden border-emerald-500/30 bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-700 text-white hover:shadow-2xl transition-all hover:-translate-y-0.5">
+              <CardContent className="p-8 md:p-10 flex flex-col md:flex-row items-start md:items-center gap-6">
+                <div className="w-14 h-14 rounded-2xl bg-emerald-400/20 flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="h-7 w-7 text-emerald-300" />
+                </div>
+                <div className="flex-1">
+                  <div className="text-[11px] tracking-[0.3em] uppercase text-emerald-300 mb-2">
+                    {isHi ? "विशेष अनुभव" : "Featured experience"}
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-bold mb-2">
+                    {isHi ? "हम कैसे पेड़ लगाते हैं" : "How we plant"}
+                  </h2>
+                  <p className="text-sm text-white/70 max-w-xl">
+                    {isHi
+                      ? "छह असली कदम — ज़मीन, प्रजाति, मानसून, प्लांटिंग, सर्वाइवल, रिकॉर्ड."
+                      : "Six real steps — land, species, monsoon, planting, survival, record."}
+                  </p>
+                </div>
+                <ArrowRight className="h-6 w-6 text-emerald-300 group-hover:translate-x-1 transition-transform" />
+              </CardContent>
+            </Card>
+          </Link>
+
         </div>
       </main>
       <Footer />
