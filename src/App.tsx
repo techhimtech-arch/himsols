@@ -80,6 +80,8 @@ const LearnDaily = lazy(() => import("./pages/LearnDaily"));
 const LearnVideos = lazy(() => import("./pages/LearnVideos"));
 const LearnWhyTreesMatter = lazy(() => import("./pages/LearnWhyTreesMatter"));
 const LearnHowWePlant = lazy(() => import("./pages/LearnHowWePlant"));
+const LearnHimachalJungles = lazy(() => import("./pages/LearnHimachalJungles"));
+const LearnForestFires = lazy(() => import("./pages/LearnForestFires"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
