@@ -140,6 +140,54 @@ const Learn = () => {
             </Card>
           </Link>
 
+          <Link to="/learn/himachal-jungles" className="group block mt-4">
+            <Card className="overflow-hidden border-emerald-500/30 bg-gradient-to-br from-emerald-950 via-teal-900 to-emerald-800 text-white hover:shadow-2xl transition-all hover:-translate-y-0.5">
+              <CardContent className="p-8 md:p-10 flex flex-col md:flex-row items-start md:items-center gap-6">
+                <div className="w-14 h-14 rounded-2xl bg-emerald-400/20 flex items-center justify-center flex-shrink-0">
+                  <TreePine className="h-7 w-7 text-emerald-300" />
+                </div>
+                <div className="flex-1">
+                  <div className="text-[11px] tracking-[0.3em] uppercase text-emerald-300 mb-2">
+                    {isHi ? "विशेष अनुभव" : "Featured experience"}
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-bold mb-2">
+                    {isHi ? "हिमाचल के जंगल" : "The forests of Himachal"}
+                  </h2>
+                  <p className="text-sm text-white/70 max-w-xl">
+                    {isHi
+                      ? "ऊँचाई की सीढ़ी, देशी प्रजातियाँ, और क्यों ये जंगल उत्तर भारत के लिए ज़रूरी हैं."
+                      : "Altitude zones, native species, and why these forests water half of north India."}
+                  </p>
+                </div>
+                <ArrowRight className="h-6 w-6 text-emerald-300 group-hover:translate-x-1 transition-transform" />
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to="/learn/forest-fires" className="group block mt-4">
+            <Card className="overflow-hidden border-amber-500/30 bg-gradient-to-br from-stone-950 via-amber-950 to-orange-900 text-white hover:shadow-2xl transition-all hover:-translate-y-0.5">
+              <CardContent className="p-8 md:p-10 flex flex-col md:flex-row items-start md:items-center gap-6">
+                <div className="w-14 h-14 rounded-2xl bg-amber-400/20 flex items-center justify-center flex-shrink-0">
+                  <Flame className="h-7 w-7 text-amber-300" />
+                </div>
+                <div className="flex-1">
+                  <div className="text-[11px] tracking-[0.3em] uppercase text-amber-300 mb-2">
+                    {isHi ? "विशेष अनुभव" : "Featured experience"}
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-bold mb-2">
+                    {isHi ? "जंगल की आग — हर गर्मी" : "Forest fires — every summer"}
+                  </h2>
+                  <p className="text-sm text-white/70 max-w-xl">
+                    {isHi
+                      ? "पैमाना, कारण, और मिश्रित देशी बागान क्यों मायने रखते हैं."
+                      : "The scale, the causes, and why mixed native cohorts matter."}
+                  </p>
+                </div>
+                <ArrowRight className="h-6 w-6 text-amber-300 group-hover:translate-x-1 transition-transform" />
+              </CardContent>
+            </Card>
+          </Link>
+
         </div>
       </main>
       <Footer />
