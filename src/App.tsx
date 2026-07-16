@@ -190,7 +190,9 @@ const App = () => (
                       <Route path="/learn/daily" element={<LearnDaily />} />
                       <Route path="/learn/videos" element={<LearnVideos />} />
                       <Route path="/learn/why-trees-matter" element={<LearnWhyTreesMatter />} />
-                      <Route path="/learn/how-we-plant" element={<LearnHowWePlant />} />
+                     <Route path="/learn/how-we-plant" element={<LearnHowWePlant />} />
+                     <Route path="/learn/himachal-jungles" element={<LearnHimachalJungles />} />
+                     <Route path="/learn/forest-fires" element={<LearnForestFires />} />
 
                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                       <Route path="*" element={<NotFound />} />
