@@ -783,19 +783,28 @@ const LearnSustainabilityHabits = () => {
   const { language } = useLanguage();
   const isHi = language === "hi";
 
-  const articleSchema = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: isHi
-      ? "सस्टेनेबिलिटी की रोज़मर्रा आदतें"
-      : "Everyday sustainability habits",
-    description: isHi
-      ? "सात रोज़मर्रा के तरीक़े — पानी, बिजली, खाना, कचरा, यातायात, ख़रीदारी — जिनसे तुम आज से फ़र्क डाल सकते हो."
-      : "Seven everyday chapters — water, energy, food, waste, transport, consumption — that let you start today.",
-    author: { "@type": "Organization", name: "Himsols" },
-    publisher: { "@type": "Organization", name: "Himsols" },
-    datePublished: "2026-07-17",
-  };
+  useEffect(() => {
+    const schema = {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: "Everyday sustainability habits",
+      description:
+        "Seven everyday chapters — water, energy, food, waste, transport, consumption.",
+      author: { "@type": "Organization", name: "Himsols" },
+      publisher: { "@type": "Organization", name: "Himsols" },
+      datePublished: "2026-07-17",
+    };
+    const script = document.createElement("script");
+    script.type = "application/ld+json";
+    script.setAttribute("data-schema", "habits-article");
+    script.text = JSON.stringify(schema);
+    document.head.appendChild(script);
+    return () => {
+      document
+        .querySelectorAll('script[data-schema="habits-article"]')
+        .forEach((el) => el.remove());
+    };
+  }, []);
 
   return (
     <div className="bg-[#03080a]">
