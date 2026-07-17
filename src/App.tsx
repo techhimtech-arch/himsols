@@ -82,6 +82,7 @@ const LearnWhyTreesMatter = lazy(() => import("./pages/LearnWhyTreesMatter"));
 const LearnHowWePlant = lazy(() => import("./pages/LearnHowWePlant"));
 const LearnHimachalJungles = lazy(() => import("./pages/LearnHimachalJungles"));
 const LearnForestFires = lazy(() => import("./pages/LearnForestFires"));
+const LearnSustainabilityHabits = lazy(() => import("./pages/LearnSustainabilityHabits"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
