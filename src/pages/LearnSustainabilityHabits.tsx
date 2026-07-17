@@ -820,7 +820,6 @@ const LearnSustainabilityHabits = () => {
             : "Seven everyday chapters — water, energy, food, waste, transport, consumption. A cinematic scroll experience."
         }
         url="https://himsols.com/learn/sustainability-habits"
-        structuredData={articleSchema}
       />
       <Navbar />
       <main>
