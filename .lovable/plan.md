@@ -1,75 +1,88 @@
-# Stunning Visual Sustainability Page — Plan
+# Cinematic Learn Page — Sustainability Best Practices (Individual Level)
 
-Ek naya immersive scroll-experience page banayenge: **`/learn/why-trees-matter`** (ya `/experience`) — 100% static content, but cinematic visuals + framer-motion animations. Mobile pe bhi buttery smooth chalega.
+Ek naya scrollytelling page: **`/learn/sustainability-habits`** — same cinematic language jaisa `/learn/why-trees-matter` aur `/learn/how-we-plant`, but **zero AI images**. Sirf framer-motion + CSS gradients + SVG + emoji/lucide icons se stunning visual experience.
 
 ## Concept
-Ek "scrollytelling" journey — jaise Apple product page ya Stripe landing. User scroll karta jaayega, aur har section pe visuals reveal honge, numbers count-up honge, images parallax karengi, trees "grow" honge. End pe CTA: "Plant your first tree — ₹269".
 
-## Page Structure (7 scroll chapters)
+7 chapters of daily-life sustainability habits — har chapter ka apna colour mood (water=blue, energy=amber, food=green, waste=stone, transport=sky, consumption=rose, community=emerald). Har section me ek "hero stat" + 3-4 actionable habits + ek visual metaphor (pure CSS/SVG animated).
 
-1. **Hero — "Ek ped, ek zindagi"**
-   - Fullscreen dark forest gradient bg + floating leaf particles (framer-motion)
-   - Massive kinetic typography: word-by-word reveal
-   - Subtle scroll indicator
+Tone: emotional, honest, action-oriented. No greenwashing, no false claims. Sab numbers "estimate" label ke saath.
 
-2. **The Crisis — India ka carbon footprint**
-   - Animated counter: "2.9 billion tonnes CO₂/year"
-   - Bar chart bars grow on scroll (framer-motion `useInView`)
-   - Split-screen: dry land → green land (image reveal on scroll)
+## Page Structure (7 chapters)
 
-3. **What one tree does — "22 kg CO₂/year"**
-   - Circular progress ring animates as you scroll
-   - Icon grid: oxygen, shade, soil, wildlife, water — each icon springs in with stagger
-   - Sensory metaphor: tree silhouette that "grows" from sapling to full canopy as user scrolls
+1. **Intro — "Choti aadatein, badi lehar"**
+   - Full-viewport dark gradient hero, kinetic typography reveal
+   - Animated SVG ripple (concentric circles expanding) as the sensory metaphor
+   - Scroll cue
 
-4. **The Himachal advantage**
-   - Parallax mountain layers (3-4 image layers moving at different speeds)
-   - Map of HP with pin drops animating one by one (Shimla, Manali, Dharamshala…)
-   - Native species cards horizontal scroll with hover tilt
+2. **Paani — Water habits** (blue mood)
+   - Big animated stat: "1 dripping tap = ~15 L/day" (count-up)
+   - 4 habit cards: shorter showers, bucket-not-hose, RO reject-water reuse, fix leaks
+   - Visual: SVG water drop that fills/empties on scroll (useScroll)
 
-5. **Your impact multiplied**
-   - Interactive slider: "Plant [10] trees" → live updates CO₂ offset, oxygen, years of impact
-   - Confetti burst when slider crosses milestones
+3. **Bijli — Energy habits** (amber/warm mood)
+   - Stat: fan vs AC, LED vs bulb, standby-power drain — animated bar comparison
+   - 4 habits: unplug chargers, AC at 24°C, natural light, star-rated appliances
+   - Visual: animated sun→bulb→lightning SVG morph
 
-6. **Real stories — before/after**
-   - Image comparison sliders (drag to reveal barren → forested)
-   - Farmer quote cards fading in with photos
+4. **Khaana — Food habits** (green mood)
+   - Stat: food waste per household (est.), meat vs plant footprint
+   - 4 habits: local/seasonal, meatless days, compost kitchen scraps, portion planning
+   - Visual: plate SVG that fills with veggie icons on stagger
 
-7. **CTA finale**
-   - Fullscreen: "Ab tumhari baari"
-   - Animated tree that fully blooms
-   - Two CTAs: "Plant a Tree ₹269" · "Corporate CSR"
+5. **Kachra — Waste & plastic** (stone/neutral mood)
+   - Stat: single-use plastic per person/year (est.)
+   - 4 habits: cloth bag, steel bottle, refuse straws, segregate wet/dry
+   - Visual: SVG bin with items sorting animation
 
-## Tech Approach
+6. **Aana-Jaana — Transport** (sky mood)
+   - Stat: 1 km walk saved vs car (CO2 estimate)
+   - 4 habits: walk <2km, carpool, public transport, combine errands
+   - Visual: horizontal parallax road with animated cycle/bus/car icons
 
-- **framer-motion** already available — use `motion`, `useScroll`, `useTransform`, `useInView`, `AnimatePresence`, stagger children
-- **All static** — no DB calls, no auth checks, super fast
-- **Assets needed**:
-  - 6–8 hero-quality images (forest, mountains, sapling, farmer, before/after pairs) — I'll generate via imagegen (premium tier for the hero)
-  - 1 tree SVG that can morph sapling → tree (custom crafted)
-- **Performance**: lazy-load images, `will-change` on animated elements, `prefers-reduced-motion` respected
-- **Bilingual**: English + Hindi via existing `useLanguage` hook
-- **SEO**: full JSON-LD Article schema, `/learn/why-trees-matter` in sitemap, meta tags, added to Learn Hub tiles
+7. **Kharidari — Mindful consumption** (rose mood)
+   - Stat: fast fashion footprint
+   - 4 habits: repair-before-replace, second-hand, quality > quantity, digital declutter
+   - Visual: closet/cart SVG with hover reveal
 
-## Routing & Integration
+8. **Finale — "Aaj se ek aadat"**
+   - Interactive: user picks ONE habit from a grid → confetti + share card
+   - CTA: `/learn` (more lessons) + `/climate-impact-pack` (compound the habit with a tree)
 
-- New route `/learn/why-trees-matter` in `App.tsx`
-- Add tile in `Learn.tsx` and `LearnHubStripSection.tsx`
-- Add to `public/sitemap.xml` + `llms.txt`
-- Homepage: subtle "Experience the story →" link near LearnHubStrip
+## Visual/Tech Approach
 
-## Deliverables
+- **No AI-generated images.** Backgrounds = layered CSS radial/linear gradients + noise texture + blurred coloured blobs (motion `useTransform` for parallax feel).
+- **Icons** = lucide-react (already in project) + inline SVGs for water drop, ripple, bin, road.
+- **Animations** = framer-motion: `useScroll`, `useTransform`, `useInView`, stagger children, count-up numbers.
+- **Kinetic typography** = word-by-word reveal, oversized display headings, mixed English/Hindi (via `useLanguage`).
+- **Interactive finale** = local `useState` grid + emoji burst; no DB writes.
+- **Perf**: single page component, no external image fetches, `prefers-reduced-motion` respected.
+- **SEO**: `<SEO>` component with title/desc, Article JSON-LD, sitemap entry.
 
-1. New page `src/pages/LearnWhyTreesMatter.tsx` (~700 lines, one file, all sections as internal components)
-2. 6–8 generated images stored via `lovable-assets`
-3. Custom SVG components for tree-growth + leaf particles
-4. Route + nav + sitemap wiring
+## Files (technical section)
 
-## What I need from you (before I build)
+Create:
+- `src/pages/LearnSustainabilityHabits.tsx` (~650 lines, 8 internal section components + shared count-up hook inline)
 
-Bhai bas 2 chhote decisions:
+Edit:
+- `src/App.tsx` — lazy import + route `/learn/sustainability-habits`
+- `src/pages/Learn.tsx` — add featured tile linking to it
+- `src/components/home/LearnHubStripSection.tsx` — optional 6th tile (or swap in place of one)
+- `public/sitemap.xml` — add URL
+- `public/llms.txt` — one-line mention
 
-1. **Page ka focus** — pure inspirational/emotional ("why trees matter"), ya educational ("how our plantation works, step by step with visuals")? Ya dono mila ke?
-2. **Length** — ek lambi cinematic page (7 chapters, ~3 min scroll), ya chhoti 3-section stunner (~1 min)?
+No DB changes, no edge functions, no new packages (framer-motion + lucide already installed).
 
-Bata do, phir main build mode me sab kuch banata hoon — images generate, animations code, sab.
+## Guardrails
+
+- All stats labelled `(estimate)` — sourced qualitatively, not fabricated authorities.
+- No pilot-cohort / farmer claims on this page — pure education, no product pitch until the finale CTA.
+- Bilingual copy via existing `useLanguage` hook.
+
+## Out of scope
+
+- No new tables, no user tracking of picked habit (client-only state).
+- No new AI image generation.
+- No changes to homepage hero or other learn pages.
+
+Bata do — build mode me switch karo to main ek shot me sab bana dunga.
