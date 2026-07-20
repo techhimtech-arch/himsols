@@ -1,6 +1,8 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { HeroSection } from "@/components/home/HeroSection";
+import { WhereTreeLivesScene } from "@/components/home/WhereTreeLivesScene";
+import { HowWeVerifyTilt } from "@/components/home/HowWeVerifyTilt";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
 import { ImpactDashboardSection } from "@/components/home/ImpactDashboardSection";
 import { ClimateImpactPackSection } from "@/components/home/ClimateImpactPackSection";
@@ -29,6 +31,8 @@ const Index = () => {
       <Navbar />
       <main>
         <HeroSection />
+        <WhereTreeLivesScene />
+        <HowWeVerifyTilt />
         <HowItWorksSection />
         <CSRSection />
         <ImpactDashboardSection />
