@@ -1,0 +1,1 @@
+ALTER TABLE public.tree_allocations ALTER COLUMN application_id DROP NOT NULL;
