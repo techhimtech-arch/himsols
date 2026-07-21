@@ -110,13 +110,13 @@ export const AllocationsTab = () => {
         supabase
           .from("orders")
           .select("id, quantity, district, state, status, created_at, tree_id, user_id, trees(name)")
-          .in("status", ["completed", "in_progress", "saplings_arranged", "scheduled", "site_verified"] as any)
+          .neq("status", "cancelled")
           .order("created_at", { ascending: false })
           .limit(50),
         supabase
           .from("tree_plantation_requests")
           .select("id, quantity, tree_type, status, created_at, user_id, location")
-          .in("status", ["completed", "in_progress", "saplings_arranged", "scheduled", "site_verified"] as any)
+          .neq("status", "cancelled")
           .order("created_at", { ascending: false })
           .limit(50),
       ]);
