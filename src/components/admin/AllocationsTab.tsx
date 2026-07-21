@@ -79,6 +79,15 @@ export const AllocationsTab = () => {
   const [payoutRef, setPayoutRef] = useState("");
   const [payoutDate, setPayoutDate] = useState("");
 
+  // New allocation dialog state
+  const [allocDialog, setAllocDialog] = useState<PendingOrder | null>(null);
+  const [allocFarmerId, setAllocFarmerId] = useState<string>("");
+  const [allocTreeCount, setAllocTreeCount] = useState<number>(0);
+  const [allocSpecies, setAllocSpecies] = useState<string>("");
+  const [allocPlantDate, setAllocPlantDate] = useState<string>(new Date().toISOString().split("T")[0]);
+  const [allocIncentive, setAllocIncentive] = useState<number>(120);
+  const [allocNotes, setAllocNotes] = useState<string>("");
+
   const { data: allocations = [], isLoading } = useQuery({
     queryKey: ["admin-allocations"],
     queryFn: async () => {
@@ -88,6 +97,76 @@ export const AllocationsTab = () => {
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data || []) as unknown as Allocation[];
+    },
+  });
+
+  const { data: pendingOrders = [], isLoading: pendingLoading } = useQuery({
+    queryKey: ["admin-pending-alloc", allocations.length],
+    queryFn: async () => {
+      const allocatedOrderIds = new Set(
+        allocations.map(a => a.order_id).filter(Boolean) as string[]
+      );
+      const [ordersRes, reqsRes] = await Promise.all([
+        supabase
+          .from("orders")
+          .select("id, quantity, district, state, status, created_at, tree_id, user_id, trees(name)")
+          .in("status", ["PAID", "paid", "completed"])
+          .order("created_at", { ascending: false })
+          .limit(50),
+        supabase
+          .from("tree_plantation_requests")
+          .select("id, quantity, tree_type, status, created_at, user_id, location")
+          .in("status", ["PAID", "paid", "confirmed", "approved"])
+          .order("created_at", { ascending: false })
+          .limit(50),
+      ]);
+      if (ordersRes.error) throw ordersRes.error;
+      if (reqsRes.error) throw reqsRes.error;
+
+      const list: PendingOrder[] = [];
+      (ordersRes.data || []).forEach((o: any) => {
+        if (allocatedOrderIds.has(o.id)) return;
+        list.push({
+          id: o.id,
+          quantity: o.quantity || 1,
+          district: o.district,
+          state: o.state,
+          status: o.status,
+          created_at: o.created_at,
+          tree_id: o.tree_id,
+          tree_name: o.trees?.name || "Mixed native trees",
+          user_id: o.user_id,
+          source: "order",
+        });
+      });
+      (reqsRes.data || []).forEach((r: any) => {
+        list.push({
+          id: r.id,
+          quantity: r.quantity || 1,
+          district: r.location,
+          state: null,
+          status: r.status,
+          created_at: r.created_at,
+          tree_id: null,
+          tree_name: r.tree_type || "Mixed native trees",
+          user_id: r.user_id,
+          source: "request",
+        });
+      });
+      return list;
+    },
+  });
+
+  const { data: verifiedFarmers = [] } = useQuery({
+    queryKey: ["admin-verified-farmers"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("farmer_registrations")
+        .select("id, user_id, full_name, village, district, mobile")
+        .eq("status", "verified")
+        .not("user_id", "is", null);
+      if (error) throw error;
+      return (data || []) as VerifiedFarmer[];
     },
   });
 
