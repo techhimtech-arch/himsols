@@ -697,6 +697,87 @@ export const AllocationsTab = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Create Allocation Dialog */}
+      <Dialog open={!!allocDialog} onOpenChange={() => setAllocDialog(null)}>
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sprout className="h-5 w-5 text-primary" />
+              Allocate to Farmer
+            </DialogTitle>
+          </DialogHeader>
+          {allocDialog && (
+            <div className="space-y-4">
+              <div className="bg-muted/50 p-3 rounded-lg text-sm space-y-1">
+                <p className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-[10px] uppercase">{allocDialog.source}</Badge>
+                  <span className="font-mono text-xs">{allocDialog.id.slice(0, 8)}</span>
+                </p>
+                <p><strong>{allocDialog.quantity} × {allocDialog.tree_name}</strong></p>
+                {allocDialog.district && <p className="text-xs text-muted-foreground">Delivery: {allocDialog.district}</p>}
+              </div>
+
+              <div>
+                <Label>Verified Farmer *</Label>
+                <Select value={allocFarmerId} onValueChange={setAllocFarmerId}>
+                  <SelectTrigger className="bg-background">
+                    <SelectValue placeholder="Pick a verified farmer" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover border border-border z-50">
+                    {verifiedFarmers.map(f => (
+                      <SelectItem key={f.id} value={f.id}>
+                        {f.full_name} — {f.village || f.district || "HP"}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground mt-1">Only verified farmers with a linked user account appear here.</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label>Tree Count *</Label>
+                  <Input type="number" min={1} value={allocTreeCount}
+                    onChange={e => setAllocTreeCount(parseInt(e.target.value) || 0)} />
+                </div>
+                <div>
+                  <Label>Incentive / Tree (₹)</Label>
+                  <Input type="number" min={0} value={allocIncentive}
+                    onChange={e => setAllocIncentive(parseFloat(e.target.value) || 0)} />
+                </div>
+              </div>
+
+              <div>
+                <Label>Species *</Label>
+                <Input value={allocSpecies} onChange={e => setAllocSpecies(e.target.value)}
+                  placeholder="e.g. Deodar, Oak, Mixed native" />
+              </div>
+
+              <div>
+                <Label>Plantation Date *</Label>
+                <Input type="date" value={allocPlantDate}
+                  onChange={e => setAllocPlantDate(e.target.value)} />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Review date auto-sets to +6 months. Total payout: ₹{(allocTreeCount * allocIncentive).toLocaleString()} (on 100% survival).
+                </p>
+              </div>
+
+              <div>
+                <Label>Notes</Label>
+                <Textarea rows={2} value={allocNotes} onChange={e => setAllocNotes(e.target.value)}
+                  placeholder="Optional: land parcel, batch reference, special instructions..." />
+              </div>
+
+              <Button className="w-full" disabled={createAllocMutation.isPending || !allocFarmerId}
+                onClick={() => createAllocMutation.mutate()}>
+                {createAllocMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <CheckCircle2 className="h-4 w-4 mr-2" />}
+                Create Allocation
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
