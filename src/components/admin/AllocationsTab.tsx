@@ -187,6 +187,77 @@ export const AllocationsTab = () => {
     return true;
   });
 
+  // Create new allocation from a paid order
+  const createAllocMutation = useMutation({
+    mutationFn: async () => {
+      if (!allocDialog) throw new Error("No order selected");
+      const farmer = verifiedFarmers.find(f => f.id === allocFarmerId);
+      if (!farmer || !farmer.user_id) throw new Error("Pick a verified farmer with a linked user account");
+      if (allocTreeCount <= 0) throw new Error("Tree count must be positive");
+      if (!allocSpecies.trim()) throw new Error("Species is required");
+      if (!allocPlantDate) throw new Error("Plantation date is required");
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      const payload: any = {
+        order_id: allocDialog.source === "order" ? allocDialog.id : null,
+        partner_id: farmer.user_id,
+        application_id: null,
+        tree_count: allocTreeCount,
+        species: allocSpecies.trim(),
+        plantation_date: allocPlantDate,
+        incentive_per_tree: allocIncentive,
+        status: "allocated",
+        payout_status: "pending",
+        allocated_by: user.id,
+        notes: allocNotes.trim() || `Allocated from ${allocDialog.source} ${allocDialog.id.slice(0, 8)} — ${farmer.village || farmer.district || ""}`,
+      };
+
+      const { data: newAlloc, error } = await supabase
+        .from("tree_allocations")
+        .insert(payload)
+        .select("id")
+        .single();
+      if (error) throw error;
+
+      // Log
+      await supabase.from("allocation_logs").insert({
+        allocation_id: newAlloc.id,
+        action: "created",
+        performed_by: user.id,
+        details: {
+          order_id: allocDialog.id,
+          source: allocDialog.source,
+          farmer: farmer.full_name,
+          tree_count: allocTreeCount,
+        },
+      } as any);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-allocations"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-pending-alloc"] });
+      setAllocDialog(null);
+      setAllocFarmerId("");
+      setAllocTreeCount(0);
+      setAllocSpecies("");
+      setAllocNotes("");
+      toast({ title: "Allocation created ✅", description: "Farmer assigned. Review date auto-set to +6 months." });
+    },
+    onError: (err: any) => toast({ title: "Error", description: err.message, variant: "destructive" }),
+  });
+
+  const openAllocDialog = (order: PendingOrder) => {
+    setAllocFarmerId("");
+    setAllocTreeCount(order.quantity);
+    setAllocSpecies(order.tree_name);
+    setAllocPlantDate(new Date().toISOString().split("T")[0]);
+    setAllocIncentive(120);
+    setAllocNotes("");
+    setAllocDialog(order);
+  };
+
+
   // Record survival update
   const survivalMutation = useMutation({
     mutationFn: async (alloc: Allocation) => {
