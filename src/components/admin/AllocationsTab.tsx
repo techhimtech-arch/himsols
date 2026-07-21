@@ -394,7 +394,67 @@ export const AllocationsTab = () => {
         </CardContent></Card>
       </div>
 
+      {/* Pending Allocations — orders waiting to be assigned to a farmer */}
+      <Card className="border-amber-500/40">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-amber-600" />
+              Pending Allocation
+              <Badge variant="secondary" className="ml-2">{pendingOrders.length}</Badge>
+            </CardTitle>
+            <p className="text-xs text-muted-foreground">
+              Paid orders + plantation requests without a farmer assigned yet.
+            </p>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {pendingLoading ? (
+            <div className="py-6 flex justify-center"><Loader2 className="h-5 w-5 animate-spin" /></div>
+          ) : pendingOrders.length === 0 ? (
+            <p className="text-center text-muted-foreground py-6 text-sm">
+              🎉 All orders are allocated. New orders will appear here.
+            </p>
+          ) : verifiedFarmers.length === 0 ? (
+            <div className="p-4 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-sm">
+              <p className="font-medium text-amber-800 dark:text-amber-300 mb-1">No verified farmers yet</p>
+              <p className="text-amber-700 dark:text-amber-400 text-xs">
+                Go to the <strong>Farmers</strong> tab and verify at least one farmer (must have a linked user account) before you can allocate orders.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {pendingOrders.slice(0, 25).map(o => (
+                <div key={`${o.source}-${o.id}`} className="flex items-center justify-between gap-3 p-3 rounded-lg border border-border bg-card hover:bg-muted/40 transition-colors">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Badge variant="outline" className="text-[10px] uppercase">{o.source}</Badge>
+                      <span className="font-mono text-xs text-muted-foreground">{o.id.slice(0, 8)}</span>
+                      <span className="text-xs text-muted-foreground">·</span>
+                      <span className="text-xs">{format(new Date(o.created_at), "dd MMM yy")}</span>
+                    </div>
+                    <div className="mt-1 flex items-center gap-2 flex-wrap">
+                      <span className="font-medium text-sm">{o.quantity} × {o.tree_name}</span>
+                      {o.district && <span className="text-xs text-muted-foreground">→ {o.district}</span>}
+                    </div>
+                  </div>
+                  <Button size="sm" onClick={() => openAllocDialog(o)}>
+                    <Plus className="h-3 w-3 mr-1" /> Allocate
+                  </Button>
+                </div>
+              ))}
+              {pendingOrders.length > 25 && (
+                <p className="text-xs text-muted-foreground text-center pt-2">
+                  Showing 25 of {pendingOrders.length}. Allocate these first, then more will appear.
+                </p>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Filters */}
+
       <Card>
         <CardHeader className="pb-3">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
