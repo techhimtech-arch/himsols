@@ -14,7 +14,29 @@ import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MobileCard, MobileCardRow, StatusBadge } from "./MobileCard";
 import { format } from "date-fns";
-import { Loader2, TreePine, IndianRupee, Camera, CheckCircle2, AlertCircle } from "lucide-react";
+import { Loader2, TreePine, IndianRupee, Camera, CheckCircle2, AlertCircle, Plus, Sprout } from "lucide-react";
+
+interface PendingOrder {
+  id: string;
+  quantity: number;
+  district: string | null;
+  state: string | null;
+  status: string;
+  created_at: string;
+  tree_id: string | null;
+  tree_name: string;
+  user_id: string | null;
+  source: "order" | "request";
+}
+
+interface VerifiedFarmer {
+  id: string;
+  user_id: string;
+  full_name: string;
+  village: string | null;
+  district: string | null;
+  mobile: string | null;
+}
 
 interface Allocation {
   id: string;
