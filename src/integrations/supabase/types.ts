@@ -2258,7 +2258,7 @@ export type Database = {
       tree_allocations: {
         Row: {
           allocated_by: string
-          application_id: string
+          application_id: string | null
           batch_id: string | null
           created_at: string
           id: string
@@ -2281,7 +2281,7 @@ export type Database = {
         }
         Insert: {
           allocated_by: string
-          application_id: string
+          application_id?: string | null
           batch_id?: string | null
           created_at?: string
           id?: string
@@ -2304,7 +2304,7 @@ export type Database = {
         }
         Update: {
           allocated_by?: string
-          application_id?: string
+          application_id?: string | null
           batch_id?: string | null
           created_at?: string
           id?: string

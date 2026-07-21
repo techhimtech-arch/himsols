@@ -1,57 +1,81 @@
-## Goal
-Homepage ko top-notch 3D-feel destination banao — hero pe ek real WebGL scene (floating low-poly tree + orbiting stat cards), aur baaki sections layered parallax + tilt cards + kinetic type. Brand-locked: Forest Green (#2e8b57), honest pilot-phase copy, ₹269 tree pack CTA intact. Motion register 3/5 — cinematic but not seizure-y.
 
-## What the user sees
+# Verified Plantation Pipeline — from claim to reality
 
-```text
-┌─────────────────────────────────────────────────┐
-│  NAVBAR (unchanged)                             │
-├─────────────────────────────────────────────────┤
-│  HERO (WebGL canvas, ~92vh)                     │
-│                                                 │
-│    "Verified plantation           ╭─────────╮   │
-│     in Himachal."                 │ 🌲 3D   │   │
-│    Pilot cohort · Monsoon 2026    │  tree   │   │
-│                                   │ rotates │   │
-│    [Plant a tree · ₹269]          ╰────┬────╯   │
-│    [CSR partnership]              orbit stats   │
-│                                   ₹269 / 50 /7  │
-├─────────────────────────────────────────────────┤
-│  SCROLL SCENES (faux-3D, sticky parallax)       │
-│   1. "Where your tree lives" — HP valley SVG    │
-│      layered mountains, drifting clouds         │
-│   2. "How we verify" — 4 tilt cards, mouse-3D   │
-│   3. Impact counters (existing, kept)           │
-│   4. Trust / testimonials (existing, kept)      │
-│   5. CSR band + FAQ (existing, kept)            │
-└─────────────────────────────────────────────────┘
-```
+## Current honest state (verified from DB)
 
-## Scope
+| Piece | Schema | Real data | Working UI |
+|---|---|---|---|
+| Order intake (`orders`, `tree_plantation_requests`) | ✅ | 59 orders, live | ✅ Checkout works |
+| Farmer roster (`farmer_registrations`) | ✅ | Only 2 rows | Registration form exists |
+| **Assign trees to farmer** (`tree_allocations`) | ✅ 21 cols ready | **0 rows** | ❌ No admin UI ever used |
+| **Geo-tag + photo per batch** (`plantation_photos` w/ lat/lng) | ✅ | 3 rows manual | ❌ No farmer/admin upload flow |
+| **Survival audit m3/m6/m12** (`survival_updates`) | ✅ | **0 rows** | ❌ No form, no reminder |
+| **CSR report PDF (Section 135)** | — | — | ❌ Doesn't exist (only donation certificates exist) |
 
-**Rebuild:** `src/components/home/HeroSection.tsx` (WebGL hero replaces current parallax hero).
-**New:** `src/components/home/WhereTreeLivesScene.tsx` (faux-3D valley scrollytelling), `src/components/home/HowWeVerifyTilt.tsx` (mouse-tilt cards).
-**Edit:** `src/pages/Index.tsx` to slot the two new sections above the existing impact/testimonial/FAQ blocks.
-**Untouched:** all business logic, routes, DB, auth, pricing, CTAs, existing impact/testimonial/CSR/FAQ sections, footer, navbar.
+**Reality:** Jab CSR ya user tree kharidta hai, admin manually WhatsApp pe farmer ko bolta hai. Kaha laga, photo, survival — **kuch record nahi**. Homepage cards abhi aspirational hain.
 
-## Technical notes
+## What we'll build (4 pieces, in order)
 
-- Stack: `@react-three/fiber@^8.18` + `@react-three/drei@^9.122.0` + `three@^0.160` (versions per project constraints, React 18 compatible). Existing `framer-motion` reused.
-- Hero canvas is lazy-loaded via `React.lazy` + `<Suspense fallback={<StaticHeroFallback/>}>`; fallback is a static gradient + headline so LCP stays fast and no-WebGL devices still convert.
-- Tree = low-poly procedural mesh (cone trunk + 3 icosahedron foliage clusters) — no external GLB, zero asset weight beyond the three.js bundle. Slow y-rotation + subtle float (sin-wave). `dpr={[1, 1.5]}`, `frameloop="demand"` on idle, `powerPreference: "high-performance"`.
-- Orbit stats = 3 HTML cards positioned with `@react-three/drei` `<Html>` on invisible orbit points, so text stays crisp and accessible.
-- Mobile: canvas renders at reduced dpr; if `matchMedia('(max-width: 640px)')` or `prefers-reduced-motion`, fall back to a static styled hero (no canvas mount at all) — protects low-end phones.
-- Faux-3D sections: pure CSS 3D transforms + `framer-motion` `useScroll` / `useTransform`. No new deps.
-- Copy: keep every honest pilot line as-is — "Pilot cohort · Monsoon 2026", "50 farmer partners", "7 districts", ₹269. No new claims.
-- SEO: hero `<h1>` stays a real DOM element behind/around the canvas (canvas is `aria-hidden`), so crawlers and screen readers get the same headline.
-- Perf budget: hero JS chunk ≤ ~180KB gzipped (three+r3f+drei tree-shaken). Verified after build.
+### 1. Admin: Allocate trees to farmer (fills `tree_allocations`)
 
-## Verification
+New page `/admin/allocations`:
+- List of paid orders + tree_plantation_requests with status = PAID and no allocation yet
+- "Allocate" button → pick farmer from `farmer_registrations` (verified only) → enter tree_count, species, plantation_date, incentive_per_tree
+- Creates row in `tree_allocations` linked to `order_id`; auto-generates `batch_id` (trigger already exists) and `review_date = plantation_date + 6 months`
+- Order status → "ALLOCATED"
 
-1. `bun add three@^0.160 @react-three/fiber@^8.18 @react-three/drei@^9.122.0` — build must pass.
-2. Playwright at 1280×900 desktop + 390×844 mobile: screenshot hero, confirm tree renders on desktop and static fallback renders on mobile; zero console errors; LCP element still the headline.
-3. Manually confirm `prefers-reduced-motion` path renders static hero.
-4. Confirm CTAs (`/checkout?pack=single-tree`, CSR link) still fire.
+### 2. Farmer/field: Geo-tagged photo upload (fills `plantation_photos`)
 
-## Out of scope
-Homepage business logic, pricing, auth, DB, CSR proposal PDF, other Learn pages. Sirf homepage visual layer.
+New mobile-first page `/partner/upload/:allocation_id`:
+- Land partner logs in (role already exists)
+- Sees pending allocations
+- Upload photo → **browser `navigator.geolocation` captures lat/lng automatically** + `Date.now()`
+- Uploads to `tree-photos` bucket, inserts into `plantation_photos` with lat/lng/caption
+- Admin can also upload on behalf (fallback)
+- Order status → "PLANTED" once ≥1 photo exists
+
+### 3. Survival audit form (fills `survival_updates`)
+
+New page `/admin/survival-audit`:
+- Lists allocations where `review_date` is due (month 3, 6, 12 from `plantation_date`)
+- Team member submits: photo, health_status (healthy/stressed/dead), height_cm, trees_alive/trees_dead counts
+- Updates `tree_allocations.trees_alive/trees_dead`
+- Simple weekly email digest to admin listing due audits (edge function + cron via `pg_cron` or manual for now — cron adds later)
+
+### 4. CSR "proof pack" PDF generator (real Section 135 report)
+
+New edge function `generate-csr-report`:
+- Input: `order_id` or `csr_partner_id` or date range
+- Pulls from DB: trees planted (from allocations), farmers involved, GPS coordinates, photos with dates, survival data if any, ₹ amount, CO₂ estimate (labeled)
+- Renders PDF (Deno + pdf-lib or existing `Himsols-CSR-Proposal.pdf` style) with:
+  - Cover page: CSR partner name, order refs, plantation window
+  - Page 2: Summary — trees, districts, farmers, ₹ contribution
+  - Page 3+: **Per-batch geo-tagged photo grid** (photo + GPS + date)
+  - Page 4: Survival snapshot (if audit done) or "next audit due" schedule
+  - Page 5: Section 135 compliance note, Himsols registration details, signatures
+- Download button on `/admin/orders/:id` and later on public CSR dashboard
+
+## What stays the same
+
+- Homepage "How we verify" cards — copy stays but each card links to a **real proof page** once section 1-2 have data
+- Pilot cohort positioning stays (only 2 farmers → build UI first, then onboard 48 more)
+- Zero changes to checkout, payment, wallet, or user-facing tree flows
+
+## Order of build (small commits so you can review each)
+
+1. **Admin allocations UI** (~1.5 hrs) — biggest unlock; fills empty `tree_allocations`
+2. **Partner geo-photo upload** (~2 hrs) — this is the actual "geo-tagging" the homepage claims
+3. **CSR PDF generator** (~2 hrs) — the deliverable CSR heads will actually ask for
+4. **Survival audit form** (~1 hr) — can be simple admin form now, cron reminders later
+
+Total ~6-7 hrs across 4 build steps. Har step ke baad tu preview me test kar sakta hai.
+
+## Not in this plan (call out honestly)
+
+- Automated month 3/6/12 reminders (needs `pg_cron` — add after step 4 works)
+- Public per-tree tracking page for buyers (nice-to-have, after CSR pipeline works)
+- Blockchain / third-party verification (out of scope; we do first-party evidence)
+
+---
+
+**Recommendation:** Step 1 pehle karte hain — bina allocations ke baaki sab empty rahenge. Approve karo to build mode me step 1 shuru karta hoon.

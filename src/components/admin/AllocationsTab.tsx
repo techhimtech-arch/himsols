@@ -14,7 +14,29 @@ import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MobileCard, MobileCardRow, StatusBadge } from "./MobileCard";
 import { format } from "date-fns";
-import { Loader2, TreePine, IndianRupee, Camera, CheckCircle2, AlertCircle } from "lucide-react";
+import { Loader2, TreePine, IndianRupee, Camera, CheckCircle2, AlertCircle, Plus, Sprout } from "lucide-react";
+
+interface PendingOrder {
+  id: string;
+  quantity: number;
+  district: string | null;
+  state: string | null;
+  status: string;
+  created_at: string;
+  tree_id: string | null;
+  tree_name: string;
+  user_id: string | null;
+  source: "order" | "request";
+}
+
+interface VerifiedFarmer {
+  id: string;
+  user_id: string;
+  full_name: string;
+  village: string | null;
+  district: string | null;
+  mobile: string | null;
+}
 
 interface Allocation {
   id: string;
@@ -57,6 +79,15 @@ export const AllocationsTab = () => {
   const [payoutRef, setPayoutRef] = useState("");
   const [payoutDate, setPayoutDate] = useState("");
 
+  // New allocation dialog state
+  const [allocDialog, setAllocDialog] = useState<PendingOrder | null>(null);
+  const [allocFarmerId, setAllocFarmerId] = useState<string>("");
+  const [allocTreeCount, setAllocTreeCount] = useState<number>(0);
+  const [allocSpecies, setAllocSpecies] = useState<string>("");
+  const [allocPlantDate, setAllocPlantDate] = useState<string>(new Date().toISOString().split("T")[0]);
+  const [allocIncentive, setAllocIncentive] = useState<number>(120);
+  const [allocNotes, setAllocNotes] = useState<string>("");
+
   const { data: allocations = [], isLoading } = useQuery({
     queryKey: ["admin-allocations"],
     queryFn: async () => {
@@ -66,6 +97,76 @@ export const AllocationsTab = () => {
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data || []) as unknown as Allocation[];
+    },
+  });
+
+  const { data: pendingOrders = [], isLoading: pendingLoading } = useQuery({
+    queryKey: ["admin-pending-alloc", allocations.length],
+    queryFn: async () => {
+      const allocatedOrderIds = new Set(
+        allocations.map(a => a.order_id).filter(Boolean) as string[]
+      );
+      const [ordersRes, reqsRes] = await Promise.all([
+        supabase
+          .from("orders")
+          .select("id, quantity, district, state, status, created_at, tree_id, user_id, trees(name)")
+          .neq("status", "cancelled")
+          .order("created_at", { ascending: false })
+          .limit(50),
+        supabase
+          .from("tree_plantation_requests")
+          .select("id, quantity, tree_type, status, created_at, user_id, location")
+          .neq("status", "cancelled")
+          .order("created_at", { ascending: false })
+          .limit(50),
+      ]);
+      if (ordersRes.error) throw ordersRes.error;
+      if (reqsRes.error) throw reqsRes.error;
+
+      const list: PendingOrder[] = [];
+      (ordersRes.data || []).forEach((o: any) => {
+        if (allocatedOrderIds.has(o.id)) return;
+        list.push({
+          id: o.id,
+          quantity: o.quantity || 1,
+          district: o.district,
+          state: o.state,
+          status: o.status,
+          created_at: o.created_at,
+          tree_id: o.tree_id,
+          tree_name: o.trees?.name || "Mixed native trees",
+          user_id: o.user_id,
+          source: "order",
+        });
+      });
+      (reqsRes.data || []).forEach((r: any) => {
+        list.push({
+          id: r.id,
+          quantity: r.quantity || 1,
+          district: r.location,
+          state: null,
+          status: r.status,
+          created_at: r.created_at,
+          tree_id: null,
+          tree_name: r.tree_type || "Mixed native trees",
+          user_id: r.user_id,
+          source: "request",
+        });
+      });
+      return list;
+    },
+  });
+
+  const { data: verifiedFarmers = [] } = useQuery({
+    queryKey: ["admin-verified-farmers"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("farmer_registrations")
+        .select("id, user_id, full_name, village, district, mobile")
+        .eq("status", "verified")
+        .not("user_id", "is", null);
+      if (error) throw error;
+      return (data || []) as VerifiedFarmer[];
     },
   });
 
@@ -85,6 +186,77 @@ export const AllocationsTab = () => {
     if (payoutFilter !== "all" && a.payout_status !== payoutFilter) return false;
     return true;
   });
+
+  // Create new allocation from a paid order
+  const createAllocMutation = useMutation({
+    mutationFn: async () => {
+      if (!allocDialog) throw new Error("No order selected");
+      const farmer = verifiedFarmers.find(f => f.id === allocFarmerId);
+      if (!farmer || !farmer.user_id) throw new Error("Pick a verified farmer with a linked user account");
+      if (allocTreeCount <= 0) throw new Error("Tree count must be positive");
+      if (!allocSpecies.trim()) throw new Error("Species is required");
+      if (!allocPlantDate) throw new Error("Plantation date is required");
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      const payload: any = {
+        order_id: allocDialog.source === "order" ? allocDialog.id : null,
+        partner_id: farmer.user_id,
+        application_id: null,
+        tree_count: allocTreeCount,
+        species: allocSpecies.trim(),
+        plantation_date: allocPlantDate,
+        incentive_per_tree: allocIncentive,
+        status: "allocated",
+        payout_status: "pending",
+        allocated_by: user.id,
+        notes: allocNotes.trim() || `Allocated from ${allocDialog.source} ${allocDialog.id.slice(0, 8)} — ${farmer.village || farmer.district || ""}`,
+      };
+
+      const { data: newAlloc, error } = await supabase
+        .from("tree_allocations")
+        .insert(payload)
+        .select("id")
+        .single();
+      if (error) throw error;
+
+      // Log
+      await supabase.from("allocation_logs").insert({
+        allocation_id: newAlloc.id,
+        action: "created",
+        performed_by: user.id,
+        details: {
+          order_id: allocDialog.id,
+          source: allocDialog.source,
+          farmer: farmer.full_name,
+          tree_count: allocTreeCount,
+        },
+      } as any);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-allocations"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-pending-alloc"] });
+      setAllocDialog(null);
+      setAllocFarmerId("");
+      setAllocTreeCount(0);
+      setAllocSpecies("");
+      setAllocNotes("");
+      toast({ title: "Allocation created ✅", description: "Farmer assigned. Review date auto-set to +6 months." });
+    },
+    onError: (err: any) => toast({ title: "Error", description: err.message, variant: "destructive" }),
+  });
+
+  const openAllocDialog = (order: PendingOrder) => {
+    setAllocFarmerId("");
+    setAllocTreeCount(order.quantity);
+    setAllocSpecies(order.tree_name);
+    setAllocPlantDate(new Date().toISOString().split("T")[0]);
+    setAllocIncentive(120);
+    setAllocNotes("");
+    setAllocDialog(order);
+  };
+
 
   // Record survival update
   const survivalMutation = useMutation({
@@ -222,7 +394,67 @@ export const AllocationsTab = () => {
         </CardContent></Card>
       </div>
 
+      {/* Pending Allocations — orders waiting to be assigned to a farmer */}
+      <Card className="border-amber-500/40">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-amber-600" />
+              Pending Allocation
+              <Badge variant="secondary" className="ml-2">{pendingOrders.length}</Badge>
+            </CardTitle>
+            <p className="text-xs text-muted-foreground">
+              Paid orders + plantation requests without a farmer assigned yet.
+            </p>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {pendingLoading ? (
+            <div className="py-6 flex justify-center"><Loader2 className="h-5 w-5 animate-spin" /></div>
+          ) : pendingOrders.length === 0 ? (
+            <p className="text-center text-muted-foreground py-6 text-sm">
+              🎉 All orders are allocated. New orders will appear here.
+            </p>
+          ) : verifiedFarmers.length === 0 ? (
+            <div className="p-4 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-sm">
+              <p className="font-medium text-amber-800 dark:text-amber-300 mb-1">No verified farmers yet</p>
+              <p className="text-amber-700 dark:text-amber-400 text-xs">
+                Go to the <strong>Farmers</strong> tab and verify at least one farmer (must have a linked user account) before you can allocate orders.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {pendingOrders.slice(0, 25).map(o => (
+                <div key={`${o.source}-${o.id}`} className="flex items-center justify-between gap-3 p-3 rounded-lg border border-border bg-card hover:bg-muted/40 transition-colors">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Badge variant="outline" className="text-[10px] uppercase">{o.source}</Badge>
+                      <span className="font-mono text-xs text-muted-foreground">{o.id.slice(0, 8)}</span>
+                      <span className="text-xs text-muted-foreground">·</span>
+                      <span className="text-xs">{format(new Date(o.created_at), "dd MMM yy")}</span>
+                    </div>
+                    <div className="mt-1 flex items-center gap-2 flex-wrap">
+                      <span className="font-medium text-sm">{o.quantity} × {o.tree_name}</span>
+                      {o.district && <span className="text-xs text-muted-foreground">→ {o.district}</span>}
+                    </div>
+                  </div>
+                  <Button size="sm" onClick={() => openAllocDialog(o)}>
+                    <Plus className="h-3 w-3 mr-1" /> Allocate
+                  </Button>
+                </div>
+              ))}
+              {pendingOrders.length > 25 && (
+                <p className="text-xs text-muted-foreground text-center pt-2">
+                  Showing 25 of {pendingOrders.length}. Allocate these first, then more will appear.
+                </p>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Filters */}
+
       <Card>
         <CardHeader className="pb-3">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
@@ -460,6 +692,87 @@ export const AllocationsTab = () => {
                 onClick={() => payoutMutation.mutate(payoutDialog)}>
                 {payoutMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <CheckCircle2 className="h-4 w-4 mr-2" />}
                 Confirm Payout — ₹{(payoutDialog.payout_amount || 0).toLocaleString()}
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Create Allocation Dialog */}
+      <Dialog open={!!allocDialog} onOpenChange={() => setAllocDialog(null)}>
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sprout className="h-5 w-5 text-primary" />
+              Allocate to Farmer
+            </DialogTitle>
+          </DialogHeader>
+          {allocDialog && (
+            <div className="space-y-4">
+              <div className="bg-muted/50 p-3 rounded-lg text-sm space-y-1">
+                <p className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-[10px] uppercase">{allocDialog.source}</Badge>
+                  <span className="font-mono text-xs">{allocDialog.id.slice(0, 8)}</span>
+                </p>
+                <p><strong>{allocDialog.quantity} × {allocDialog.tree_name}</strong></p>
+                {allocDialog.district && <p className="text-xs text-muted-foreground">Delivery: {allocDialog.district}</p>}
+              </div>
+
+              <div>
+                <Label>Verified Farmer *</Label>
+                <Select value={allocFarmerId} onValueChange={setAllocFarmerId}>
+                  <SelectTrigger className="bg-background">
+                    <SelectValue placeholder="Pick a verified farmer" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover border border-border z-50">
+                    {verifiedFarmers.map(f => (
+                      <SelectItem key={f.id} value={f.id}>
+                        {f.full_name} — {f.village || f.district || "HP"}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground mt-1">Only verified farmers with a linked user account appear here.</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label>Tree Count *</Label>
+                  <Input type="number" min={1} value={allocTreeCount}
+                    onChange={e => setAllocTreeCount(parseInt(e.target.value) || 0)} />
+                </div>
+                <div>
+                  <Label>Incentive / Tree (₹)</Label>
+                  <Input type="number" min={0} value={allocIncentive}
+                    onChange={e => setAllocIncentive(parseFloat(e.target.value) || 0)} />
+                </div>
+              </div>
+
+              <div>
+                <Label>Species *</Label>
+                <Input value={allocSpecies} onChange={e => setAllocSpecies(e.target.value)}
+                  placeholder="e.g. Deodar, Oak, Mixed native" />
+              </div>
+
+              <div>
+                <Label>Plantation Date *</Label>
+                <Input type="date" value={allocPlantDate}
+                  onChange={e => setAllocPlantDate(e.target.value)} />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Review date auto-sets to +6 months. Total payout: ₹{(allocTreeCount * allocIncentive).toLocaleString()} (on 100% survival).
+                </p>
+              </div>
+
+              <div>
+                <Label>Notes</Label>
+                <Textarea rows={2} value={allocNotes} onChange={e => setAllocNotes(e.target.value)}
+                  placeholder="Optional: land parcel, batch reference, special instructions..." />
+              </div>
+
+              <Button className="w-full" disabled={createAllocMutation.isPending || !allocFarmerId}
+                onClick={() => createAllocMutation.mutate()}>
+                {createAllocMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <CheckCircle2 className="h-4 w-4 mr-2" />}
+                Create Allocation
               </Button>
             </div>
           )}
