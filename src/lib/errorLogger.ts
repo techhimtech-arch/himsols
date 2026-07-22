@@ -37,6 +37,15 @@ async function logError(payload: {
   }
 }
 
+function shortenUrl(u: string) {
+  try {
+    const url = new URL(u);
+    return url.pathname + url.search.slice(0, 100);
+  } catch {
+    return u.slice(0, 200);
+  }
+}
+
 let installed = false;
 export function installErrorLogger() {
   if (installed || typeof window === "undefined") return;
@@ -58,6 +67,39 @@ export function installErrorLogger() {
       source: "unhandledrejection",
     });
   });
+
+  // Intercept fetch to catch API errors (Supabase REST/functions, RLS violations, etc.)
+  const origFetch = window.fetch.bind(window);
+  window.fetch = async (input: any, init?: any) => {
+    const url = typeof input === "string" ? input : (input?.url || "");
+    try {
+      const res = await origFetch(input, init);
+      if (!res.ok && res.status >= 400 && !url.includes("client_error_logs")) {
+        const isAppApi = url.includes("supabase.co") || url.includes("/rest/v1") || url.includes("/functions/v1") || url.includes("/auth/v1");
+        if (isAppApi) {
+          let bodyText = "";
+          try { bodyText = await res.clone().text(); } catch {}
+          const method = (init?.method || "GET").toUpperCase();
+          logError({
+            message: `API ${res.status} ${method} ${shortenUrl(url)}: ${bodyText.slice(0, 500)}`,
+            source: "fetch",
+            severity: res.status >= 500 ? "error" : "warning",
+            metadata: { status: res.status, method, url: shortenUrl(url) },
+          });
+        }
+      }
+      return res;
+    } catch (err: any) {
+      if (!url.includes("client_error_logs")) {
+        logError({
+          message: `Network error ${shortenUrl(url)}: ${err?.message || String(err)}`,
+          stack: err?.stack,
+          source: "fetch",
+        });
+      }
+      throw err;
+    }
+  };
 }
 
 export function reportError(err: unknown, meta?: Record<string, any>) {
