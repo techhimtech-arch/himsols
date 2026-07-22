@@ -9,7 +9,8 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Shield, Users, TreePine, TrendingUp, Loader2, Settings, FileText, Image, Quote, Activity, Handshake, Store, Globe, BarChart3, Heart, Flower2, Gift, MessageSquare, Menu, Link2, Info, MapPin, Building2, Sprout, Gauge, ShieldCheck, IndianRupee } from "lucide-react";
+import { Shield, Users, TreePine, TrendingUp, Loader2, Settings, FileText, Image, Quote, Activity, Handshake, Store, Globe, BarChart3, Heart, Flower2, Gift, MessageSquare, Menu, Link2, Info, MapPin, Building2, Sprout, Gauge, ShieldCheck, IndianRupee, AlertTriangle } from "lucide-react";
+import { ErrorLogsTab } from "@/components/admin/ErrorLogsTab";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlantsTab } from "@/components/admin/PlantsTab";
 import { OrdersTab } from "@/components/admin/OrdersTab";
@@ -167,6 +168,7 @@ const Admin = () => {
                 <TabsTrigger value="land-partners" className="text-xs md:text-sm"><ShieldCheck className="h-3 w-3 md:h-4 md:w-4 mr-1" />Land Partners</TabsTrigger>
                 <TabsTrigger value="allocations" className="text-xs md:text-sm"><TreePine className="h-3 w-3 md:h-4 md:w-4 mr-1" />Allocations</TabsTrigger>
                 <TabsTrigger value="scrap-types" className="text-xs md:text-sm"><IndianRupee className="h-3 w-3 md:h-4 md:w-4 mr-1" />Scrap Rates</TabsTrigger>
+                <TabsTrigger value="error-logs" className="text-xs md:text-sm"><AlertTriangle className="h-3 w-3 md:h-4 md:w-4 mr-1" />Errors</TabsTrigger>
                 <TabsTrigger value="settings" className="text-xs md:text-sm"><Settings className="h-3 w-3 md:h-4 md:w-4 mr-1" />Settings</TabsTrigger>
               </TabsList>
             </div>
@@ -213,6 +215,7 @@ const Admin = () => {
             <TabsContent value="land-partners"><LandPartnersTab /></TabsContent>
             <TabsContent value="allocations"><AllocationsTab /></TabsContent>
             <TabsContent value="scrap-types"><ScrapTypesTab /></TabsContent>
+            <TabsContent value="error-logs"><ErrorLogsTab /></TabsContent>
             <TabsContent value="settings"><SettingsTab /></TabsContent>
           </Tabs>
         </div>
