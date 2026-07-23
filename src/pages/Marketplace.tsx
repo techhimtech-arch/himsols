@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { SEO } from "@/components/SEO";
+import { SEO, CollectionPageSchema } from "@/components/SEO";
 import { MarketplaceProductCard } from "@/components/marketplace/MarketplaceProductCard";
 import { MarketplaceCartSheet } from "@/components/marketplace/MarketplaceCartSheet";
 import { CategoryFilter } from "@/components/marketplace/CategoryFilter";
@@ -51,6 +51,18 @@ const Marketplace = () => {
         title="Rural Marketplace — Farmer Produce & Handmade Goods | Himsols"
         description="Shop directly from Himachal farmers and artisans: fresh produce, handmade crafts, plants, and home essentials. Pan-India delivery."
         url="https://himsols.com/marketplace"
+      />
+      <CollectionPageSchema
+        name="Himsols Rural Marketplace"
+        description="Farmer produce, handmade crafts, plants and home essentials from Himachal Pradesh."
+        url="https://himsols.com/marketplace"
+        itemType="Product"
+        items={(filteredProducts || []).map((p: any) => ({
+          name: p.name,
+          url: `https://himsols.com/marketplace/${p.id}`,
+          image: p.image_url || undefined,
+          price: p.price,
+        }))}
       />
       <Navbar />
 

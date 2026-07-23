@@ -18,6 +18,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { SEO, CollectionPageSchema } from "@/components/SEO";
 
 interface PlantationPhoto {
   id: string;
@@ -167,6 +168,21 @@ const Gallery = () => {
 
   return (
     <div className="min-h-screen">
+      <SEO
+        title="Plantation Gallery — Geo-Tagged Tree Photos | Himsols"
+        description="Photos from our verified tree plantation drives across Himachal Pradesh, uploaded by farmers and CSR partners with location tags."
+        url="https://himsols.com/gallery"
+      />
+      <CollectionPageSchema
+        name="Himsols Plantation Gallery"
+        description="Geo-tagged plantation photos from Himachal Pradesh."
+        url="https://himsols.com/gallery"
+        itemType="ImageObject"
+        items={photos.map((p) => ({
+          name: p.caption || "Plantation photo",
+          image: p.photo_url,
+        }))}
+      />
       <Navbar />
 
       {/* Hero Section */}

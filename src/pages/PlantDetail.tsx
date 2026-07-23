@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/hooks/useCart";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useToast } from "@/hooks/use-toast";
-import { SEO } from "@/components/SEO";
+import { SEO, ProductSchema } from "@/components/SEO";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 interface PlantImage {
@@ -220,6 +220,17 @@ const PlantDetail = () => {
         title={`${plant.name} | Ornamental Plants`}
         description={plant.description.slice(0, 160)}
         keywords={`${plant.name}, ${plant.category}, ornamental plants, indoor plants`}
+        url={`https://himsols.com/plants/${plant.id}`}
+        image={currentImage?.image_url || undefined}
+        type="product"
+      />
+      <ProductSchema
+        name={plant.name}
+        description={plant.description.slice(0, 300)}
+        image={currentImage?.image_url || undefined}
+        price={plant.price}
+        availability={plant.stock_quantity > 0 ? 'InStock' : 'OutOfStock'}
+        url={`https://himsols.com/plants/${plant.id}`}
       />
       <Navbar />
 

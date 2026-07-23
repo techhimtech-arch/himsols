@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { SEO } from "@/components/SEO";
+import { SEO, CollectionPageSchema } from "@/components/SEO";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -70,6 +70,17 @@ const Blog = () => {
         title="Blog — Sustainability & Tree Plantation Stories | Himsols"
         description="Read stories on agroforestry, carbon credits, climate action, and how Himachal farmers are building India's verified plantation network."
         url="https://himsols.com/blog"
+      />
+      <CollectionPageSchema
+        name="Himsols Blog"
+        description="Sustainability, agroforestry and tree plantation stories from Himachal Pradesh."
+        url="https://himsols.com/blog"
+        itemType="Article"
+        items={(posts || []).map((p: any) => ({
+          name: p.title,
+          url: `https://himsols.com/blog/${p.slug}`,
+          image: p.featured_image || undefined,
+        }))}
       />
       <Navbar />
 
