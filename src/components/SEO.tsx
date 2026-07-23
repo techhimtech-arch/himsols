@@ -372,4 +372,59 @@ export const ProductSchema = ({
   return null;
 };
 
+// Collection / listing page schema (marketplace, plants, blog, gallery)
+export const CollectionPageSchema = ({
+  name,
+  description,
+  url,
+  items,
+  itemType = 'Thing',
+}: {
+  name: string;
+  description: string;
+  url: string;
+  items: Array<{ name: string; url?: string; image?: string; price?: number }>;
+  itemType?: 'Product' | 'Article' | 'ImageObject' | 'Thing';
+}) => {
+  useEffect(() => {
+    const schema = {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": name,
+      "description": description,
+      "url": url,
+      "mainEntity": {
+        "@type": "ItemList",
+        "numberOfItems": items.length,
+        "itemListElement": items.slice(0, 30).map((it, i) => ({
+          "@type": "ListItem",
+          "position": i + 1,
+          "item": {
+            "@type": itemType,
+            "name": it.name,
+            ...(it.url ? { "url": it.url } : {}),
+            ...(it.image ? { "image": it.image } : {}),
+            ...(it.price != null
+              ? { "offers": { "@type": "Offer", "price": it.price, "priceCurrency": "INR" } }
+              : {}),
+          },
+        })),
+      },
+    };
+
+    document.querySelectorAll('script[data-schema="collection"]').forEach(el => el.remove());
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.setAttribute('data-schema', 'collection');
+    script.textContent = JSON.stringify(schema);
+    document.head.appendChild(script);
+
+    return () => {
+      document.querySelectorAll('script[data-schema="collection"]').forEach(el => el.remove());
+    };
+  }, [name, description, url, items, itemType]);
+
+  return null;
+};
+
 export default SEO;
