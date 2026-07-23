@@ -18,6 +18,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { SEO, CollectionPageSchema } from "@/components/SEO";
 
 interface PlantationPhoto {
   id: string;
