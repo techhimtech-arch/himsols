@@ -28,7 +28,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Checkbox } from "@/components/ui/checkbox";
-import { SEO } from "@/components/SEO";
+import { SEO, CollectionPageSchema } from "@/components/SEO";
 
 interface PlantImage {
   id: string;
