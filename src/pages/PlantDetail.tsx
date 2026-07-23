@@ -220,6 +220,17 @@ const PlantDetail = () => {
         title={`${plant.name} | Ornamental Plants`}
         description={plant.description.slice(0, 160)}
         keywords={`${plant.name}, ${plant.category}, ornamental plants, indoor plants`}
+        url={`https://himsols.com/plants/${plant.id}`}
+        image={currentImage?.image_url || undefined}
+        type="product"
+      />
+      <ProductSchema
+        name={plant.name}
+        description={plant.description.slice(0, 300)}
+        image={currentImage?.image_url || undefined}
+        price={plant.price}
+        availability={plant.stock_quantity > 0 ? 'InStock' : 'OutOfStock'}
+        url={`https://himsols.com/plants/${plant.id}`}
       />
       <Navbar />
 
