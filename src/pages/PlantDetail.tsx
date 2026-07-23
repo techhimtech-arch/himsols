@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/hooks/useCart";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useToast } from "@/hooks/use-toast";
-import { SEO } from "@/components/SEO";
+import { SEO, ProductSchema } from "@/components/SEO";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 interface PlantImage {
