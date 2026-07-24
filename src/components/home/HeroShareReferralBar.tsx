@@ -13,7 +13,7 @@ export const HeroShareReferralBar = () => {
   const referee = Number(settings?.referral_bonus_referee || 50);
   const enabled = settings?.referral_enabled !== "false";
 
-  const shareUrl = "https://himsols.com";
+  const shareUrl = "https://himsols.online";
   const msg = isHi
     ? `🌳 Mai Himsols par ped laga raha hoon — Himachal ke kisaano ki zameen par verified tree plantation. Tum bhi sirf ₹299 me apna ped lagao aur geo-tagged proof pao 👇\n${shareUrl}`
     : `🌳 I'm planting trees with Himsols — verified plantations on farmer land in Himachal. Plant your own from just ₹299 and get geo-tagged proof 👇\n${shareUrl}`;

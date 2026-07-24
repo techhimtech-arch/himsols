@@ -262,7 +262,7 @@ const LearnHimachalJungles = () => {
             ? "हिमाचल प्रदेश के जंगलों की सिनेमैटिक कहानी — ऊँचाई की सीढ़ी, देशी प्रजातियाँ, और क्यों ये जंगल उत्तर भारत के लिए ज़रूरी हैं।"
             : "A cinematic look at Himachal Pradesh's forests — altitude zones, native species, and why these mountains water half of north India."
         }
-        url="https://himsols.com/learn/himachal-jungles"
+        url="https://himsols.online/learn/himachal-jungles"
       />
       <Navbar />
       <main>

@@ -50,7 +50,7 @@ const LearnLessons = () => {
         description={isHi
           ? "छोटे 5-10 मिनट के पर्यावरण पाठ जिन्हें पूरा करके बैज कमाओ।"
           : "Short 5-10 min sustainability lessons. Finish quizzes to earn badges."}
-        url="https://himsols.com/learn/lessons"
+        url="https://himsols.online/learn/lessons"
       />
       <Navbar />
       <main className="pt-24 pb-20 px-4">

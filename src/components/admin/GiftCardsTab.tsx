@@ -94,7 +94,7 @@ export const GiftCardsTab = () => {
           gift_message: newCard.giftMessage || null,
           occasion: newCard.occasion || null,
           purchaser_name: "Admin",
-          purchaser_email: "admin@himsols.com",
+          purchaser_email: "admin@himsols.online",
           payment_gateway: "admin_created",
           payment_id: `admin_${Date.now()}`,
         });

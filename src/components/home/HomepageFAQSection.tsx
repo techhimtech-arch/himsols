@@ -73,10 +73,10 @@ export const HomepageFAQSection = memo(() => {
       schemas.push({
         "@context": "https://schema.org",
         "@type": "Organization",
-        "@id": "https://himsols.com/#organization",
+        "@id": "https://himsols.online/#organization",
         name: "Himsols",
-        url: "https://himsols.com",
-        logo: "https://himsols.com/favicon.png",
+        url: "https://himsols.online",
+        logo: "https://himsols.online/favicon.png",
         aggregateRating: {
           "@type": "AggregateRating",
           ratingValue: avg.toFixed(1),

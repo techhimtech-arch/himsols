@@ -122,7 +122,7 @@ const handler = async (req: Request): Promise<Response> => {
       type: 'magiclink',
       email: email,
       options: {
-        redirectTo: redirectTo || 'https://himsols.com/',
+        redirectTo: redirectTo || 'https://himsols.online/',
       },
     });
 
@@ -148,7 +148,7 @@ const handler = async (req: Request): Promise<Response> => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Himsols <noreply@himsols.com>",
+        from: "Himsols <noreply@himsols.online>",
         to: [email],
         subject: "🌱 Himsols - Verify Your Email",
         html: getEmailTemplate(displayName, verificationUrl),

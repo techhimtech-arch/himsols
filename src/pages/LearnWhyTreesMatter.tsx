@@ -590,7 +590,7 @@ const LearnWhyTreesMatter = () => {
           ? "एक पेड़ 22 किग्रा CO₂ सोखता है. हिमाचल में असली प्लांटेशन कैसे काम करता है — विज़ुअल कहानी में देखें."
           : "One tree absorbs 22 kg CO₂/year. See how verified plantation in Himachal actually works — an immersive visual story."}
         keywords="why trees matter, sustainability story, tree plantation impact, CO2 offset, Himachal forestry, environmental education"
-        url="https://himsols.com/learn/why-trees-matter"
+        url="https://himsols.online/learn/why-trees-matter"
       />
       <Navbar />
       <main>

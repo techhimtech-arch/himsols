@@ -361,7 +361,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       toast({
         title: "✅ Email Sent!",
-        description: "Verification email has been sent from noreply@himsols.com. Please check your inbox.",
+        description: "Verification email has been sent from noreply@himsols.online. Please check your inbox.",
       });
       return { success: true };
     } catch (error: any) {

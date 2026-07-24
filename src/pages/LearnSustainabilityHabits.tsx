@@ -819,7 +819,7 @@ const LearnSustainabilityHabits = () => {
             ? "सात रोज़मर्रा के अध्याय — पानी, बिजली, खाना, कचरा, यातायात, ख़रीदारी. एक सिनेमैटिक स्क्रॉल अनुभव."
             : "Seven everyday chapters — water, energy, food, waste, transport, consumption. A cinematic scroll experience."
         }
-        url="https://himsols.com/learn/sustainability-habits"
+        url="https://himsols.online/learn/sustainability-habits"
       />
       <Navbar />
       <main>

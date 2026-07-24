@@ -225,7 +225,7 @@ export const generateSchoolOutreachPdf = (
     doc.text(`Website:  ${contact.website}`, M, y);
     y += 6;
   }
-  doc.text("Apply online:  himsols.com/schools", M, y);
+  doc.text("Apply online:  himsols.online/schools", M, y);
 
   // Footer
   doc.setFontSize(9);

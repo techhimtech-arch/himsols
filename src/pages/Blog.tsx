@@ -69,16 +69,16 @@ const Blog = () => {
       <SEO
         title="Blog — Sustainability & Tree Plantation Stories | Himsols"
         description="Read stories on agroforestry, carbon credits, climate action, and how Himachal farmers are building India's verified plantation network."
-        url="https://himsols.com/blog"
+        url="https://himsols.online/blog"
       />
       <CollectionPageSchema
         name="Himsols Blog"
         description="Sustainability, agroforestry and tree plantation stories from Himachal Pradesh."
-        url="https://himsols.com/blog"
+        url="https://himsols.online/blog"
         itemType="Article"
         items={(posts || []).map((p: any) => ({
           name: p.title,
-          url: `https://himsols.com/blog/${p.slug}`,
+          url: `https://himsols.online/blog/${p.slug}`,
           image: p.featured_image || undefined,
         }))}
       />

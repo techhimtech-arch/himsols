@@ -25,7 +25,7 @@ const Index = () => {
         title="Himsols — Verified CSR Plantation Partner in Himachal Pradesh"
         description="Report-ready CSR & ESG tree plantation in Himachal Pradesh. Geo-tagged photos, survival tracking, CO₂ impact reports. Trusted by CSR teams. Get a proposal."
         keywords="CSR tree plantation India, ESG plantation partner, carbon offset Himachal, corporate tree planting, Section 135 CSR, verified plantation vendor, geo-tagged plantation"
-        url="https://himsols.com/"
+        url="https://himsols.online/"
       />
       <SEOSchemas includeServices={true} />
       <Navbar />

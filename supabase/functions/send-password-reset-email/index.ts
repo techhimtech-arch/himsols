@@ -125,7 +125,7 @@ const handler = async (req: Request): Promise<Response> => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Himsols <noreply@himsols.com>",
+        from: "Himsols <noreply@himsols.online>",
         to: [email],
         subject: "🔐 Reset Your Himsols Password",
         html: getEmailTemplate(resetUrl),

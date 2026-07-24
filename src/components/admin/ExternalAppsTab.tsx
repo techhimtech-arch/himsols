@@ -183,7 +183,7 @@ export const ExternalAppsTab = () => {
                 <Input
                   value={formData.url}
                   onChange={(e) => setFormData({ ...formData, url: e.target.value })}
-                  placeholder="https://carbon.himsols.com"
+                  placeholder="https://carbon.himsols.online"
                 />
               </div>
               <div>

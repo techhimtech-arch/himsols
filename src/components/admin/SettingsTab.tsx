@@ -243,7 +243,7 @@ export const SettingsTab = () => {
                 type="email"
                 value={formData.contact_email}
                 onChange={(e) => setFormData({ ...formData, contact_email: e.target.value })}
-                placeholder="info@himsols.com"
+                placeholder="info@himsols.online"
               />
             </div>
           </div>
