@@ -584,7 +584,7 @@ const LearnHowWePlant = () => {
             : "The six-step process behind every tree we plant — verified Himachal farmers, native species, monsoon timing, geo-tags, and survival tracking."
         }
         keywords="how we plant trees, tree plantation process, Himachal reforestation, native species plantation, geo-tagged trees, verified farmer"
-        url="https://himsols.com/learn/how-we-plant"
+        url="https://himsols.online/learn/how-we-plant"
       />
       <Navbar />
       <main>

@@ -150,7 +150,7 @@ const BlogPost = () => {
     );
   }
 
-  const postUrl = `https://himsols.com/blog/${post.slug}`;
+  const postUrl = `https://himsols.online/blog/${post.slug}`;
   const metaDescription = (excerpt || rawContent?.replace(/<[^>]+>/g, "").slice(0, 155)) || "Himsols blog post";
 
   return (

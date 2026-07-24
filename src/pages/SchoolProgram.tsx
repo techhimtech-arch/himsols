@@ -130,7 +130,7 @@ const SchoolProgram = () => {
         title="Schools & Education Program | Himsols — Plantation Drives & Sustainability Workshops"
         description="Partner with Himsols to bring tree plantation drives and sustainability workshops to your school, college, or NGO. Free consultation, hands-on workshops, and eco-club setup."
         keywords="school plantation program, sustainability workshop schools, eco-club India, kids climate education, Himachal Pradesh schools"
-        url="https://himsols.com/schools"
+        url="https://himsols.online/schools"
       />
       <Navbar />
 

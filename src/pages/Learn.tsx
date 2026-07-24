@@ -52,7 +52,7 @@ const Learn = () => {
         description={isHi
           ? "मुफ्त पर्यावरण पाठ, दैनिक हरी टिप्स, वीडियो और पेड़ों का विश्वकोश।"
           : "Free sustainability lessons, daily green tips, videos, and a tree encyclopedia. Learn, earn badges, plant a tree."}
-        url="https://himsols.com/learn"
+        url="https://himsols.online/learn"
       />
       <Navbar />
       <main className="pt-24 pb-20 px-4">

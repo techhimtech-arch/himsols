@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 
 
-const CANONICAL = "https://himsols.com/csr/guide-to-csr-plantation-india/thank-you";
+const CANONICAL = "https://himsols.online/csr/guide-to-csr-plantation-india/thank-you";
 
 const CSRGuideThankYou = () => {
   const navigate = useNavigate();

@@ -55,7 +55,7 @@ export const SchoolPartnershipsTab = () => {
   const contact = {
     phone: settings?.contact_phone || settings?.whatsapp_number,
     email: settings?.contact_email,
-    website: "himsols.com",
+    website: "himsols.online",
   };
 
   const downloadKit = (institutionName: string | null) => {
@@ -66,7 +66,7 @@ export const SchoolPartnershipsTab = () => {
 
   const shareKitOnWhatsApp = (r: SchoolPartnership | null) => {
     const phone = r?.phone?.replace(/\D/g, "");
-    const text = `Namaste${r?.contact_person ? " " + r.contact_person : ""},\n\nThank you for your interest in the Himsols Schools & Education Program${r?.institution_name ? " for " + r.institution_name : ""}. Please find our outreach kit attached (download from your email or ask us to resend).\n\nApply / details: https://himsols.com/schools\n\n— Himsols Team`;
+    const text = `Namaste${r?.contact_person ? " " + r.contact_person : ""},\n\nThank you for your interest in the Himsols Schools & Education Program${r?.institution_name ? " for " + r.institution_name : ""}. Please find our outreach kit attached (download from your email or ask us to resend).\n\nApply / details: https://himsols.online/schools\n\n— Himsols Team`;
     const url = phone
       ? `https://wa.me/${phone}?text=${encodeURIComponent(text)}`
       : `https://wa.me/?text=${encodeURIComponent(text)}`;

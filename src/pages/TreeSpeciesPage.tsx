@@ -14,7 +14,7 @@ import {
 import { Leaf, TreePine, ArrowRight } from "lucide-react";
 import { getSpeciesBySlug, TREE_SPECIES } from "@/lib/seo/tree-species";
 
-const SITE = "https://himsols.com";
+const SITE = "https://himsols.online";
 
 const TreeSpeciesPage = () => {
   const { slug } = useParams<{ slug: string }>();

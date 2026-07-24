@@ -78,9 +78,9 @@ const LearnDaily = () => {
   const body = tip ? (isHi && tip.body_hi ? tip.body_hi : tip.body) : "";
 
   const share = async () => {
-    const text = `${title}\n\n${body}\n\n${isHi ? "आज की टिप Himsols से" : "Today's eco-tip from Himsols"} → https://himsols.com/learn/daily`;
+    const text = `${title}\n\n${body}\n\n${isHi ? "आज की टिप Himsols से" : "Today's eco-tip from Himsols"} → https://himsols.online/learn/daily`;
     if (navigator.share) {
-      try { await navigator.share({ title, text, url: "https://himsols.com/learn/daily" }); } catch {}
+      try { await navigator.share({ title, text, url: "https://himsols.online/learn/daily" }); } catch {}
     } else {
       await navigator.clipboard.writeText(text);
       toast({ title: isHi ? "कॉपी हुआ!" : "Copied!" });
@@ -92,7 +92,7 @@ const LearnDaily = () => {
       <SEO
         title={isHi ? "आज की ग्रीन टिप | Himsols" : "Today's Green Tip | Himsols"}
         description={isHi ? "रोज़ एक नई पर्यावरण टिप। स्ट्रीक बनाओ, बोनस पाओ।" : "A new eco-tip every day. Build a streak, earn wallet bonuses."}
-        url="https://himsols.com/learn/daily"
+        url="https://himsols.online/learn/daily"
       />
       <Navbar />
       <main className="pt-24 pb-20 px-4">

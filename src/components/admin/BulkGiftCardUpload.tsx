@@ -151,7 +151,7 @@ export const BulkGiftCardUpload = () => {
             recipient_email: card.recipientEmail || null,
             gift_message: card.giftMessage || null,
             purchaser_name: "Admin (Bulk)",
-            purchaser_email: "admin@himsols.com",
+            purchaser_email: "admin@himsols.online",
             payment_gateway: "admin_bulk",
             payment_id: `bulk_${Date.now()}_${i}`,
           });

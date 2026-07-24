@@ -20,7 +20,7 @@ import {
 import { z } from "zod";
 import { Link } from "react-router-dom";
 
-const CANONICAL = "https://himsols.com/csr/guide-to-csr-plantation-india";
+const CANONICAL = "https://himsols.online/csr/guide-to-csr-plantation-india";
 
 const TOC = [
   { id: "what-is-csr-plantation", label: "What is CSR tree plantation?" },

@@ -167,7 +167,7 @@ export const BulkPlantationInquiriesTab = () => {
       `Reply on this chat to confirm and we will share the payment link.`,
       ``,
       `— Himsols Team`,
-      `https://himsols.com/bulk-plantation`,
+      `https://himsols.online/bulk-plantation`,
     ].filter(Boolean).join("\n");
     const url = phone
       ? `https://wa.me/${phone}?text=${encodeURIComponent(lines)}`
@@ -230,7 +230,7 @@ export const BulkPlantationInquiriesTab = () => {
                 <TableRow><TableCell colSpan={6} className="text-center py-8">Loading...</TableCell></TableRow>
               ) : filtered.length === 0 ? (
                 <TableRow><TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
-                  No inquiries yet. Share <span className="font-medium">himsols.com/bulk-plantation</span> with Panchayats and CSR teams.
+                  No inquiries yet. Share <span className="font-medium">himsols.online/bulk-plantation</span> with Panchayats and CSR teams.
                 </TableCell></TableRow>
               ) : (
                 filtered.map((r) => (

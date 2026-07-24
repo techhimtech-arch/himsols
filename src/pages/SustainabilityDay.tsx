@@ -20,7 +20,7 @@ import {
   type SustainabilityDay,
 } from "@/lib/seo/sustainability-days";
 
-const SITE = "https://himsols.com";
+const SITE = "https://himsols.online";
 
 function daysUntil(mmdd: string): number {
   const [m, d] = mmdd.split("-").map(Number);

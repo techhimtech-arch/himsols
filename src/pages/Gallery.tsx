@@ -171,12 +171,12 @@ const Gallery = () => {
       <SEO
         title="Plantation Gallery — Geo-Tagged Tree Photos | Himsols"
         description="Photos from our verified tree plantation drives across Himachal Pradesh, uploaded by farmers and CSR partners with location tags."
-        url="https://himsols.com/gallery"
+        url="https://himsols.online/gallery"
       />
       <CollectionPageSchema
         name="Himsols Plantation Gallery"
         description="Geo-tagged plantation photos from Himachal Pradesh."
-        url="https://himsols.com/gallery"
+        url="https://himsols.online/gallery"
         itemType="ImageObject"
         items={photos.map((p) => ({
           name: p.caption || "Plantation photo",

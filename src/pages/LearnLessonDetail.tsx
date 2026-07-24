@@ -88,7 +88,7 @@ const LearnLessonDetail = () => {
 
   return (
     <div className="min-h-screen">
-      <SEO title={`${title} | Himsols Learn`} description={lesson.summary || title} url={`https://himsols.com/learn/lessons/${lesson.slug}`} />
+      <SEO title={`${title} | Himsols Learn`} description={lesson.summary || title} url={`https://himsols.online/learn/lessons/${lesson.slug}`} />
       <Navbar />
       <main className="pt-24 pb-20 px-4">
         <article className="container mx-auto max-w-3xl">

@@ -343,16 +343,16 @@ const Plants = () => {
         title="Ornamental Plants | Indoor & Decorative Plants"
         description="Discover our handpicked collection of indoor and decorative plants. Easy care, beautiful aesthetics."
         keywords="indoor plants, ornamental plants, decorative plants, houseplants, plant shop"
-        url="https://himsols.com/plants"
+        url="https://himsols.online/plants"
       />
       <CollectionPageSchema
         name="Himsols Ornamental Plants"
         description="Handpicked indoor and decorative plants with care guidance."
-        url="https://himsols.com/plants"
+        url="https://himsols.online/plants"
         itemType="Product"
         items={filteredPlants.map((p) => ({
           name: p.name,
-          url: `https://himsols.com/plants/${p.id}`,
+          url: `https://himsols.online/plants/${p.id}`,
           image: p.images?.find((i) => i.is_primary)?.image_url || p.images?.[0]?.image_url,
           price: p.price,
         }))}

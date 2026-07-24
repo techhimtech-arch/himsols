@@ -278,7 +278,7 @@ const LearnForestFires = () => {
             ? "हिमाचल प्रदेश के जंगलों में हर गर्मी आग की सिनेमैटिक कहानी — पैमाना, कारण, और मिश्रित देशी बागान क्यों मायने रखते हैं।"
             : "A cinematic story of Himachal's summer forest fires — the scale, the causes, and why mixed native cohorts matter."
         }
-        url="https://himsols.com/learn/forest-fires"
+        url="https://himsols.online/learn/forest-fires"
       />
       <Navbar />
       <main>

@@ -14,7 +14,7 @@ import {
 import { MapPin, Leaf, ArrowRight, Mountain } from "lucide-react";
 import { getCityBySlug, HP_CITIES } from "@/lib/seo/himachal-cities";
 
-const SITE = "https://himsols.com";
+const SITE = "https://himsols.online";
 
 const PlantTreesInCity = () => {
   const { city } = useParams<{ city: string }>();

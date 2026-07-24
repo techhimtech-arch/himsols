@@ -130,7 +130,7 @@ export const HP_CITIES: HPCity[] = [
     localAngle: "Hamirpur's lower-altitude farmland is ideal for agroforestry species that yield fruit, fodder and fuelwood alongside carbon. Himsols' Hamirpur plantation supports small farmers transitioning to multi-layer cropping.",
     nativeSpecies: ["Mango", "Mulberry", "Toon", "Khair"],
     faqs: [
-      { q: "Can college students from Hamirpur join Himsols?", a: "Yes — NIT Hamirpur and other colleges can run plantation drives with us. Email partnerships@himsols.com." },
+      { q: "Can college students from Hamirpur join Himsols?", a: "Yes — NIT Hamirpur and other colleges can run plantation drives with us. Email partnerships@himsols.online." },
     ],
   },
   {

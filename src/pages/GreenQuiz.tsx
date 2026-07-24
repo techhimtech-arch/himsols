@@ -180,7 +180,7 @@ const GreenQuiz = () => {
       <SEO
         title={isHi ? "कितने ग्रीन हो तुम? - Himsols Quiz" : "How Green Are You? - Himsols Quiz"}
         description={isHi ? "अपना ग्रीन स्कोर जानें और पेड़ लगाकर पर्यावरण बचाएं" : "Find your green score and plant a tree to offset your carbon footprint"}
-        url="https://himsols.com/green-quiz"
+        url="https://himsols.online/green-quiz"
       />
       <Navbar />
 
@@ -278,7 +278,7 @@ const GreenQuiz = () => {
                     title={isHi ? "Himsols ग्रीन क्विज़" : "Himsols Green Quiz"}
                     description={shareText}
                     url="/green-quiz"
-                    whatsappMessage={shareText + "\nhttps://himsols.com/green-quiz"}
+                    whatsappMessage={shareText + "\nhttps://himsols.online/green-quiz"}
                     variant="full"
                     size="sm"
                     className="justify-center"

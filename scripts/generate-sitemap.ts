@@ -9,7 +9,7 @@ import { HP_CITIES } from "../src/lib/seo/himachal-cities";
 import { TREE_SPECIES } from "../src/lib/seo/tree-species";
 import { USE_CASES } from "../src/lib/seo/use-cases";
 
-const BASE_URL = "https://himsols.com";
+const BASE_URL = "https://himsols.online";
 const SUPABASE_URL = "https://jwozuiznphqhiyctiixm.supabase.co";
 const SUPABASE_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3b3p1aXpucGhxaGl5Y3RpaXhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYyNzg1MjUsImV4cCI6MjA4MTg1NDUyNX0.qkNw21xVksAMDPjIqQ1CJ3Id_N5_MhDkGkeV56IRvME";

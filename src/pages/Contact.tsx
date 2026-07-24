@@ -91,7 +91,7 @@ const Contact = () => {
                     </div>
                     <div>
                       <h3 className="font-semibold text-foreground mb-1">{t("common.email")}</h3>
-                      <p className="text-muted-foreground">{settings?.contact_email || "info@himsols.com"}</p>
+                      <p className="text-muted-foreground">{settings?.contact_email || "info@himsols.online"}</p>
                     </div>
                   </div>
 

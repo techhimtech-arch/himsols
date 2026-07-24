@@ -36,16 +36,16 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 
 // Configuration
 const SITE_NAME = "himsols-web-companion"
-const SENDER_DOMAIN = "notify.himsols.com"
-const ROOT_DOMAIN = "himsols.com"
-const FROM_DOMAIN = "notify.himsols.com" // Domain shown in From address (may be root or sender subdomain)
+const SENDER_DOMAIN = "notify.himsols.online"
+const ROOT_DOMAIN = "himsols.online"
+const FROM_DOMAIN = "notify.himsols.online" // Domain shown in From address (may be root or sender subdomain)
 
 // Sample data for preview mode ONLY (not used in actual email sending).
 // URLs are baked in at scaffold time from the project's real data.
 // The sample email uses a fixed placeholder (RFC 6761 .test TLD) so the Go backend
 // can always find-and-replace it with the actual recipient when sending test emails,
 // even if the project's domain has changed since the template was scaffolded.
-const SAMPLE_PROJECT_URL = "https://himsols.com"
+const SAMPLE_PROJECT_URL = "https://himsols.online"
 const SAMPLE_EMAIL = "user@example.test"
 const SAMPLE_DATA: Record<string, object> = {
   signup: {
@@ -252,7 +252,7 @@ async function handleWebhook(req: Request): Promise<Response> {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: `Himsols <noreply@himsols.com>`,
+        from: `Himsols <noreply@himsols.online>`,
         to: [payload.data.email],
         subject: EMAIL_SUBJECTS[emailType] || 'Notification',
         html,
