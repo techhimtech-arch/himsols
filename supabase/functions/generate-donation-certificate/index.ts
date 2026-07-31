@@ -17,7 +17,7 @@ serve(async (req) => {
     
     if (!donationId) {
       return new Response(
-        JSON.stringify({ error: "Donation ID is required" }),
+        JSON.stringify({ error: "Contribution ID is required" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -35,7 +35,7 @@ serve(async (req) => {
 
     if (donationError || !donation) {
       return new Response(
-        JSON.stringify({ error: "Donation not found" }),
+        JSON.stringify({ error: "Contribution not found" }),
         { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }

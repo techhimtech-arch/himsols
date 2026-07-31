@@ -135,7 +135,7 @@ Deno.serve(async (req) => {
         amount,
         source: "DONATION",
         reference_id: donation.id,
-        description: `Donation to ${campaign.title}`,
+        description: `Contribution to ${campaign.title}`,
         balance_after: newBalance,
       });
 
