@@ -124,7 +124,7 @@ export const DonationsTab = () => {
   };
 
   if (isLoading) {
-    return <div className="text-center py-8">Loading donations...</div>;
+    return <div className="text-center py-8">Loading contributions...</div>;
   }
 
   const totalAmount = donations
