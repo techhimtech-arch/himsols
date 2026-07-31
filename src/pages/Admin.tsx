@@ -147,7 +147,7 @@ const Admin = () => {
                 <TabsTrigger value="live-visitors" className="text-xs md:text-sm"><Activity className="h-3 w-3 md:h-4 md:w-4 mr-1" />Live</TabsTrigger>
                 <TabsTrigger value="partners" className="text-xs md:text-sm"><Handshake className="h-3 w-3 md:h-4 md:w-4 mr-1" />Partners</TabsTrigger>
                 <TabsTrigger value="campaigns" className="text-xs md:text-sm"><Heart className="h-3 w-3 md:h-4 md:w-4 mr-1" />Campaigns</TabsTrigger>
-                <TabsTrigger value="donations" className="text-xs md:text-sm">Donations</TabsTrigger>
+                <TabsTrigger value="donations" className="text-xs md:text-sm">Contributions</TabsTrigger>
                 <TabsTrigger value="gift-cards" className="text-xs md:text-sm"><Gift className="h-3 w-3 md:h-4 md:w-4 mr-1" />Gift Cards</TabsTrigger>
                 <TabsTrigger value="gift-card-content" className="text-xs md:text-sm">GC Content</TabsTrigger>
                 <TabsTrigger value="users" className="text-xs md:text-sm">Users</TabsTrigger>

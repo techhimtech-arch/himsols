@@ -126,7 +126,7 @@ const CampaignDetail = () => {
       setShowSuccess(true);
 
       toast({
-        title: "Donation Successful! 🎉",
+        title: "Contribution Successful! 🎉",
         description: `₹${amount} contributed from your wallet`,
       });
     } catch (err: any) {

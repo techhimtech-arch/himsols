@@ -15,7 +15,7 @@ const inclusions = [
 const whyItMatters = [
   "Every ₹299 plants one verified tree",
   "Direct support to rural farming families",
-  "Transparent tracking — no blind donations",
+  "Transparent tracking — no blind contributions",
 ];
 
 export const ClimateImpactPackSection = memo(() => {
@@ -62,7 +62,7 @@ export const ClimateImpactPackSection = memo(() => {
             </div>
             
             <p className="text-muted-foreground mb-6 leading-relaxed">
-              Unlike anonymous donations, every rupee is traceable. You'll see where your trees are planted, which farmer is growing them, and how they're doing — with real photos and data.
+              Unlike anonymous contributions, every rupee is traceable. You'll see where your trees are planted, which farmer is growing them, and how they're doing — with real photos and data.
             </p>
 
             <div className="space-y-4 mb-8">

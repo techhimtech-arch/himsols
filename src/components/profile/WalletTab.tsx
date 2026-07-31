@@ -15,7 +15,7 @@ const sourceLabels: Record<string, string> = {
   GIFT_CARD: "Gift Card",
   REFUND: "Refund",
   REFERRAL: "Referral Bonus",
-  DONATION: "Campaign Donation",
+  DONATION: "Campaign Contribution",
   MARKETPLACE: "Marketplace Purchase",
   WELCOME_BONUS: "Welcome Bonus",
 };

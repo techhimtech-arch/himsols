@@ -78,7 +78,7 @@ const questions: QuizQuestion[] = [
     question_en: "How do you handle old clothes and electronics?",
     question_hi: "पुराने कपड़े और इलेक्ट्रॉनिक्स का क्या करते हैं?",
     options: [
-      { label_en: "Donate / Recycle", label_hi: "दान / रीसायकल", score: 4 },
+      { label_en: "Give away / Recycle", label_hi: "दान / रीसायकल", score: 4 },
       { label_en: "Sell to scrap dealer", label_hi: "कबाड़ीवाले को बेचते हैं", score: 3 },
       { label_en: "Keep at home unused", label_hi: "घर पर रखे रहते हैं", score: 1 },
       { label_en: "Throw away", label_hi: "फेंक देते हैं", score: 0 },
