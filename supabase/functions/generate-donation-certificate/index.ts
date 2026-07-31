@@ -42,7 +42,7 @@ serve(async (req) => {
 
     if (donation.payment_status !== "SUCCESS") {
       return new Response(
-        JSON.stringify({ error: "Certificate only available for successful donations" }),
+        JSON.stringify({ error: "Certificate only available for successful contributions" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -146,7 +146,7 @@ serve(async (req) => {
     });
 
     // Donation amount
-    const amountText = `Donation Amount: Rs. ${Number(donation.amount).toLocaleString("en-IN")}`;
+    const amountText = `Contribution Amount: Rs. ${Number(donation.amount).toLocaleString("en-IN")}`;
     page.drawText(amountText, {
       x: width / 2 - helveticaBold.widthOfTextAtSize(amountText, 16) / 2,
       y: height - 350, size: 16, font: helveticaBold, color: primaryGreen,
@@ -186,7 +186,7 @@ serve(async (req) => {
     page.drawText(`Certificate ID: ${certificateId}`, {
       x: margin + 30, y: footerY, size: 9, font: helvetica, color: lightGray,
     });
-    page.drawText(`Donation: #${donation.id.slice(0, 8).toUpperCase()}`, {
+    page.drawText(`Contribution: #${donation.id.slice(0, 8).toUpperCase()}`, {
       x: margin + 30, y: footerY - 15, size: 9, font: helvetica, color: lightGray,
     });
     page.drawText(`Date: ${formattedDate}`, {
