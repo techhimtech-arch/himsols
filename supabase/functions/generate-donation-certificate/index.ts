@@ -212,7 +212,7 @@ serve(async (req) => {
       headers: {
         ...corsHeaders,
         "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="HIMSOLS-Donation-Certificate-${certificateId}.pdf"`,
+        "Content-Disposition": `attachment; filename="HIMSOLS-Contribution-Certificate-${certificateId}.pdf"`,
       },
     });
   } catch (error: unknown) {
