@@ -15,7 +15,7 @@ const FAQS = [
   },
   {
     q: "Does Himsols give 80G tax-deduction receipts?",
-    a: "Donations made to our verified CSR/fundraiser campaigns are eligible for 80G receipts. Standalone tree purchases (₹299 / ₹2,999 packs) are commercial sponsorships, not donations, and do not carry 80G. For 80G-eligible CSR plantation, use the Corporate / CSR page.",
+    a: "Contributions made to our verified CSR/fundraiser campaigns are eligible for 80G receipts. Standalone tree purchases (₹299 / ₹2,999 packs) are commercial sponsorships, not charitable contributions, and do not carry 80G. For 80G-eligible CSR plantation, use the Corporate / CSR page.",
   },
   {
     q: "How do I know my tree is real and not fake?",

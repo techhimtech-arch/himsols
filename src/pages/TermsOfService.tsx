@@ -64,12 +64,12 @@ const TermsOfService = () => {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-foreground">6. Campaigns & Donations</h2>
+              <h2 className="text-xl font-semibold text-foreground">6. Campaigns & Contributions</h2>
               <ul className="list-disc pl-5 text-muted-foreground space-y-2">
-                <li>Donations made to campaigns are voluntary and non-refundable.</li>
+                <li>Contributions made to campaigns are voluntary and non-refundable.</li>
                 <li>Campaign funds are used exclusively for the stated campaign purpose.</li>
-                <li>Donation certificates are generated for successful contributions.</li>
-                <li>Both direct payments (Razorpay) and wallet balance can be used for donations.</li>
+                <li>Contribution certificates are generated for successful contributions.</li>
+                <li>Both direct payments (Razorpay) and wallet balance can be used for contributions.</li>
               </ul>
             </section>
 
@@ -77,7 +77,7 @@ const TermsOfService = () => {
               <h2 className="text-xl font-semibold text-foreground">7. Gift Cards</h2>
               <ul className="list-disc pl-5 text-muted-foreground space-y-2">
                 <li>Gift cards are valid for 1 year from the date of purchase.</li>
-                <li>Gift cards can be redeemed for campaign donations or converted to wallet credit.</li>
+                <li>Gift cards can be redeemed for campaign contributions or converted to wallet credit.</li>
                 <li>Gift cards are non-transferable for cash and cannot be exchanged for money.</li>
                 <li>Expired or fully redeemed gift cards cannot be restored.</li>
               </ul>
@@ -86,7 +86,7 @@ const TermsOfService = () => {
             <section>
               <h2 className="text-xl font-semibold text-foreground">8. Wallet & Referral Program</h2>
               <ul className="list-disc pl-5 text-muted-foreground space-y-2">
-                <li>Wallet balance can be used for marketplace purchases and campaign donations.</li>
+                <li>Wallet balance can be used for marketplace purchases and campaign contributions.</li>
                 <li>Referral bonuses are credited upon successful signup and email verification of the referred user.</li>
                 <li>Himsols reserves the right to modify or discontinue the referral program at any time.</li>
                 <li>Any abuse of the referral system (fake accounts, multiple accounts) will result in account suspension and forfeiture of wallet balance.</li>

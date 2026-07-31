@@ -133,7 +133,7 @@ const RedeemGiftCard = () => {
       });
       if (error || !data.success) throw new Error(data?.error || "Redemption failed");
       setRedemptionResult(data.redemption);
-      toast({ title: "Redemption Successful! 🌱", description: `You donated ₹${data.redemption.amount} to ${data.redemption.campaign_title}!` });
+      toast({ title: "Redemption Successful! 🌱", description: `You contributed ₹${data.redemption.amount} to ${data.redemption.campaign_title}!` });
     } catch (err: any) {
       toast({ title: "Redemption Failed", description: err.message, variant: "destructive" });
     } finally {
@@ -155,7 +155,7 @@ const RedeemGiftCard = () => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `HIMSOLS-Donation-Certificate.pdf`;
+      a.download = `HIMSOLS-Contribution-Certificate.pdf`;
       a.click();
       URL.revokeObjectURL(url);
       toast({ title: "Certificate Downloaded! 📜", description: "Your certificate of appreciation is ready." });
@@ -189,21 +189,21 @@ const RedeemGiftCard = () => {
                 <div className="mx-auto w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mb-4">
                   <TreePine className="h-10 w-10 text-primary" />
                 </div>
-                <CardTitle className="text-2xl text-primary">Donation Successful! 🌳</CardTitle>
+                <CardTitle className="text-2xl text-primary">Contribution Successful! 🌳</CardTitle>
                 <CardDescription>Your gift card contribution made a real impact</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6 pt-6">
                 {/* Impact Display */}
                 <div className="bg-gradient-to-br from-primary to-green-600 text-white rounded-xl p-6 text-center">
                   <div className="text-4xl font-bold mb-1">₹{redemptionResult.amount.toLocaleString()}</div>
-                  <p className="text-lg opacity-90">Donated Successfully</p>
+                  <p className="text-lg opacity-90">Contributed Successfully</p>
                   <p className="text-sm opacity-75 mt-2">to {redemptionResult.campaign_title}</p>
                 </div>
 
                 {/* Details */}
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between py-2 border-b">
-                    <span className="text-muted-foreground">Amount Donated</span>
+                    <span className="text-muted-foreground">Amount Contributed</span>
                     <span className="font-medium">₹{redemptionResult.amount.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between py-2 border-b">
@@ -468,7 +468,7 @@ const RedeemGiftCard = () => {
                   {isRedeeming ? (
                     <><Loader2 className="h-5 w-5 animate-spin" /> Processing...</>
                   ) : (
-                    <>🌱 Donate Now <ArrowRight className="h-5 w-5" /></>
+                    <>🌱 Contribute Now <ArrowRight className="h-5 w-5" /></>
                   )}
                 </Button>
 

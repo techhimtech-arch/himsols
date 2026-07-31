@@ -23,7 +23,7 @@ const PrivacyPolicy = () => {
               <p className="text-muted-foreground leading-relaxed">We collect the following information when you use our platform:</p>
               <ul className="list-disc pl-5 text-muted-foreground space-y-2">
                 <li><strong>Personal Information:</strong> Name, email address, phone number provided during registration.</li>
-                <li><strong>Transaction Data:</strong> Payment details processed by Razorpay (we do not store card/bank details), order history, donation records.</li>
+                <li><strong>Transaction Data:</strong> Payment details processed by Razorpay (we do not store card/bank details), order history, contribution records.</li>
                 <li><strong>Location Data:</strong> Delivery addresses, district, and state for order fulfillment.</li>
                 <li><strong>Usage Data:</strong> Pages visited, features used, and interaction patterns to improve our services.</li>
               </ul>
@@ -33,8 +33,8 @@ const PrivacyPolicy = () => {
               <h2 className="text-xl font-semibold text-foreground">2. How We Use Your Information</h2>
               <ul className="list-disc pl-5 text-muted-foreground space-y-2">
                 <li>To create and manage your account.</li>
-                <li>To process orders, donations, and gift card transactions.</li>
-                <li>To generate certificates for tree plantations and donations.</li>
+                <li>To process orders, contributions, and gift card transactions.</li>
+                <li>To generate certificates for tree plantations and contributions.</li>
                 <li>To communicate updates about your orders, campaigns, and services.</li>
                 <li>To prevent fraud and abuse of referral/wallet systems.</li>
                 <li>To improve our platform and user experience.</li>
@@ -88,7 +88,7 @@ const PrivacyPolicy = () => {
             <section>
               <h2 className="text-xl font-semibold text-foreground">8. Data Retention</h2>
               <p className="text-muted-foreground leading-relaxed">
-                We retain your personal data for as long as your account is active or as needed to provide services. Transaction records and donation certificates are retained permanently for legal and audit purposes.
+                We retain your personal data for as long as your account is active or as needed to provide services. Transaction records and contribution certificates are retained permanently for legal and audit purposes.
               </p>
             </section>
 

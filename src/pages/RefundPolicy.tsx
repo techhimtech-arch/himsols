@@ -8,7 +8,7 @@ const RefundPolicy = () => {
     <div className="min-h-screen">
       <SEO
         title="Refund & Cancellation Policy - Himsols"
-        description="Understand Himsols' refund and cancellation policy for tree plantation orders, marketplace purchases, donations, and gift cards."
+        description="Understand Himsols' refund and cancellation policy for tree plantation orders, marketplace purchases, contributions, and gift cards."
         url="https://himsols.online/refund-policy"
       />
       <Navbar />
@@ -22,7 +22,7 @@ const RefundPolicy = () => {
           <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 mb-8">
             <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
             <p className="text-sm text-amber-800 dark:text-amber-200">
-              Please read this policy carefully before making any purchase or donation on Himsols. By using our services, you agree to the terms outlined below.
+              Please read this policy carefully before making any purchase or contribution on Himsols. By using our services, you agree to the terms outlined below.
             </p>
           </div>
 
@@ -48,11 +48,11 @@ const RefundPolicy = () => {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-foreground">3. Donations</h2>
+              <h2 className="text-xl font-semibold text-foreground">3. Contributions</h2>
               <ul className="list-disc pl-5 text-muted-foreground space-y-2">
-                <li>All donations are voluntary and <strong>non-refundable</strong>.</li>
-                <li>This applies to both direct payments and wallet-based donations.</li>
-                <li>Donation certificates are provided as acknowledgment and cannot be used to claim refunds.</li>
+                <li>All contributions are voluntary and <strong>non-refundable</strong>.</li>
+                <li>This applies to both direct payments and wallet-based contributions.</li>
+                <li>Contribution certificates are provided as acknowledgment and cannot be used to claim refunds.</li>
               </ul>
             </section>
 

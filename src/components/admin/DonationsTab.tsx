@@ -93,7 +93,7 @@ export const DonationsTab = () => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `HIMSOLS-Donation-Certificate.pdf`;
+      a.download = `HIMSOLS-Contribution-Certificate.pdf`;
       a.click();
       URL.revokeObjectURL(url);
       
@@ -124,7 +124,7 @@ export const DonationsTab = () => {
   };
 
   if (isLoading) {
-    return <div className="text-center py-8">Loading donations...</div>;
+    return <div className="text-center py-8">Loading contributions...</div>;
   }
 
   const totalAmount = donations
@@ -135,7 +135,7 @@ export const DonationsTab = () => {
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-xl font-semibold">Donations</h2>
+          <h2 className="text-xl font-semibold">Contributions</h2>
           <p className="text-sm text-muted-foreground">
             Total Collected: <span className="font-semibold text-primary">₹{totalAmount.toLocaleString()}</span>
             {" · "}{donations.filter(d => d.payment_status === 'SUCCESS').length} successful
@@ -272,7 +272,7 @@ export const DonationsTab = () => {
                 {donations.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                      No donations yet.
+                      No contributions yet.
                     </TableCell>
                   </TableRow>
                 )}

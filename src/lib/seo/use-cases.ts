@@ -125,7 +125,7 @@ export const USE_CASES: UseCase[] = [
     primaryCtaLabel: "Request Corporate Quote",
     primaryCtaPath: "/corporate",
     faqs: [
-      { q: "Do you provide GST invoices and 80G receipts?", a: "Yes — GST invoices for all orders and 80G receipts where applicable for the donation portion." },
+      { q: "Do you provide GST invoices and 80G receipts?", a: "Yes — GST invoices for all orders and 80G receipts where applicable for the eligible CSR portion." },
       { q: "Can certificates carry our company logo?", a: "Yes — all corporate bulk orders include logo and brand colour customisation." },
     ],
     keywords: "corporate tree gifting India, ESG corporate gifts, employee gift sustainable, client gift trees",
@@ -153,7 +153,7 @@ export const USE_CASES: UseCase[] = [
     primaryCtaLabel: "Request CSR Proposal",
     primaryCtaPath: "/corporate",
     faqs: [
-      { q: "Are you 80G certified?", a: "Yes — Himsols issues 80G-eligible receipts for the donation portion of CSR plantation programmes." },
+      { q: "Are you 80G certified?", a: "Yes — Himsols issues 80G-eligible receipts for the eligible portion of CSR plantation programmes." },
       { q: "What does survival tracking look like?", a: "Quarterly geo-tagged photos and a survival-rate dashboard for every planted batch, for 3 years." },
     ],
     keywords: "CSR tree plantation India, corporate plantation Himachal, ESG plantation, 80G tree plantation",

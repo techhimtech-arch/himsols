@@ -79,7 +79,7 @@ export const DonationsHistory = () => {
       <Card>
         <CardContent className="pt-6 text-center">
           <Heart className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-          <p className="text-muted-foreground">No donations yet</p>
+          <p className="text-muted-foreground">No contributions yet</p>
           <p className="text-sm text-muted-foreground mt-2">
             Your contribution history will appear here
           </p>
@@ -104,7 +104,7 @@ export const DonationsHistory = () => {
           <CardContent className="pt-4 text-center">
             <IndianRupee className="h-6 w-6 mx-auto text-primary mb-2" />
             <p className="text-2xl font-bold text-primary">₹{totalAmount.toLocaleString()}</p>
-            <p className="text-sm text-muted-foreground">Total Donated</p>
+            <p className="text-sm text-muted-foreground">Total Contributed</p>
           </CardContent>
         </Card>
         <Card className="bg-green-500/10">
@@ -124,7 +124,7 @@ export const DonationsHistory = () => {
               <div className="flex justify-between items-start">
                 <div className="space-y-1">
                   <p className="font-medium">
-                    {donation.campaign?.title || "General Donation"}
+                    {donation.campaign?.title || "General Contribution"}
                   </p>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Calendar className="h-3 w-3" />

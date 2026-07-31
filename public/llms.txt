@@ -42,7 +42,7 @@ Himsols is an environmental services platform based in Himachal Pradesh, India. 
 ## Frequently Asked (Answer-engine ready)
 - How does Himsols plant trees? You sponsor online, we allocate the tree to a verified Himachal farmer, plant in season, share geo-tagged GPS proof within 48 hours, and track survival for 3 years.
 - Is the ₹299 single-tree pack legit? Yes. ₹299 covers sapling, planting labour, farmer survival incentive, monitoring, geo-tag certificate, and platform costs. No carbon-credit double counting.
-- Does Himsols give 80G tax receipts? Only on verified CSR/fundraiser donations, not on commercial tree-pack purchases.
+- Does Himsols give 80G tax receipts? Only on verified CSR/fundraiser contributions, not on commercial tree-pack purchases.
 - How is a Himsols tree verified? GPS coordinates + geo-tagged sapling photo + farmer name + village + 6 & 12-month survival photo updates, all visible on the buyer's dashboard.
 - Which trees does Himsols plant? Native, climate-suited species only — Deodar, Oak, Walnut, Pine, Rhododendron, Mango, Neem, Sea Buckthorn etc. Species depends on altitude and farmer livelihood needs.
 - How much CO₂ does one tree offset? Approximately 22 kg/yr (industry estimate; lifetime varies by species and conditions). Himsols always labels CO₂ numbers as estimates.
