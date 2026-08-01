@@ -23,19 +23,8 @@ const Services = () => {
       color: "hsl(150, 45%, 35%)",
       link: "/tree-plantation",
     },
-    {
-      icon: <Recycle className="h-12 w-12" />,
-      titleKey: "services.wasteManagement",
-      descKey: "services.wasteManagementDesc",
-      features: [
-        "services.feature.freePickup",
-        "services.feature.bestPrices",
-        "services.feature.allScrapTypes",
-        "services.feature.ecoRecycling",
-      ],
-      color: "hsl(35, 80%, 50%)",
-      link: "/waste-management",
-    },
+    // Scrap / waste management service hidden until the program launches
+
     {
       icon: <BookOpen className="h-12 w-12" />,
       titleKey: "services.conservation",
