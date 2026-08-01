@@ -6,7 +6,7 @@ import { HowWeVerifyTilt } from "@/components/home/HowWeVerifyTilt";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
 import { ImpactDashboardSection } from "@/components/home/ImpactDashboardSection";
 import { ClimateImpactPackSection } from "@/components/home/ClimateImpactPackSection";
-import { ScrapToWalletSection } from "@/components/home/ScrapToWalletSection";
+// import { ScrapToWalletSection } from "@/components/home/ScrapToWalletSection"; // hidden
 import { TrustProofSection } from "@/components/home/TrustProofSection";
 import { CSRSection } from "@/components/home/CSRSection";
 import { PartnerFarmerSection } from "@/components/home/PartnerFarmerSection";
@@ -38,7 +38,7 @@ const Index = () => {
         <ImpactDashboardSection />
         <TrustProofSection />
         <ClimateImpactPackSection />
-        <ScrapToWalletSection />
+        {/* <ScrapToWalletSection /> hidden until scrap program launches */}
         <PartnerFarmerSection />
         <SchoolProgramSection />
         <TestimonialsSection />

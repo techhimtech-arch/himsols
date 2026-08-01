@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://himsols.online/</loc>
-    <lastmod>2026-07-31</lastmod>
+    <lastmod>2026-08-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -352,12 +352,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://himsols.online/blog/himsols-sustainable-future-tree-plantation</loc>
-    <lastmod>2026-07-19</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://himsols.online/blog/how-to-prevent-forest-fires-in-himachal-pradesh</loc>
     <lastmod>2026-07-18</lastmod>
     <changefreq>monthly</changefreq>
@@ -366,6 +360,12 @@
   <url>
     <loc>https://himsols.online/blog/tree-plantation-effective-climate-action</loc>
     <lastmod>2026-07-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://himsols.online/blog/himsols-sustainable-future-tree-plantation</loc>
+    <lastmod>2026-08-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -400,14 +400,14 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://himsols.online/blog/van-mahotsav-2026-tree-plantation-himachal</loc>
-    <lastmod>2026-07-17</lastmod>
+    <loc>https://himsols.online/blog/proclime-him-evergreen-project-himachal</loc>
+    <lastmod>2026-07-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://himsols.online/blog/proclime-him-evergreen-project-himachal</loc>
-    <lastmod>2026-07-22</lastmod>
+    <loc>https://himsols.online/blog/van-mahotsav-2026-tree-plantation-himachal</loc>
+    <lastmod>2026-08-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
