@@ -38,7 +38,7 @@ const Index = () => {
         <ImpactDashboardSection />
         <TrustProofSection />
         <ClimateImpactPackSection />
-        <ScrapToWalletSection />
+        {/* <ScrapToWalletSection /> hidden until scrap program launches */}
         <PartnerFarmerSection />
         <SchoolProgramSection />
         <TestimonialsSection />
