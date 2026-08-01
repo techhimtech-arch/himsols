@@ -15,15 +15,8 @@ const services = [
     link: "/tree-plantation",
     cta: "Book Plantation"
   },
-  {
-    icon: Recycle,
-    title: "Scrap Collection",
-    description: "Schedule doorstep pickup for metals, e-waste, paper, plastic. Get fair prices for your valuable scrap.",
-    features: ["Free pickup", "Best prices", "All scrap types"],
-    color: "hsl(200, 70%, 45%)",
-    link: "/waste-management",
-    cta: "Schedule Pickup"
-  },
+  // Scrap collection hidden until the program launches
+
   {
     icon: GraduationCap,
     title: "Schools & Education",
