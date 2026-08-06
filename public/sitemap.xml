@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://himsols.online/</loc>
-    <lastmod>2026-08-01</lastmod>
+    <lastmod>2026-08-06</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -352,14 +352,8 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://himsols.online/blog/how-to-prevent-forest-fires-in-himachal-pradesh</loc>
-    <lastmod>2026-07-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://himsols.online/blog/tree-plantation-effective-climate-action</loc>
-    <lastmod>2026-07-14</lastmod>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -370,44 +364,50 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://himsols.online/blog/why-tree-plantation-is-important-in-2026</loc>
-    <lastmod>2026-07-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://himsols.online/blog/forest-fires-in-himachal-pradesh-causes-impact-and-challenges</loc>
-    <lastmod>2026-07-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://himsols.online/blog/agroforestry-benefits-for-farmers-in-himachal-pradesh</loc>
-    <lastmod>2026-07-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://himsols.online/blog/agristack-farm-kyc-for-farmers2</loc>
-    <lastmod>2026-07-16</lastmod>
+    <loc>https://himsols.online/blog/how-to-prevent-forest-fires-in-himachal-pradesh</loc>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://himsols.online/blog/him-evergreen-project-himachal-carbon-credit</loc>
-    <lastmod>2026-07-15</lastmod>
+    <lastmod>2026-08-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://himsols.online/blog/proclime-him-evergreen-project-himachal</loc>
-    <lastmod>2026-07-22</lastmod>
+    <loc>https://himsols.online/blog/agristack-farm-kyc-for-farmers2</loc>
+    <lastmod>2026-08-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://himsols.online/blog/why-tree-plantation-is-important-in-2026</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://himsols.online/blog/forest-fires-in-himachal-pradesh-causes-impact-and-challenges</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://himsols.online/blog/agroforestry-benefits-for-farmers-in-himachal-pradesh</loc>
+    <lastmod>2026-08-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://himsols.online/blog/van-mahotsav-2026-tree-plantation-himachal</loc>
     <lastmod>2026-08-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://himsols.online/blog/proclime-him-evergreen-project-himachal</loc>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
