@@ -21,15 +21,20 @@
     <meta name="author" content="Himsols" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <script>
-      // Block indexing of preview/staging subdomains so only himsols.online appears in Google
+      // Keep only himsols.online in Google: noindex staging subdomains and
+      // hard-redirect the old published lovable.app URL to the live domain.
       (function () {
         var h = location.hostname;
-        if (h.indexOf('lovable.app') !== -1 || h.indexOf('lovable.dev') !== -1) {
-          var m = document.querySelector('meta[name="robots"]');
-          if (m) m.setAttribute('content', 'noindex, nofollow');
-        }
+        var isLovable = h.indexOf('lovable.app') !== -1 || h.indexOf('lovable.dev') !== -1;
+        if (!isLovable) return;
+        var m = document.querySelector('meta[name="robots"]');
+        if (m) m.setAttribute('content', 'noindex, nofollow');
+        // Don't touch the in-editor preview host
+        if (h.indexOf('id-preview--') === 0) return;
+        location.replace('https://himsols.online' + location.pathname + location.search + location.hash);
       })();
     </script>
+
     <meta name="theme-color" content="#16a34a" />
     <meta name="geo.region" content="IN-HP" />
     <meta name="geo.placename" content="Himachal Pradesh" />
