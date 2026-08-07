@@ -11,7 +11,8 @@ export const HeroShareReferralBar = () => {
 
   const referrer = Number(settings?.referral_bonus_referrer || 100);
   const referee = Number(settings?.referral_bonus_referee || 50);
-  const enabled = settings?.referral_enabled !== "false";
+  // Referral program hidden during the focused plantation-only phase
+  const enabled = false;
 
   const shareUrl = "https://himsols.online";
   const msg = isHi

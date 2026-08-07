@@ -180,7 +180,8 @@ const RedeemGiftCard = () => {
   if (redemptionResult) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-primary/5 to-background">
-        <SEO title="Gift Card Redeemed - Himsols" description="Your gift card has been successfully redeemed." />
+        <SEO title="Gift Card Redeemed - Himsols" description="Your gift card has been successfully redeemed." noindex
+      />
         <Navbar />
         <main className="container mx-auto px-4 py-24">
           <div className="max-w-lg mx-auto">

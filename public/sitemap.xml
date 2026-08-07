@@ -27,29 +27,9 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://himsols.online/gift-cards</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://himsols.online/marketplace</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://himsols.online/corporate</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://himsols.online/campaigns</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://himsols.online/plants</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://himsols.online/blog</loc>
@@ -64,16 +44,6 @@
   <url>
     <loc>https://himsols.online/contact</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://himsols.online/waste-management</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://himsols.online/services</loc>
-    <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
@@ -102,19 +72,9 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://himsols.online/green-quiz</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://himsols.online/impact</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://himsols.online/partner-with-us</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://himsols.online/farmer-registration</loc>
@@ -410,41 +370,5 @@
     <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://himsols.online/campaign/99f787eb-2b9e-43fc-889c-367f9600c3a8</loc>
-    <lastmod>2026-01-31</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://himsols.online/campaign/5ec3cf4c-baa1-4140-9789-2405a31aaae3</loc>
-    <lastmod>2026-02-21</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://himsols.online/marketplace/fbb6ce36-1c9c-4245-93fa-56e774c0e27f</loc>
-    <lastmod>2026-06-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.55</priority>
-  </url>
-  <url>
-    <loc>https://himsols.online/marketplace/8687909c-df2d-48de-ad8a-1b20ca112ec3</loc>
-    <lastmod>2026-07-04</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.55</priority>
-  </url>
-  <url>
-    <loc>https://himsols.online/marketplace/b836d9a6-b881-497a-bfdc-acc5751f5c10</loc>
-    <lastmod>2026-07-04</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.55</priority>
-  </url>
-  <url>
-    <loc>https://himsols.online/plants/3cb72674-b4d7-49a4-bfc1-45cd0ab603b6</loc>
-    <lastmod>2026-01-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.55</priority>
   </url>
 </urlset>

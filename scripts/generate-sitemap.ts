@@ -28,24 +28,16 @@ const staticEntries: SitemapEntry[] = [
   { path: "/about", changefreq: "monthly", priority: "0.8" },
   { path: "/tree-plantation", changefreq: "weekly", priority: "0.9" },
   { path: "/shop", changefreq: "daily", priority: "0.9" },
-  { path: "/gift-cards", changefreq: "weekly", priority: "0.9" },
-  { path: "/marketplace", changefreq: "daily", priority: "0.8" },
   { path: "/corporate", changefreq: "weekly", priority: "0.8" },
-  { path: "/campaigns", changefreq: "weekly", priority: "0.8" },
-  { path: "/plants", changefreq: "weekly", priority: "0.7" },
   { path: "/blog", changefreq: "daily", priority: "0.8" },
   { path: "/gallery", changefreq: "weekly", priority: "0.6" },
   { path: "/contact", changefreq: "monthly", priority: "0.7" },
-  { path: "/waste-management", changefreq: "weekly", priority: "0.7" },
-  { path: "/services", changefreq: "weekly", priority: "0.7" },
   { path: "/schools", changefreq: "weekly", priority: "0.7" },
   { path: "/bulk-plantation", changefreq: "weekly", priority: "0.8" },
   { path: "/climate-impact-pack", changefreq: "weekly", priority: "0.8" },
   { path: "/single-tree-pack", changefreq: "weekly", priority: "0.8" },
   { path: "/csr-carbon-offset", changefreq: "monthly", priority: "0.7" },
-  { path: "/green-quiz", changefreq: "monthly", priority: "0.6" },
   { path: "/impact", changefreq: "weekly", priority: "0.7" },
-  { path: "/partner-with-us", changefreq: "monthly", priority: "0.6" },
   { path: "/farmer-registration", changefreq: "monthly", priority: "0.6" },
   { path: "/terms", changefreq: "monthly", priority: "0.3" },
   { path: "/privacy", changefreq: "monthly", priority: "0.3" },
@@ -108,42 +100,6 @@ async function fetchDynamic(): Promise<SitemapEntry[]> {
           priority: "0.6",
         });
     });
-
-    const campaigns = await pgrest<{ id: string; updated_at: string }>(
-      "campaigns?select=id,updated_at"
-    );
-    campaigns.forEach((c) =>
-      entries.push({
-        path: `/campaign/${c.id}`,
-        lastmod: isoDate(c.updated_at),
-        changefreq: "weekly",
-        priority: "0.6",
-      })
-    );
-
-    const products = await pgrest<{ id: string; updated_at: string }>(
-      "marketplace_products?select=id,updated_at&is_active=eq.true"
-    );
-    products.forEach((p) =>
-      entries.push({
-        path: `/marketplace/${p.id}`,
-        lastmod: isoDate(p.updated_at),
-        changefreq: "weekly",
-        priority: "0.55",
-      })
-    );
-
-    const plants = await pgrest<{ id: string; updated_at: string }>(
-      "plants?select=id,updated_at&is_active=eq.true"
-    );
-    plants.forEach((p) =>
-      entries.push({
-        path: `/plants/${p.id}`,
-        lastmod: isoDate(p.updated_at),
-        changefreq: "weekly",
-        priority: "0.55",
-      })
-    );
   } catch (err) {
     console.warn("[sitemap] dynamic fetch error:", err);
   }

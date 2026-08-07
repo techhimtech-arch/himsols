@@ -52,6 +52,7 @@ const LearnVideos = () => {
         title={isHi ? "वीडियो लाइब्रेरी | Himsols Learn" : "Video Library | Himsols Learn"}
         description={isHi ? "किसान की कहानियाँ, प्लांटेशन साइट टूर और DIY सस्टेनेबिलिटी रील्स।" : "Farmer stories, plantation site tours, and DIY sustainability reels."}
         url="https://himsols.online/learn/videos"
+      noindex
       />
       <Navbar />
       <main className="pt-24 pb-20 px-4">

@@ -344,6 +344,7 @@ const Plants = () => {
         description="Discover our handpicked collection of indoor and decorative plants. Easy care, beautiful aesthetics."
         keywords="indoor plants, ornamental plants, decorative plants, houseplants, plant shop"
         url="https://himsols.online/plants"
+      noindex
       />
       <CollectionPageSchema
         name="Himsols Ornamental Plants"

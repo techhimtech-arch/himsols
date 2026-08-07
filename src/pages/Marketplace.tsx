@@ -51,6 +51,7 @@ const Marketplace = () => {
         title="Rural Marketplace — Farmer Produce & Handmade Goods | Himsols"
         description="Shop directly from Himachal farmers and artisans: fresh produce, handmade crafts, plants, and home essentials. Pan-India delivery."
         url="https://himsols.online/marketplace"
+      noindex
       />
       <CollectionPageSchema
         name="Himsols Rural Marketplace"
