@@ -1,81 +1,69 @@
+# Khichdi Cleanup — App ko ek focus pe le aana
 
-# Verified Plantation Pipeline — from claim to reality
+Abhi app 60+ pages aur 12 alag programs try kar rahi hai (trees, marketplace, gift cards, wallet, referral, scrap, campaigns, quiz, learn hub, school, land partner, vendor, carbon dashboard). Data bata raha hai ki asli traction sirf ek jagah hai:
 
-## Current honest state (verified from DB)
+- Orders: 18 · Trees catalog: 59 · Contributions: 6 · Gift cards: 9
+- Marketplace orders: 0 · Tree allocations: 0 · Survival updates: 0 · Activities: 0
+- Campaigns: 2 · Plants (ornamental): 1 · Villages: 0 · Nurseries: 0 · School partnerships: 0 · CSR partners: 0 · Referrals: 0 · Learn videos: 0 · Lessons: 2
 
-| Piece | Schema | Real data | Working UI |
-|---|---|---|---|
-| Order intake (`orders`, `tree_plantation_requests`) | ✅ | 59 orders, live | ✅ Checkout works |
-| Farmer roster (`farmer_registrations`) | ✅ | Only 2 rows | Registration form exists |
-| **Assign trees to farmer** (`tree_allocations`) | ✅ 21 cols ready | **0 rows** | ❌ No admin UI ever used |
-| **Geo-tag + photo per batch** (`plantation_photos` w/ lat/lng) | ✅ | 3 rows manual | ❌ No farmer/admin upload flow |
-| **Survival audit m3/m6/m12** (`survival_updates`) | ✅ | **0 rows** | ❌ No form, no reminder |
-| **CSR report PDF (Section 135)** | — | — | ❌ Doesn't exist (only donation certificates exist) |
+Yaani 40% features me ek bhi row nahi hai. Wo maintain karne me energy jaa rahi hai aur visitor confuse ho raha hai.
 
-**Reality:** Jab CSR ya user tree kharidta hai, admin manually WhatsApp pe farmer ko bolta hai. Kaha laga, photo, survival — **kuch record nahi**. Homepage cards abhi aspirational hain.
+## Naya focus (ek line)
 
-## What we'll build (4 pieces, in order)
+**Himsols = verified tree plantation partner for CSR + individuals in Himachal.** Baaki sab ya hide, ya baad ke liye.
 
-### 1. Admin: Allocate trees to farmer (fills `tree_allocations`)
+## Kya rakhna hai (core)
 
-New page `/admin/allocations`:
-- List of paid orders + tree_plantation_requests with status = PAID and no allocation yet
-- "Allocate" button → pick farmer from `farmer_registrations` (verified only) → enter tree_count, species, plantation_date, incentive_per_tree
-- Creates row in `tree_allocations` linked to `order_id`; auto-generates `batch_id` (trigger already exists) and `review_date = plantation_date + 6 months`
-- Order status → "ALLOCATED"
+- Home, About, Contact
+- Plant/Contribute funnel: `/shop`, `/shop/:id`, `/climate-impact-pack`, `/single-tree-pack`, `/cart`
+- CSR funnel: `/corporate`, `/csr-carbon-offset`, `/csr/guide-to-csr-plantation-india`, `/bulk-plantation`, `/schools`
+- Trust/proof: `/impact`, `/gallery`, `/track-request`
+- Account: `/auth`, `/profile`, `/order-history`, `/my-contributions`, forgot/reset password
+- SEO pages jo free traffic laate hain: `/blog`, `/days`, `/plant-trees-in/:city`, `/trees/:slug`, `/plant-trees-for/:slug`, `/monsoon-plantation-himachal`
+- Admin (jo tabs core ke hain)
+- Learn: sirf 4 cinematic pages (`why-trees-matter`, `how-we-plant`, `himachal-jungles`, `forest-fires`, `sustainability-habits`) + hub
 
-### 2. Farmer/field: Geo-tagged photo upload (fills `plantation_photos`)
+## Kya hide karna hai (Phase 1 — turant)
 
-New mobile-first page `/partner/upload/:allocation_id`:
-- Land partner logs in (role already exists)
-- Sees pending allocations
-- Upload photo → **browser `navigator.geolocation` captures lat/lng automatically** + `Date.now()`
-- Uploads to `tree-photos` bucket, inserts into `plantation_photos` with lat/lng/caption
-- Admin can also upload on behalf (fallback)
-- Order status → "PLANTED" once ≥1 photo exists
+Ye sab **delete nahi, hide** — route rahega but koi link/menu/section nahi, aur sitemap + llms.txt se nikal dena. Jab chalane layak ho, ek line me wapas on.
 
-### 3. Survival audit form (fills `survival_updates`)
+| Feature | Kyun |
+|---|---|
+| Marketplace (`/marketplace`, product, checkout, cart sheet) | 0 orders, 3 products, alag COD flow maintain karna pad raha hai |
+| Ornamental Plants (`/plants`) | 1 plant, purple theme brand se match nahi karta |
+| Campaigns / fundraisers (`/campaigns`) | 2 campaigns, koi active fundraising nahi |
+| Gift Cards (`/gift-cards`, redeem) | 9 cards, sales channel nahi, checkout complexity zyada |
+| Wallet + Referral tabs (profile) | 0 referrals, wallet sirf gift-card ke liye tha |
+| Green Quiz (`/green-quiz`) | lead capture chal nahi raha, distraction |
+| Learn Lessons / Daily / Videos | 0 videos, 2 lessons, 0 completions — adhoora dikhta hai |
+| Village Register, Partner-with-us, Vendor Dashboard, Carbon Dashboard | 0 rows sab me |
+| Waste management / Scrap | pehle se hidden — hidden hi rahega |
 
-New page `/admin/survival-audit`:
-- Lists allocations where `review_date` is due (month 3, 6, 12 from `plantation_date`)
-- Team member submits: photo, health_status (healthy/stressed/dead), height_cm, trees_alive/trees_dead counts
-- Updates `tree_allocations.trees_alive/trees_dead`
-- Simple weekly email digest to admin listing due audits (edge function + cron via `pg_cron` or manual for now — cron adds later)
+Farmer Registration + Partner Dashboard **rakhna** (pilot cohort ke liye zaroori hai, 2 rows hain).
 
-### 4. CSR "proof pack" PDF generator (real Section 135 report)
+## Phase 2 — Home page ko simple karna
 
-New edge function `generate-csr-report`:
-- Input: `order_id` or `csr_partner_id` or date range
-- Pulls from DB: trees planted (from allocations), farmers involved, GPS coordinates, photos with dates, survival data if any, ₹ amount, CO₂ estimate (labeled)
-- Renders PDF (Deno + pdf-lib or existing `Himsols-CSR-Proposal.pdf` style) with:
-  - Cover page: CSR partner name, order refs, plantation window
-  - Page 2: Summary — trees, districts, farmers, ₹ contribution
-  - Page 3+: **Per-batch geo-tagged photo grid** (photo + GPS + date)
-  - Page 4: Survival snapshot (if audit done) or "next audit due" schedule
-  - Page 5: Section 135 compliance note, Himsols registration details, signatures
-- Download button on `/admin/orders/:id` and later on public CSR dashboard
+Aaj home pe 14 sections hain. 8 pe le aate hain:
 
-## What stays the same
+```text
+Hero (3D tree)  →  How it works  →  CSR strip  →  Impact numbers
+→  Trust/proof (geo-tag + photos)  →  Impact Pack pricing  →  FAQ  →  Final CTA
+```
 
-- Homepage "How we verify" cards — copy stays but each card links to a **real proof page** once section 1-2 have data
-- Pilot cohort positioning stays (only 2 farmers → build UI first, then onboard 48 more)
-- Zero changes to checkout, payment, wallet, or user-facing tree flows
+Hataane wale sections: Where-tree-lives scene, How-we-verify tilt (Trust me merge), Partner farmer, School program strip (CSR strip me merge), Testimonials (sirf 3 hain), Learn hub strip.
 
-## Order of build (small commits so you can review each)
+## Phase 3 — Admin declutter
 
-1. **Admin allocations UI** (~1.5 hrs) — biggest unlock; fills empty `tree_allocations`
-2. **Partner geo-photo upload** (~2 hrs) — this is the actual "geo-tagging" the homepage claims
-3. **CSR PDF generator** (~2 hrs) — the deliverable CSR heads will actually ask for
-4. **Survival audit form** (~1 hr) — can be simple admin form now, cron reminders later
+Admin me ~30 tabs hain. Hidden features ke tabs (Marketplace products/orders, Plants, Campaigns, Gift cards + content, Sellers, Scrap types, Villages, Nurseries, Lessons/Videos, External apps) ek "Archive" group me daal denge — dikhenge nahi, but delete bhi nahi honge.
 
-Total ~6-7 hrs across 4 build steps. Har step ke baad tu preview me test kar sakta hai.
+## Technical notes
 
-## Not in this plan (call out honestly)
+- Routes ko `App.tsx` se hataaya nahi jayega — sirf navigation se unlink honge, plus `<SEO noindex>` add hoga taaki Google inhe rank na kare.
+- Nav aur footer DB-driven hain (`navigation_items`, `footer_links`) — un rows ko `is_active = false` karna hoga, code se nahi.
+- `public/sitemap.xml`, `scripts/generate-sitemap.ts` aur `public/llms.txt` se hidden URLs nikalna.
+- Cart context (`useCart` / `useMarketplaceCart`) mounted rahega — sirf navbar se CartSheet hatega, koi crash nahi.
+- Koi table drop nahi, koi data delete nahi. Sab reversible.
 
-- Automated month 3/6/12 reminders (needs `pg_cron` — add after step 4 works)
-- Public per-tree tracking page for buyers (nice-to-have, after CSR pipeline works)
-- Blockchain / third-party verification (out of scope; we do first-party evidence)
+## Result
 
----
-
-**Recommendation:** Step 1 pehle karte hain — bina allocations ke baaki sab empty rahenge. Approve karo to build mode me step 1 shuru karta hoon.
+~60 pages → ~25 focused pages. Ek hi message: "CSR ya individual, Himachal me verified tree plantation." Baaki sab tab wapas aayega jab uske peeche real operations honge.
