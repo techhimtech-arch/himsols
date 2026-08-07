@@ -1,19 +1,12 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { HeroSection } from "@/components/home/HeroSection";
-import { WhereTreeLivesScene } from "@/components/home/WhereTreeLivesScene";
-import { HowWeVerifyTilt } from "@/components/home/HowWeVerifyTilt";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
 import { ImpactDashboardSection } from "@/components/home/ImpactDashboardSection";
 import { ClimateImpactPackSection } from "@/components/home/ClimateImpactPackSection";
-// import { ScrapToWalletSection } from "@/components/home/ScrapToWalletSection"; // hidden
 import { TrustProofSection } from "@/components/home/TrustProofSection";
 import { CSRSection } from "@/components/home/CSRSection";
-import { PartnerFarmerSection } from "@/components/home/PartnerFarmerSection";
-import { SchoolProgramSection } from "@/components/home/SchoolProgramSection";
-import { TestimonialsSection } from "@/components/home/TestimonialsSection";
 import { HomepageFAQSection } from "@/components/home/HomepageFAQSection";
-import { LearnHubStripSection } from "@/components/home/LearnHubStripSection";
 import { FinalCTASection } from "@/components/home/FinalCTASection";
 import { MobileStickyCTA } from "@/components/home/MobileStickyCTA";
 import { SEO, SEOSchemas } from "@/components/SEO";
@@ -31,18 +24,11 @@ const Index = () => {
       <Navbar />
       <main>
         <HeroSection />
-        <WhereTreeLivesScene />
-        <HowWeVerifyTilt />
         <HowItWorksSection />
         <CSRSection />
         <ImpactDashboardSection />
         <TrustProofSection />
         <ClimateImpactPackSection />
-        {/* <ScrapToWalletSection /> hidden until scrap program launches */}
-        <PartnerFarmerSection />
-        <SchoolProgramSection />
-        <TestimonialsSection />
-        <LearnHubStripSection />
         <HomepageFAQSection />
         <FinalCTASection />
       </main>
