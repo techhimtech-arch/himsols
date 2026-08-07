@@ -13,9 +13,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { DonationsHistory } from "@/components/profile/DonationsHistory";
-import { GiftCardsHistory } from "@/components/profile/GiftCardsHistory";
-import { WalletTab } from "@/components/profile/WalletTab";
-import { ReferralTab } from "@/components/profile/ReferralTab";
 
 interface ProfileData {
   full_name: string;
