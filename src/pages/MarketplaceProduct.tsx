@@ -126,6 +126,7 @@ const MarketplaceProduct = () => {
         url={productUrl}
         type="product"
         image={product.image_url || undefined}
+      noindex
       />
       <ProductSchema
         name={product.name}

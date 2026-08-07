@@ -88,7 +88,8 @@ const CarbonDashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO title="Carbon Impact Dashboard - Himsols" description="Verified environmental impact from Himsols tree plantation activities. Live counts of allocated trees, survival, and estimated CO₂ offset." />
+      <SEO title="Carbon Impact Dashboard - Himsols" description="Verified environmental impact from Himsols tree plantation activities. Live counts of allocated trees, survival, and estimated CO₂ offset." noindex
+      />
       <Navbar />
 
       {/* Hero */}

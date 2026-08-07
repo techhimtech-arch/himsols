@@ -38,6 +38,7 @@ const Campaigns = () => {
       <SEO 
         title="Campaigns | Himsols" 
         description="Support our environmental campaigns. Contribute to tree plantation drives and make a positive impact."
+      noindex
       />
       <Navbar />
       

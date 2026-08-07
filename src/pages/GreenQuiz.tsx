@@ -181,6 +181,7 @@ const GreenQuiz = () => {
         title={isHi ? "कितने ग्रीन हो तुम? - Himsols Quiz" : "How Green Are You? - Himsols Quiz"}
         description={isHi ? "अपना ग्रीन स्कोर जानें और पेड़ लगाकर पर्यावरण बचाएं" : "Find your green score and plant a tree to offset your carbon footprint"}
         url="https://himsols.online/green-quiz"
+      noindex
       />
       <Navbar />
 

@@ -251,7 +251,8 @@ const CampaignDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO title={`${campaign.title} | Campaigns`} description={campaign.description} />
+      <SEO title={`${campaign.title} | Campaigns`} description={campaign.description} noindex
+      />
       <Navbar />
       
       <main className="pt-20">

@@ -80,7 +80,8 @@ const VillageRegister = () => {
 
   return (
     <div className="min-h-screen">
-      <SEO title="Village Registration - Himsols" description="Register your village for tree plantation and greening programs with Himsols." />
+      <SEO title="Village Registration - Himsols" description="Register your village for tree plantation and greening programs with Himsols." noindex
+      />
       <Navbar />
 
       <section className="pt-32 pb-8 px-4 bg-gradient-hero text-white">

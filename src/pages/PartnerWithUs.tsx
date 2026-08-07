@@ -80,7 +80,8 @@ const PartnerWithUs = () => {
 
   return (
     <div className="min-h-screen">
-      <SEO title="Partner With Us - Himsols" description="Partner with Himsols for CSR tree plantation, village greening programs, and sustainable impact." />
+      <SEO title="Partner With Us - Himsols" description="Partner with Himsols for CSR tree plantation, village greening programs, and sustainable impact." noindex
+      />
       <Navbar />
 
       <section className="pt-32 pb-8 px-4 bg-gradient-hero text-white">

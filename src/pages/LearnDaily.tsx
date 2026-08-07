@@ -93,6 +93,7 @@ const LearnDaily = () => {
         title={isHi ? "आज की ग्रीन टिप | Himsols" : "Today's Green Tip | Himsols"}
         description={isHi ? "रोज़ एक नई पर्यावरण टिप। स्ट्रीक बनाओ, बोनस पाओ।" : "A new eco-tip every day. Build a streak, earn wallet bonuses."}
         url="https://himsols.online/learn/daily"
+      noindex
       />
       <Navbar />
       <main className="pt-24 pb-20 px-4">

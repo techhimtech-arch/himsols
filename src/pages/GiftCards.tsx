@@ -128,7 +128,8 @@ const GiftCards = () => {
     const occasion = OCCASIONS.find(o => o.id === selectedOccasion);
     return (
       <div className="min-h-screen bg-gradient-to-b from-primary/5 to-background">
-        <SEO title="Gift Card Purchased - Himsols Green Gift Cards" description="Your green gift card has been successfully purchased." />
+        <SEO title="Gift Card Purchased - Himsols Green Gift Cards" description="Your green gift card has been successfully purchased." noindex
+      />
         <Navbar />
         <main className="container mx-auto px-4 py-24">
           <div className="max-w-lg mx-auto">

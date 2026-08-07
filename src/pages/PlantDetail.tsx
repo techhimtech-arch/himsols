@@ -223,6 +223,7 @@ const PlantDetail = () => {
         url={`https://himsols.online/plants/${plant.id}`}
         image={currentImage?.image_url || undefined}
         type="product"
+      noindex
       />
       <ProductSchema
         name={plant.name}
