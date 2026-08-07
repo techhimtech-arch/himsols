@@ -145,16 +145,8 @@ const Profile = () => {
             </p>
           </div>
 
-          <Tabs defaultValue="wallet" className="w-full">
-            <TabsList className="grid w-full grid-cols-5 mb-6">
-              <TabsTrigger value="wallet" className="gap-2">
-                <Wallet className="h-4 w-4" />
-                <span className="hidden sm:inline">Wallet</span>
-              </TabsTrigger>
-              <TabsTrigger value="referrals" className="gap-2">
-                <Users className="h-4 w-4" />
-                <span className="hidden sm:inline">Refer</span>
-              </TabsTrigger>
+          <Tabs defaultValue="profile" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger value="profile" className="gap-2">
                 <User className="h-4 w-4" />
                 <span className="hidden sm:inline">Profile</span>
@@ -163,19 +155,7 @@ const Profile = () => {
                 <Heart className="h-4 w-4" />
                 <span className="hidden sm:inline">History</span>
               </TabsTrigger>
-              <TabsTrigger value="gift-cards" className="gap-2">
-                <Gift className="h-4 w-4" />
-                <span className="hidden sm:inline">Gifts</span>
-              </TabsTrigger>
             </TabsList>
-
-            <TabsContent value="wallet">
-              <WalletTab />
-            </TabsContent>
-
-            <TabsContent value="referrals">
-              <ReferralTab />
-            </TabsContent>
 
             <TabsContent value="profile" className="space-y-6">
               <Card>
@@ -297,10 +277,6 @@ const Profile = () => {
 
             <TabsContent value="transactions">
               <DonationsHistory />
-            </TabsContent>
-
-            <TabsContent value="gift-cards">
-              <GiftCardsHistory />
             </TabsContent>
           </Tabs>
         </div>

@@ -3,7 +3,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { Card, CardContent } from "@/components/ui/card";
-import { BookOpen, TreePine, ArrowRight, Sparkles } from "lucide-react";
+import { BookOpen, TreePine, Flame, ArrowRight, Sparkles } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 
 const Learn = () => {
@@ -13,7 +13,7 @@ const Learn = () => {
   return (
     <div className="min-h-screen">
       <SEO
-        title={isHi ? "लर्न हब — पर्यावरण सीखो और कार्य करो | Himsols" : "Learn Hub — Sustainability Lessons, Tips & Videos | Himsols"}
+        title={isHi ? "लर्न हब — पर्यावरण सीखो और कार्य करो | Himsols" : "Learn Hub — Cinematic Sustainability Stories | Himsols"}
         description={isHi
           ? "मुफ्त पर्यावरण पाठ, दैनिक हरी टिप्स, वीडियो और पेड़ों का विश्वकोश।"
           : "Free sustainability lessons, daily green tips, videos, and a tree encyclopedia. Learn, earn badges, plant a tree."}
