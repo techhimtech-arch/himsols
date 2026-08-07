@@ -2,9 +2,10 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
@@ -59,6 +60,7 @@ const Admin = () => {
 
   const currentTab = searchParams.get('tab') || 'requests';
   const handleTabChange = (value: string) => setSearchParams({ tab: value });
+  const [showArchived, setShowArchived] = useState(false);
 
   // Lazy stats — only fetches counts, not full rows
   const { data: stats } = useQuery({
