@@ -135,43 +135,56 @@ const Admin = () => {
             <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
               <TabsList className="w-max md:w-auto">
                 <TabsTrigger value="requests" className="text-xs md:text-sm">Plantation</TabsTrigger>
-                <TabsTrigger value="scrap" className="text-xs md:text-sm">Scrap</TabsTrigger>
                 <TabsTrigger value="orders" className="text-xs md:text-sm">Orders</TabsTrigger>
                 <TabsTrigger value="trees" className="text-xs md:text-sm">Trees</TabsTrigger>
-                <TabsTrigger value="plants" className="text-xs md:text-sm"><Flower2 className="h-3 w-3 md:h-4 md:w-4 mr-1" />Plants</TabsTrigger>
-                <TabsTrigger value="blog" className="text-xs md:text-sm"><FileText className="h-3 w-3 md:h-4 md:w-4 mr-1" />Blog</TabsTrigger>
+                <TabsTrigger value="allocations" className="text-xs md:text-sm"><TreePine className="h-3 w-3 md:h-4 md:w-4 mr-1" />Allocations</TabsTrigger>
+                <TabsTrigger value="farmers" className="text-xs md:text-sm"><Sprout className="h-3 w-3 md:h-4 md:w-4 mr-1" />Farmers</TabsTrigger>
+                <TabsTrigger value="land-partners" className="text-xs md:text-sm"><ShieldCheck className="h-3 w-3 md:h-4 md:w-4 mr-1" />Land Partners</TabsTrigger>
+                <TabsTrigger value="bulk-plantation" className="text-xs md:text-sm"><TreePine className="h-3 w-3 md:h-4 md:w-4 mr-1" />Bulk</TabsTrigger>
+                <TabsTrigger value="schools" className="text-xs md:text-sm">Schools</TabsTrigger>
+                <TabsTrigger value="csr-partners" className="text-xs md:text-sm"><Building2 className="h-3 w-3 md:h-4 md:w-4 mr-1" />CSR</TabsTrigger>
+                <TabsTrigger value="donations" className="text-xs md:text-sm">Contributions</TabsTrigger>
                 <TabsTrigger value="photos" className="text-xs md:text-sm"><Image className="h-3 w-3 md:h-4 md:w-4 mr-1" />Photos</TabsTrigger>
+                <TabsTrigger value="blog" className="text-xs md:text-sm"><FileText className="h-3 w-3 md:h-4 md:w-4 mr-1" />Blog</TabsTrigger>
                 <TabsTrigger value="testimonials" className="text-xs md:text-sm"><Quote className="h-3 w-3 md:h-4 md:w-4 mr-1" />Reviews</TabsTrigger>
-                <TabsTrigger value="activities" className="text-xs md:text-sm"><Activity className="h-3 w-3 md:h-4 md:w-4 mr-1" />Activities</TabsTrigger>
                 <TabsTrigger value="live-stats" className="text-xs md:text-sm"><BarChart3 className="h-3 w-3 md:h-4 md:w-4 mr-1" />Stats</TabsTrigger>
                 <TabsTrigger value="live-visitors" className="text-xs md:text-sm"><Activity className="h-3 w-3 md:h-4 md:w-4 mr-1" />Live</TabsTrigger>
-                <TabsTrigger value="partners" className="text-xs md:text-sm"><Handshake className="h-3 w-3 md:h-4 md:w-4 mr-1" />Partners</TabsTrigger>
-                <TabsTrigger value="campaigns" className="text-xs md:text-sm"><Heart className="h-3 w-3 md:h-4 md:w-4 mr-1" />Campaigns</TabsTrigger>
-                <TabsTrigger value="donations" className="text-xs md:text-sm">Contributions</TabsTrigger>
-                <TabsTrigger value="gift-cards" className="text-xs md:text-sm"><Gift className="h-3 w-3 md:h-4 md:w-4 mr-1" />Gift Cards</TabsTrigger>
-                <TabsTrigger value="gift-card-content" className="text-xs md:text-sm">GC Content</TabsTrigger>
                 <TabsTrigger value="users" className="text-xs md:text-sm">Users</TabsTrigger>
-                <TabsTrigger value="corporate" className="text-xs md:text-sm">Corporate</TabsTrigger>
-                <TabsTrigger value="marketplace" className="text-xs md:text-sm"><Store className="h-3 w-3 md:h-4 md:w-4 mr-1" />Marketplace</TabsTrigger>
-                <TabsTrigger value="external-apps" className="text-xs md:text-sm"><Globe className="h-3 w-3 md:h-4 md:w-4 mr-1" />Apps</TabsTrigger>
                 <TabsTrigger value="messages" className="text-xs md:text-sm"><MessageSquare className="h-3 w-3 md:h-4 md:w-4 mr-1" />Messages</TabsTrigger>
-                <TabsTrigger value="schools" className="text-xs md:text-sm">Schools</TabsTrigger>
-                <TabsTrigger value="bulk-plantation" className="text-xs md:text-sm"><TreePine className="h-3 w-3 md:h-4 md:w-4 mr-1" />Bulk</TabsTrigger>
+                <TabsTrigger value="corporate" className="text-xs md:text-sm">Corporate</TabsTrigger>
+                <TabsTrigger value="carbon" className="text-xs md:text-sm"><Gauge className="h-3 w-3 md:h-4 md:w-4 mr-1" />Carbon</TabsTrigger>
                 <TabsTrigger value="navigation" className="text-xs md:text-sm"><Menu className="h-3 w-3 md:h-4 md:w-4 mr-1" />Navbar</TabsTrigger>
                 <TabsTrigger value="footer" className="text-xs md:text-sm"><Link2 className="h-3 w-3 md:h-4 md:w-4 mr-1" />Footer</TabsTrigger>
                 <TabsTrigger value="about-page" className="text-xs md:text-sm"><Info className="h-3 w-3 md:h-4 md:w-4 mr-1" />About</TabsTrigger>
-                <TabsTrigger value="villages" className="text-xs md:text-sm"><MapPin className="h-3 w-3 md:h-4 md:w-4 mr-1" />Villages</TabsTrigger>
-                <TabsTrigger value="csr-partners" className="text-xs md:text-sm"><Building2 className="h-3 w-3 md:h-4 md:w-4 mr-1" />CSR</TabsTrigger>
-                <TabsTrigger value="nurseries" className="text-xs md:text-sm"><Flower2 className="h-3 w-3 md:h-4 md:w-4 mr-1" />Nurseries</TabsTrigger>
-                <TabsTrigger value="carbon" className="text-xs md:text-sm"><Gauge className="h-3 w-3 md:h-4 md:w-4 mr-1" />Carbon</TabsTrigger>
-                <TabsTrigger value="farmers" className="text-xs md:text-sm"><Sprout className="h-3 w-3 md:h-4 md:w-4 mr-1" />Farmers</TabsTrigger>
-                <TabsTrigger value="land-partners" className="text-xs md:text-sm"><ShieldCheck className="h-3 w-3 md:h-4 md:w-4 mr-1" />Land Partners</TabsTrigger>
-                <TabsTrigger value="allocations" className="text-xs md:text-sm"><TreePine className="h-3 w-3 md:h-4 md:w-4 mr-1" />Allocations</TabsTrigger>
-                <TabsTrigger value="scrap-types" className="text-xs md:text-sm"><IndianRupee className="h-3 w-3 md:h-4 md:w-4 mr-1" />Scrap Rates</TabsTrigger>
                 <TabsTrigger value="error-logs" className="text-xs md:text-sm"><AlertTriangle className="h-3 w-3 md:h-4 md:w-4 mr-1" />Errors</TabsTrigger>
                 <TabsTrigger value="settings" className="text-xs md:text-sm"><Settings className="h-3 w-3 md:h-4 md:w-4 mr-1" />Settings</TabsTrigger>
+
+                {/* Archived — features currently hidden on the public site */}
+                {showArchived && (
+                  <>
+                    <TabsTrigger value="scrap" className="text-xs md:text-sm">Scrap</TabsTrigger>
+                    <TabsTrigger value="scrap-types" className="text-xs md:text-sm"><IndianRupee className="h-3 w-3 md:h-4 md:w-4 mr-1" />Scrap Rates</TabsTrigger>
+                    <TabsTrigger value="plants" className="text-xs md:text-sm"><Flower2 className="h-3 w-3 md:h-4 md:w-4 mr-1" />Plants</TabsTrigger>
+                    <TabsTrigger value="marketplace" className="text-xs md:text-sm"><Store className="h-3 w-3 md:h-4 md:w-4 mr-1" />Marketplace</TabsTrigger>
+                    <TabsTrigger value="campaigns" className="text-xs md:text-sm"><Heart className="h-3 w-3 md:h-4 md:w-4 mr-1" />Campaigns</TabsTrigger>
+                    <TabsTrigger value="gift-cards" className="text-xs md:text-sm"><Gift className="h-3 w-3 md:h-4 md:w-4 mr-1" />Gift Cards</TabsTrigger>
+                    <TabsTrigger value="gift-card-content" className="text-xs md:text-sm">GC Content</TabsTrigger>
+                    <TabsTrigger value="activities" className="text-xs md:text-sm"><Activity className="h-3 w-3 md:h-4 md:w-4 mr-1" />Activities</TabsTrigger>
+                    <TabsTrigger value="partners" className="text-xs md:text-sm"><Handshake className="h-3 w-3 md:h-4 md:w-4 mr-1" />Partners</TabsTrigger>
+                    <TabsTrigger value="villages" className="text-xs md:text-sm"><MapPin className="h-3 w-3 md:h-4 md:w-4 mr-1" />Villages</TabsTrigger>
+                    <TabsTrigger value="nurseries" className="text-xs md:text-sm"><Flower2 className="h-3 w-3 md:h-4 md:w-4 mr-1" />Nurseries</TabsTrigger>
+                    <TabsTrigger value="external-apps" className="text-xs md:text-sm"><Globe className="h-3 w-3 md:h-4 md:w-4 mr-1" />Apps</TabsTrigger>
+                  </>
+                )}
               </TabsList>
             </div>
+
+            <div>
+              <Button variant="ghost" size="sm" className="text-xs text-muted-foreground" onClick={() => setShowArchived((v) => !v)}>
+                {showArchived ? "Hide archived modules" : "Show archived modules"}
+              </Button>
+            </div>
+
 
             <TabsContent value="campaigns"><CampaignsTab /></TabsContent>
             <TabsContent value="donations"><DonationsTab /></TabsContent>
