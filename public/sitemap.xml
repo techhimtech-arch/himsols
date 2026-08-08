@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://himsols.online/</loc>
-    <lastmod>2026-08-07</lastmod>
+    <lastmod>2026-08-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -312,6 +312,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://himsols.online/blog/how-to-prevent-forest-fires-in-himachal-pradesh</loc>
+    <lastmod>2026-08-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://himsols.online/blog/tree-plantation-effective-climate-action</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
@@ -320,12 +326,6 @@
   <url>
     <loc>https://himsols.online/blog/himsols-sustainable-future-tree-plantation</loc>
     <lastmod>2026-08-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://himsols.online/blog/how-to-prevent-forest-fires-in-himachal-pradesh</loc>
-    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
