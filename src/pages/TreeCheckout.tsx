@@ -351,52 +351,13 @@ const TreeCheckout = () => {
                       </Button>
                     </div>
                   ) : (
-                    <Tabs value={paymentTab} onValueChange={setPaymentTab}>
-                      <TabsList className="grid w-full grid-cols-3 mb-4">
-                        <TabsTrigger value="razorpay" className="text-xs sm:text-sm gap-1">
-                          <CreditCard className="h-3 w-3" /> Online
-                        </TabsTrigger>
-                        <TabsTrigger value="wallet" className="text-xs sm:text-sm gap-1">
-                          <Wallet className="h-3 w-3" /> Wallet
-                        </TabsTrigger>
-                        <TabsTrigger value="gift_card" className="text-xs sm:text-sm gap-1">
-                          <Gift className="h-3 w-3" /> Gift Card
-                        </TabsTrigger>
-                      </TabsList>
-
-                      <TabsContent value="razorpay" className="space-y-4">
-                        <p className="text-sm text-muted-foreground">Pay via UPI, Card, or Net Banking.</p>
-                        <Button onClick={handleRazorpayPayment} disabled={isProcessing} className="w-full gap-2" size="lg">
-                          {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
-                          Pay ₹{totalPrice.toLocaleString()}
-                        </Button>
-                      </TabsContent>
-
-                      <TabsContent value="wallet" className="space-y-4">
-                        <div className="flex justify-between items-center p-3 rounded-lg bg-muted/50">
-                          <span className="text-sm text-muted-foreground">Wallet Balance</span>
-                          <span className="font-bold text-foreground">₹{balance.toLocaleString()}</span>
-                        </div>
-                        {balance < totalPrice && (
-                          <p className="text-xs text-destructive">Need ₹{(totalPrice - balance).toLocaleString()} more.</p>
-                        )}
-                        <Button onClick={handleWalletPayment} disabled={isProcessing || balance < totalPrice} className="w-full gap-2" size="lg">
-                          {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wallet className="h-4 w-4" />}
-                          Pay from Wallet
-                        </Button>
-                      </TabsContent>
-
-                      <TabsContent value="gift_card" className="space-y-4">
-                        <div>
-                          <Label htmlFor="gc-code">Gift Card Code</Label>
-                          <Input id="gc-code" placeholder="GC-XXXX-XXXX" value={giftCardCode} onChange={(e) => setGiftCardCode(e.target.value.toUpperCase())} className="mt-1" />
-                        </div>
-                        <Button onClick={handleGiftCardPayment} disabled={isProcessing || !giftCardCode.trim()} className="w-full gap-2" size="lg">
-                          {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Gift className="h-4 w-4" />}
-                          Redeem & Order
-                        </Button>
-                      </TabsContent>
-                    </Tabs>
+                    <div className="space-y-4">
+                      <p className="text-sm text-muted-foreground">Pay via UPI, Card, or Net Banking.</p>
+                      <Button onClick={handleRazorpayPayment} disabled={isProcessing} className="w-full gap-2" size="lg">
+                        {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
+                        Pay ₹{totalPrice.toLocaleString()}
+                      </Button>
+                    </div>
                   )}
                 </CardContent>
               </Card>
