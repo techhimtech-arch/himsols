@@ -130,10 +130,12 @@ export const DonationsHistory = () => {
                     <Calendar className="h-3 w-3" />
                     {format(new Date(donation.created_at), "dd MMM yyyy")}
                   </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <TreePine className="h-3 w-3 text-green-600" />
-                    {calculateTrees(donation.amount, donation.campaign?.price_per_tree ?? null)} trees
-                  </div>
+                  {calculateTrees(donation.amount, donation.campaign?.price_per_tree ?? null) > 0 && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <TreePine className="h-3 w-3 text-green-600" />
+                      {calculateTrees(donation.amount, donation.campaign?.price_per_tree ?? null)} trees
+                    </div>
+                  )}
                 </div>
                 <div className="text-right space-y-2">
                   <p className="font-bold text-lg">₹{donation.amount.toLocaleString()}</p>
