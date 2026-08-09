@@ -105,6 +105,13 @@ const MyContributions = () => {
     enabled: !!user,
   });
 
+  // Unified auth gating: same pattern as /profile
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate("/auth?redirect=/my-contributions", { replace: true });
+    }
+  }, [authLoading, user, navigate]);
+
   const handleDownloadCertificate = async (donationId: string) => {
     setDownloadingId(donationId);
     try {
@@ -112,20 +119,38 @@ const MyContributions = () => {
         body: { donationId },
       });
       if (response.error) throw new Error(response.error.message);
-      const blob = new Blob([response.data], { type: "application/pdf" });
+
+      const data = response.data;
+      if (!data) throw new Error("Certificate could not be generated. Please try again.");
+
+      // Guard against JSON error payloads being saved as a corrupt PDF
+      let blob: Blob;
+      if (data instanceof Blob) {
+        blob = data;
+      } else if (data instanceof ArrayBuffer) {
+        blob = new Blob([data], { type: "application/pdf" });
+      } else if (typeof data === "object") {
+        throw new Error((data as any)?.error || "Certificate service returned an error.");
+      } else {
+        blob = new Blob([data as any], { type: "application/pdf" });
+      }
+
+      if (blob.size < 1000) throw new Error("Certificate file looks invalid. Please try again.");
+
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `HIMSOLS-Certificate.pdf`;
+      a.download = `HIMSOLS-Contribution-Certificate.pdf`;
       a.click();
       URL.revokeObjectURL(url);
       toast({ title: "Certificate Downloaded! 🎉" });
     } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+      toast({ title: "Download Failed", description: err.message, variant: "destructive" });
     } finally {
       setDownloadingId(null);
     }
   };
+
 
   const totalTreesOrdered = orders.reduce((sum, o) => sum + o.quantity, 0);
   const totalAllocated = orders.reduce((sum, o) => sum + (o.tree_allocations?.reduce((s, a) => s + a.tree_count, 0) || 0), 0);
