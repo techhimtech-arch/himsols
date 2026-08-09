@@ -61,7 +61,7 @@ const Auth = () => {
       setNeedsVerification(true);
       setUnverifiedEmail(result.email);
     } else if (!result.error) {
-      navigate("/");
+      navigate(redirectTo, { replace: true });
     }
   };
 
@@ -93,7 +93,7 @@ const Auth = () => {
       signupData.referralCode
     );
     if (!error) {
-      navigate("/");
+      navigate(redirectTo, { replace: true });
     }
   };
 
