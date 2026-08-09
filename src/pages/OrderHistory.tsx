@@ -35,7 +35,7 @@ const OrderHistory = () => {
 
   useEffect(() => {
     if (!authLoading && !user) {
-      navigate("/auth");
+      navigate("/auth?redirect=/order-history", { replace: true });
     }
   }, [user, authLoading, navigate]);
 

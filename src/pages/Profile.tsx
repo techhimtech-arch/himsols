@@ -36,7 +36,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (!loading && !user) {
-      navigate("/auth");
+      navigate("/auth?redirect=/profile", { replace: true });
     }
   }, [user, loading, navigate]);
 
