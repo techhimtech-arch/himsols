@@ -36,12 +36,19 @@ const Auth = () => {
     }
   }, [searchParams]);
 
+  // Where to go after successful auth
+  const redirectTo = (() => {
+    const target = searchParams.get("redirect");
+    return target && target.startsWith("/") ? target : "/";
+  })();
+
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
-      navigate("/");
+      navigate(redirectTo, { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, navigate, redirectTo]);
+
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,7 +61,7 @@ const Auth = () => {
       setNeedsVerification(true);
       setUnverifiedEmail(result.email);
     } else if (!result.error) {
-      navigate("/");
+      navigate(redirectTo, { replace: true });
     }
   };
 
@@ -86,7 +93,7 @@ const Auth = () => {
       signupData.referralCode
     );
     if (!error) {
-      navigate("/");
+      navigate(redirectTo, { replace: true });
     }
   };
 
