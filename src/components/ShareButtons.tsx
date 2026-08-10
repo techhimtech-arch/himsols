@@ -2,6 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Share2, Copy, Check, MessageCircle, Facebook, Linkedin } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { SITE_ORIGIN } from "@/lib/seo/site";
+
+// Shared links must always point at the live domain, never the preview host.
+const absoluteShareUrl = (url: string) =>
+  /^https?:\/\//i.test(url) ? url : `${SITE_ORIGIN}${url.startsWith("/") ? url : `/${url}`}`;
 
 // X (Twitter) icon component
 const XIcon = ({ className }: { className?: string }) => (
@@ -34,7 +39,7 @@ export const ShareButtons = ({
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
 
-  const shareUrl = url.startsWith("http") ? url : `${window.location.origin}${url}`;
+  const shareUrl = absoluteShareUrl(url);
   const defaultWhatsappMessage = whatsappMessage || `${title}\n\n${description}\n\n${shareUrl}`;
 
   const shareWhatsApp = () => {

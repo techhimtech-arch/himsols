@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { canonicalUrl, absoluteUrl } from '@/lib/seo/site';
 
 interface SEOProps {
   title?: string;
@@ -116,15 +117,7 @@ const websiteSchema = {
   }
 };
 
-const SITE_ORIGIN = "https://himsols.online";
-
-const resolveCanonicalUrl = (explicit?: string) => {
-  if (explicit) return explicit;
-  if (typeof window !== "undefined") {
-    return `${SITE_ORIGIN}${window.location.pathname}${window.location.search || ""}`;
-  }
-  return `${SITE_ORIGIN}/`;
-};
+const resolveCanonicalUrl = (explicit?: string) => canonicalUrl(explicit);
 
 export const SEO = ({
   title = "Himsols — पर्यावरण समाधान | Environmental Solutions",
@@ -172,7 +165,7 @@ export const SEO = ({
     // Open Graph tags
     updateMetaTag('og:title', title, true);
     updateMetaTag('og:description', description, true);
-    updateMetaTag('og:image', image, true);
+    updateMetaTag('og:image', absoluteUrl(image), true);
     updateMetaTag('og:url', canonicalUrl, true);
     updateMetaTag('og:type', type, true);
     updateMetaTag('og:site_name', 'Himsols', true);
@@ -183,7 +176,7 @@ export const SEO = ({
     updateMetaTag('twitter:card', 'summary_large_image');
     updateMetaTag('twitter:title', title);
     updateMetaTag('twitter:description', description);
-    updateMetaTag('twitter:image', image);
+    updateMetaTag('twitter:image', absoluteUrl(image));
     updateMetaTag('twitter:site', '@Himsols');
 
     // Article specific tags
