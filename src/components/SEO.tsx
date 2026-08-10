@@ -165,7 +165,7 @@ export const SEO = ({
     // Open Graph tags
     updateMetaTag('og:title', title, true);
     updateMetaTag('og:description', description, true);
-    updateMetaTag('og:image', image, true);
+    updateMetaTag('og:image', absoluteUrl(image), true);
     updateMetaTag('og:url', canonicalUrl, true);
     updateMetaTag('og:type', type, true);
     updateMetaTag('og:site_name', 'Himsols', true);
@@ -176,7 +176,7 @@ export const SEO = ({
     updateMetaTag('twitter:card', 'summary_large_image');
     updateMetaTag('twitter:title', title);
     updateMetaTag('twitter:description', description);
-    updateMetaTag('twitter:image', image);
+    updateMetaTag('twitter:image', absoluteUrl(image));
     updateMetaTag('twitter:site', '@Himsols');
 
     // Article specific tags
