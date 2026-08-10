@@ -81,26 +81,26 @@ const servicesSchema = {
     {
       "@type": "Service",
       "position": 2,
-      "name": "Waste Management",
-      "description": "Scrap pickup and recycling services - we collect electronic waste, metal, paper, and plastic",
-      "provider": {
-        "@type": "Organization",
-        "name": "Himsols"
-      },
-      "areaServed": "Himachal Pradesh, India",
-      "serviceType": "Waste Collection"
-    },
-    {
-      "@type": "Service",
-      "position": 3,
-      "name": "Rural Marketplace",
-      "description": "Buy fresh farmer produce, handmade products, and plants directly from rural Himachal communities",
+      "name": "CSR Tree Plantation",
+      "description": "Corporate CSR plantation drives in Himachal Pradesh with geo-tagged trees, farmer-led care and impact reporting",
       "provider": {
         "@type": "Organization",
         "name": "Himsols"
       },
       "areaServed": "India",
-      "serviceType": "E-commerce"
+      "serviceType": "Corporate Social Responsibility"
+    },
+    {
+      "@type": "Service",
+      "position": 3,
+      "name": "School & Community Plantation",
+      "description": "Plantation drives and environmental education programs for schools and communities in Himachal Pradesh",
+      "provider": {
+        "@type": "Organization",
+        "name": "Himsols"
+      },
+      "areaServed": "Himachal Pradesh, India",
+      "serviceType": "Environmental Education"
     }
   ]
 };
