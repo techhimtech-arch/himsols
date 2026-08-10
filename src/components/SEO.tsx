@@ -81,26 +81,26 @@ const servicesSchema = {
     {
       "@type": "Service",
       "position": 2,
-      "name": "Waste Management",
-      "description": "Scrap pickup and recycling services - we collect electronic waste, metal, paper, and plastic",
-      "provider": {
-        "@type": "Organization",
-        "name": "Himsols"
-      },
-      "areaServed": "Himachal Pradesh, India",
-      "serviceType": "Waste Collection"
-    },
-    {
-      "@type": "Service",
-      "position": 3,
-      "name": "Rural Marketplace",
-      "description": "Buy fresh farmer produce, handmade products, and plants directly from rural Himachal communities",
+      "name": "CSR Tree Plantation",
+      "description": "Corporate CSR plantation drives in Himachal Pradesh with geo-tagged trees, farmer-led care and impact reporting",
       "provider": {
         "@type": "Organization",
         "name": "Himsols"
       },
       "areaServed": "India",
-      "serviceType": "E-commerce"
+      "serviceType": "Corporate Social Responsibility"
+    },
+    {
+      "@type": "Service",
+      "position": 3,
+      "name": "School & Community Plantation",
+      "description": "Plantation drives and environmental education programs for schools and communities in Himachal Pradesh",
+      "provider": {
+        "@type": "Organization",
+        "name": "Himsols"
+      },
+      "areaServed": "Himachal Pradesh, India",
+      "serviceType": "Environmental Education"
     }
   ]
 };
@@ -121,8 +121,8 @@ const resolveCanonicalUrl = (explicit?: string) => canonicalUrl(explicit);
 
 export const SEO = ({
   title = "Himsols — पर्यावरण समाधान | Environmental Solutions",
-  description = "Himsols - Tree plantation, waste management, and conservation services for rural communities in Himachal Pradesh. पर्यावरण संरक्षण के लिए हमसे जुड़ें।",
-  keywords = "tree plantation, waste management, scrap pickup, eco-friendly, Himachal Pradesh, पेड़ लगाओ, कबाड़ बेचो, पर्यावरण",
+  description = "Himsols - Verified tree plantation with geo-tagged proof and farmer-led care in rural Himachal Pradesh. पर्यावरण संरक्षण के लिए हमसे जुड़ें।",
+  keywords = "tree plantation, CSR plantation India, geo-tagged trees, agroforestry, carbon offset, Himachal Pradesh, पेड़ लगाओ, पर्यावरण",
   image = "https://himsols.online/pwa-512x512.png",
   url,
   type = "website",
