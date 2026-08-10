@@ -6,8 +6,10 @@ Run:  python3 tests/e2e/auth_redirects.py            (against http://localhost:8
 Covers:
   1. Logged out: /my-contributions, /profile, /order-history redirect to
      /auth?redirect=<original path>.
-  2. Logged in (only when a Supabase session is injected into the env):
-     visiting /auth?redirect=<path> returns the user to <path>.
+  2. Logged in: visiting /auth?redirect=<path> returns the user to <path> and
+     the route stays put. Session comes from the injected Lovable env vars, or
+     falls back to minting one with TEST_EMAIL / TEST_PASSWORD:
+       TEST_EMAIL=... TEST_PASSWORD=... python3 tests/e2e/auth_redirects.py
 """
 
 import asyncio
