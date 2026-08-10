@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { canonicalUrl, absoluteUrl } from '@/lib/seo/site';
 
 interface SEOProps {
   title?: string;
@@ -116,15 +117,7 @@ const websiteSchema = {
   }
 };
 
-const SITE_ORIGIN = "https://himsols.online";
-
-const resolveCanonicalUrl = (explicit?: string) => {
-  if (explicit) return explicit;
-  if (typeof window !== "undefined") {
-    return `${SITE_ORIGIN}${window.location.pathname}${window.location.search || ""}`;
-  }
-  return `${SITE_ORIGIN}/`;
-};
+const resolveCanonicalUrl = (explicit?: string) => canonicalUrl(explicit);
 
 export const SEO = ({
   title = "Himsols — पर्यावरण समाधान | Environmental Solutions",
