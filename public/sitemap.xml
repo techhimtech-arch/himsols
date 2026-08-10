@@ -81,6 +81,16 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://himsols.online/partner-with-us</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://himsols.online/services</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://himsols.online/terms</loc>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
@@ -96,12 +106,62 @@
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://himsols.online/auth</loc>
+    <loc>https://himsols.online/days</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://himsols.online/days</loc>
+    <loc>https://himsols.online/csr/guide-to-csr-plantation-india</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://himsols.online/green-quiz</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://himsols.online/learn</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://himsols.online/learn/lessons</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://himsols.online/learn/daily</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://himsols.online/learn/videos</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://himsols.online/learn/why-trees-matter</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://himsols.online/learn/how-we-plant</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://himsols.online/learn/himachal-jungles</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://himsols.online/learn/forest-fires</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://himsols.online/learn/sustainability-habits</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
