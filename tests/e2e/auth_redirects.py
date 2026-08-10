@@ -6,8 +6,10 @@ Run:  python3 tests/e2e/auth_redirects.py            (against http://localhost:8
 Covers:
   1. Logged out: /my-contributions, /profile, /order-history redirect to
      /auth?redirect=<original path>.
-  2. Logged in (only when a Supabase session is injected into the env):
-     visiting /auth?redirect=<path> returns the user to <path>.
+  2. Logged in: visiting /auth?redirect=<path> returns the user to <path> and
+     the route stays put. Session comes from the injected Lovable env vars, or
+     falls back to minting one with TEST_EMAIL / TEST_PASSWORD:
+       TEST_EMAIL=... TEST_PASSWORD=... python3 tests/e2e/auth_redirects.py
 """
 
 import asyncio
@@ -16,6 +18,7 @@ import os
 import sys
 from pathlib import Path
 
+import requests
 from playwright.async_api import async_playwright
 
 BASE_URL = os.environ.get("BASE_URL", "http://localhost:8080")
@@ -45,10 +48,36 @@ async def test_logged_out(context) -> None:
     await page.close()
 
 
+def mint_session_via_password():
+    """Sign in with TEST_EMAIL/TEST_PASSWORD to get a real session (fallback
+    when Lovable does not inject one). Returns (storage_key, session_json)."""
+    email = os.environ.get("TEST_EMAIL")
+    password = os.environ.get("TEST_PASSWORD")
+    url = os.environ.get("VITE_SUPABASE_URL") or os.environ.get("SUPABASE_URL")
+    anon = os.environ.get("VITE_SUPABASE_PUBLISHABLE_KEY") or os.environ.get("SUPABASE_ANON_KEY")
+    if not (email and password and url and anon):
+        return None, None
+    resp = requests.post(
+        f"{url}/auth/v1/token?grant_type=password",
+        headers={"apikey": anon, "Content-Type": "application/json"},
+        json={"email": email, "password": password},
+        timeout=30,
+    )
+    if resp.status_code != 200:
+        print(f"NOTE  password sign-in failed ({resp.status_code})")
+        return None, None
+    session = resp.json()
+    project_ref = url.split("//")[1].split(".")[0]
+    return f"sb-{project_ref}-auth-token", json.dumps(session)
+
+
 async def restore_session(context, page) -> bool:
     storage_key = os.environ.get("LOVABLE_BROWSER_SUPABASE_STORAGE_KEY")
     session_json = os.environ.get("LOVABLE_BROWSER_SUPABASE_SESSION_JSON")
     cookies_json = os.environ.get("LOVABLE_BROWSER_SUPABASE_COOKIES_JSON")
+    if not (storage_key and session_json):
+        storage_key, session_json = mint_session_via_password()
+        cookies_json = None
     if not (storage_key and session_json):
         return False
     if cookies_json:
@@ -61,6 +90,7 @@ async def restore_session(context, page) -> bool:
         f"window.localStorage.setItem({json.dumps(storage_key)}, {json.dumps(session_json)})"
     )
     return True
+
 
 
 async def test_logged_in(context) -> None:
