@@ -129,9 +129,9 @@ function render(entries: SitemapEntry[]): string {
 }
 
 async function main() {
-  const today = new Date().toISOString().slice(0, 10);
-  const homepage = staticEntries.find((e) => e.path === "/");
-  if (homepage) homepage.lastmod = today;
+  // No synthetic lastmod: only real content timestamps (e.g. blog updated_at) are used.
+
+
 
   const dynamic = await fetchDynamic();
   const all = [...staticEntries, ...programmaticEntries, ...dynamic];
