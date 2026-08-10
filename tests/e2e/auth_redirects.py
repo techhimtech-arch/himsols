@@ -16,6 +16,7 @@ import os
 import sys
 from pathlib import Path
 
+import requests
 from playwright.async_api import async_playwright
 
 BASE_URL = os.environ.get("BASE_URL", "http://localhost:8080")
