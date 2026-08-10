@@ -10,9 +10,22 @@ Sitemap: https://himsols.online/sitemap.xml
 # Crawl delay for polite crawling
 Crawl-delay: 1
 
-# Block admin pages from indexing
+# Block admin + private/app pages from indexing
 Disallow: /admin
 Disallow: /admin/*
+Disallow: /auth
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /profile
+Disallow: /cart
+Disallow: /order-history
+Disallow: /my-contributions
+Disallow: /partner-dashboard
+Disallow: /vendor-dashboard
+Disallow: /track-request
+Disallow: /redeem-gift-card
+Disallow: /csr/guide-to-csr-plantation-india/thank-you
+Disallow: /*?ref=
 
 # Google
 User-agent: Googlebot
