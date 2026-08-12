@@ -16,7 +16,7 @@ Focus shift: paise pehle maangna band. Koi bhi banda **free tree plantation requ
 
 3. **Voluntary support (UPI QR)**
    - Request submit hone ke baad thank-you card: tracking ID + "Chaho to cause support karo" — UPI QR + UPI ID + Copy button.
-   - QR client-side generate hoga UPI ID se (koi image upload nahi). UPI ID admin panel se editable hogi (`site_settings` key `upi_id`, `upi_payee_name`) — pehle aap UPI ID bata do ya seed value me daal dunga.
+   - QR client-side generate hoga UPI ID se (koi image upload nahi). UPI ID: **8618982400m@pnb** (payee name "Himsols") — `site_settings` me `upi_id` / `upi_payee_name` ke roop me seed karenge taaki admin panel se badal sako.
    - Bilkul clear: **support optional hai, tree free hi lagega**.
    - Same card `/track-request` pe bhi (soft, ek line).
 
