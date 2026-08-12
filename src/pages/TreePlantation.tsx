@@ -6,13 +6,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { TreePine, Leaf, Droplets, Sun } from "lucide-react";
+import { TreePine, Leaf, Droplets, Sun, CheckCircle2, Gift, Sprout } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useLanguage } from "@/hooks/useLanguage";
+import { UpiSupportCard } from "@/components/UpiSupportCard";
+
+const MAX_FREE_TREES = 25;
 
 const TreePlantation = () => {
   const { toast } = useToast();
@@ -29,6 +32,7 @@ const TreePlantation = () => {
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submittedTrackingId, setSubmittedTrackingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) {
@@ -37,9 +41,10 @@ const TreePlantation = () => {
         description: t("plantation.pleaseLogin"),
         variant: "destructive",
       });
-      navigate("/auth");
+      navigate("/auth?redirect=/tree-plantation");
     }
   }, [user, navigate, toast, t]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
