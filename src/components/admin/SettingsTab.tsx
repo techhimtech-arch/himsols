@@ -28,6 +28,8 @@ export const SettingsTab = () => {
     referral_bonus_referee: "15",
     referral_enabled: true,
     show_referral_banner: true,
+    upi_id: "",
+    upi_payee_name: "",
   });
   const [saving, setSaving] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
