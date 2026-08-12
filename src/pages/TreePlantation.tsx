@@ -6,13 +6,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { TreePine, Leaf, Droplets, Sun } from "lucide-react";
+import { TreePine, Leaf, Droplets, Sun, CheckCircle2, Gift, Sprout } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useLanguage } from "@/hooks/useLanguage";
+import { UpiSupportCard } from "@/components/UpiSupportCard";
+
+const MAX_FREE_TREES = 25;
 
 const TreePlantation = () => {
   const { toast } = useToast();
@@ -29,6 +32,7 @@ const TreePlantation = () => {
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submittedTrackingId, setSubmittedTrackingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) {
@@ -37,13 +41,24 @@ const TreePlantation = () => {
         description: t("plantation.pleaseLogin"),
         variant: "destructive",
       });
-      navigate("/auth");
+      navigate("/auth?redirect=/tree-plantation");
     }
   }, [user, navigate, toast, t]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+
+    const qty = parseInt(formData.quantity);
+    if (!Number.isFinite(qty) || qty < 1 || qty > MAX_FREE_TREES) {
+      toast({
+        title: "Check the number of trees",
+        description: `Free requests are limited to ${MAX_FREE_TREES} trees. For larger plantations, please use the CSR / bulk plantation page.`,
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsSubmitting(true);
 
@@ -60,13 +75,13 @@ const TreePlantation = () => {
         .insert({
           user_id: user.id,
           tracking_id: trackingData,
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          location: formData.location,
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim(),
+          location: formData.location.trim(),
           tree_type: formData.treeType,
-          quantity: parseInt(formData.quantity),
-          message: formData.message || null,
+          quantity: qty,
+          message: formData.message.trim() || null,
         });
 
       if (insertError) throw insertError;
@@ -86,10 +101,8 @@ const TreePlantation = () => {
         message: "",
       });
 
-      // Navigate to track request page
-      setTimeout(() => {
-        navigate("/track-request");
-      }, 2000);
+      setSubmittedTrackingId(trackingData as string);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error: any) {
       console.error('Error submitting request:', error);
       toast({
@@ -101,6 +114,7 @@ const TreePlantation = () => {
       setIsSubmitting(false);
     }
   };
+
 
   const treeTypes = [
     { nameKey: "plantation.deodar", icon: <TreePine className="h-8 w-8 text-primary" />, descKey: "plantation.deodarDesc" },
@@ -117,12 +131,56 @@ const TreePlantation = () => {
       <section className="pt-32 pb-16 px-4 bg-gradient-hero text-white">
         <div className="container mx-auto text-center">
           <TreePine className="h-16 w-16 mx-auto mb-6" />
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 backdrop-blur text-sm font-semibold mb-5">
+            <Gift className="h-4 w-4" />
+            100% free — no payment needed
+          </div>
           <h1 className="text-5xl font-bold mb-6">{t("plantation.title")}</h1>
           <p className="text-xl max-w-3xl mx-auto">
-            {t("plantation.subtitle")}
+            Request a free plantation. We plant native saplings on verified farmer land and in forest
+            patches in Himachal, and you get a certificate once your trees are planted.
+          </p>
+          <p className="text-sm max-w-2xl mx-auto mt-4 text-white/80">
+            Have extra saplings at home? We'll happily collect and plant them for you too — just
+            mention it in the request.
           </p>
         </div>
       </section>
+
+      {submittedTrackingId && (
+        <section className="pt-12 px-4">
+          <div className="container mx-auto max-w-2xl space-y-6">
+            <Card className="border-primary/30">
+              <CardContent className="p-6 md:p-8 text-center">
+                <CheckCircle2 className="h-12 w-12 text-primary mx-auto mb-4" />
+                <h2 className="text-2xl font-bold mb-2">Request received — thank you!</h2>
+                <p className="text-muted-foreground mb-4">
+                  Your free plantation request is in. Save your tracking ID to follow progress and
+                  download your certificate once the trees are planted.
+                </p>
+                <div className="inline-block px-4 py-2 rounded-lg bg-muted font-mono font-bold text-lg mb-5">
+                  {submittedTrackingId}
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <Link to={`/track-request/${submittedTrackingId}`}>
+                    <Button className="w-full sm:w-auto">
+                      <Sprout className="h-4 w-4" />
+                      Track my trees
+                    </Button>
+                  </Link>
+                  <Button variant="outline" onClick={() => setSubmittedTrackingId(null)}>
+                    Make another request
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <UpiSupportCard note={`Himsols trees ${submittedTrackingId}`} />
+          </div>
+        </section>
+      )}
+
+
 
       {/* Benefits Section */}
       <section className="py-16 px-4">
@@ -252,11 +310,20 @@ const TreePlantation = () => {
                     id="quantity"
                     type="number"
                     min="1"
+                    max={MAX_FREE_TREES}
                     value={formData.quantity}
                     onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
                     required
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Free requests: 1–{MAX_FREE_TREES} trees. Need more?{" "}
+                    <Link to="/bulk-plantation" className="text-primary underline">
+                      See bulk / CSR plantation
+                    </Link>
+                    .
+                  </p>
                 </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="message">{t("plantation.additionalInfo")}</Label>
                   <Textarea

@@ -28,6 +28,8 @@ export const SettingsTab = () => {
     referral_bonus_referee: "15",
     referral_enabled: true,
     show_referral_banner: true,
+    upi_id: "",
+    upi_payee_name: "",
   });
   const [saving, setSaving] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
@@ -48,6 +50,8 @@ export const SettingsTab = () => {
         referral_bonus_referee: settings.referral_bonus_referee || "15",
         referral_enabled: settings.referral_enabled === "true",
         show_referral_banner: settings.show_referral_banner !== "false",
+        upi_id: settings.upi_id || "",
+        upi_payee_name: settings.upi_payee_name || "",
       });
     }
   }, [settings]);
@@ -127,6 +131,8 @@ export const SettingsTab = () => {
         updateSetting.mutateAsync({ key: "referral_bonus_referee", value: formData.referral_bonus_referee }),
         updateSetting.mutateAsync({ key: "referral_enabled", value: formData.referral_enabled ? "true" : "false" }),
         updateSetting.mutateAsync({ key: "show_referral_banner", value: formData.show_referral_banner ? "true" : "false" }),
+        updateSetting.mutateAsync({ key: "upi_id", value: formData.upi_id }),
+        updateSetting.mutateAsync({ key: "upi_payee_name", value: formData.upi_payee_name }),
       ]);
 
       toast({
@@ -323,6 +329,36 @@ export const SettingsTab = () => {
               value={formData.twitter_url}
               onChange={(e) => setFormData({ ...formData, twitter_url: e.target.value })}
               placeholder="https://twitter.com/himsols"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Voluntary UPI Support */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg md:text-xl">Voluntary Support (UPI)</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="upi_id">UPI ID</Label>
+            <Input
+              id="upi_id"
+              value={formData.upi_id}
+              onChange={(e) => setFormData({ ...formData, upi_id: e.target.value })}
+              placeholder="8618982400m@pnb"
+            />
+            <p className="text-xs text-muted-foreground">
+              Used to generate the optional support QR code shown after a free plantation request.
+            </p>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="upi_payee_name">Payee Name</Label>
+            <Input
+              id="upi_payee_name"
+              value={formData.upi_payee_name}
+              onChange={(e) => setFormData({ ...formData, upi_payee_name: e.target.value })}
+              placeholder="Himsols"
             />
           </div>
         </CardContent>

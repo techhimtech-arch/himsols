@@ -3,7 +3,7 @@ import { Footer } from "@/components/Footer";
 import { HeroSection } from "@/components/home/HeroSection";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
 import { ImpactDashboardSection } from "@/components/home/ImpactDashboardSection";
-import { ClimateImpactPackSection } from "@/components/home/ClimateImpactPackSection";
+import { FreePlantationSection } from "@/components/home/FreePlantationSection";
 import { TrustProofSection } from "@/components/home/TrustProofSection";
 import { CSRSection } from "@/components/home/CSRSection";
 import { HomepageFAQSection } from "@/components/home/HomepageFAQSection";
@@ -24,11 +24,11 @@ const Index = () => {
       <Navbar />
       <main>
         <HeroSection />
+        <FreePlantationSection />
         <HowItWorksSection />
         <CSRSection />
         <ImpactDashboardSection />
         <TrustProofSection />
-        <ClimateImpactPackSection />
         <HomepageFAQSection />
         <FinalCTASection />
       </main>
