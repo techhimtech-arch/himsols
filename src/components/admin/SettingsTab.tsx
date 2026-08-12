@@ -334,6 +334,36 @@ export const SettingsTab = () => {
         </CardContent>
       </Card>
 
+      {/* Voluntary UPI Support */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg md:text-xl">Voluntary Support (UPI)</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="upi_id">UPI ID</Label>
+            <Input
+              id="upi_id"
+              value={formData.upi_id}
+              onChange={(e) => setFormData({ ...formData, upi_id: e.target.value })}
+              placeholder="8618982400m@pnb"
+            />
+            <p className="text-xs text-muted-foreground">
+              Used to generate the optional support QR code shown after a free plantation request.
+            </p>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="upi_payee_name">Payee Name</Label>
+            <Input
+              id="upi_payee_name"
+              value={formData.upi_payee_name}
+              onChange={(e) => setFormData({ ...formData, upi_payee_name: e.target.value })}
+              placeholder="Himsols"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Bonus & Referral Settings */}
       <Card>
         <CardHeader>
