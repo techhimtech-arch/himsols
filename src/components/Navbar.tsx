@@ -78,9 +78,9 @@ export const Navbar = () => {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-3">
-            <Link to="/shop">
+            <Link to="/tree-plantation">
               <Button size="sm" className="gap-2">
-                🌱 Plant Now
+                🌱 Plant Free
               </Button>
             </Link>
             <LanguageToggle />
@@ -149,9 +149,9 @@ export const Navbar = () => {
               </Link>
             )}
             <div className="pt-4 space-y-3">
-              <Link to="/shop" onClick={() => setIsMenuOpen(false)}>
+              <Link to="/tree-plantation" onClick={() => setIsMenuOpen(false)}>
                 <Button className="w-full gap-2">
-                  🌱 Plant Now
+                  🌱 Plant Free
                 </Button>
               </Link>
               <CartSheet />
