@@ -15,6 +15,8 @@ export interface SiteSettings {
   referral_bonus_referee: string;
   referral_enabled: string;
   show_referral_banner: string;
+  upi_id: string;
+  upi_payee_name: string;
 }
 
 export const useSiteSettings = () => {
