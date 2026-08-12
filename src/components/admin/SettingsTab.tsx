@@ -131,6 +131,8 @@ export const SettingsTab = () => {
         updateSetting.mutateAsync({ key: "referral_bonus_referee", value: formData.referral_bonus_referee }),
         updateSetting.mutateAsync({ key: "referral_enabled", value: formData.referral_enabled ? "true" : "false" }),
         updateSetting.mutateAsync({ key: "show_referral_banner", value: formData.show_referral_banner ? "true" : "false" }),
+        updateSetting.mutateAsync({ key: "upi_id", value: formData.upi_id }),
+        updateSetting.mutateAsync({ key: "upi_payee_name", value: formData.upi_payee_name }),
       ]);
 
       toast({
