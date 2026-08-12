@@ -160,13 +160,15 @@ serve(async (req) => {
 
 
     // Get user profile
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("full_name, email")
-      .eq("id", order.user_id)
-      .single();
+    const { data: profile } = order.user_id
+      ? await supabase
+          .from("profiles")
+          .select("full_name, email")
+          .eq("id", order.user_id)
+          .single()
+      : { data: null };
 
-    const recipientName = profile?.full_name || "Valued Customer";
+    const recipientName = recipientOverride || profile?.full_name || "Valued Contributor";
     const treeCount = order.quantity;
     const completionDate = new Date(order.updated_at);
     const formattedDate = completionDate.toLocaleDateString("en-IN", {
