@@ -50,6 +50,8 @@ export const SettingsTab = () => {
         referral_bonus_referee: settings.referral_bonus_referee || "15",
         referral_enabled: settings.referral_enabled === "true",
         show_referral_banner: settings.show_referral_banner !== "false",
+        upi_id: settings.upi_id || "",
+        upi_payee_name: settings.upi_payee_name || "",
       });
     }
   }, [settings]);
