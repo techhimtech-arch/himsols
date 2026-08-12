@@ -131,12 +131,56 @@ const TreePlantation = () => {
       <section className="pt-32 pb-16 px-4 bg-gradient-hero text-white">
         <div className="container mx-auto text-center">
           <TreePine className="h-16 w-16 mx-auto mb-6" />
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 backdrop-blur text-sm font-semibold mb-5">
+            <Gift className="h-4 w-4" />
+            100% free — no payment needed
+          </div>
           <h1 className="text-5xl font-bold mb-6">{t("plantation.title")}</h1>
           <p className="text-xl max-w-3xl mx-auto">
-            {t("plantation.subtitle")}
+            Request a free plantation. We plant native saplings on verified farmer land and in forest
+            patches in Himachal, and you get a certificate once your trees are planted.
+          </p>
+          <p className="text-sm max-w-2xl mx-auto mt-4 text-white/80">
+            Have extra saplings at home? We'll happily collect and plant them for you too — just
+            mention it in the request.
           </p>
         </div>
       </section>
+
+      {submittedTrackingId && (
+        <section className="pt-12 px-4">
+          <div className="container mx-auto max-w-2xl space-y-6">
+            <Card className="border-primary/30">
+              <CardContent className="p-6 md:p-8 text-center">
+                <CheckCircle2 className="h-12 w-12 text-primary mx-auto mb-4" />
+                <h2 className="text-2xl font-bold mb-2">Request received — thank you!</h2>
+                <p className="text-muted-foreground mb-4">
+                  Your free plantation request is in. Save your tracking ID to follow progress and
+                  download your certificate once the trees are planted.
+                </p>
+                <div className="inline-block px-4 py-2 rounded-lg bg-muted font-mono font-bold text-lg mb-5">
+                  {submittedTrackingId}
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <Link to={`/track-request/${submittedTrackingId}`}>
+                    <Button className="w-full sm:w-auto">
+                      <Sprout className="h-4 w-4" />
+                      Track my trees
+                    </Button>
+                  </Link>
+                  <Button variant="outline" onClick={() => setSubmittedTrackingId(null)}>
+                    Make another request
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <UpiSupportCard note={`Himsols trees ${submittedTrackingId}`} />
+          </div>
+        </section>
+      )}
+
+
 
       {/* Benefits Section */}
       <section className="py-16 px-4">
