@@ -151,25 +151,24 @@ export const HeroSection = memo(() => {
               transition={{ duration: 0.9, delay: 0.7 }}
               className="mt-9 flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4"
             >
-              <Link to="/csr-carbon-offset" className="w-full sm:w-auto">
+              <Link to="/tree-plantation" className="w-full sm:w-auto">
                 <Button
                   size="lg"
                   className="w-full sm:w-auto px-8 py-6 text-base bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-bold rounded-xl shadow-[0_0_40px_-8px_rgba(16,185,129,0.6)] hover:shadow-[0_0_60px_-4px_rgba(16,185,129,0.8)] transition-all group"
                 >
-                  <Building2 className="h-4 w-4" />
-                  {isHi ? "CSR प्रस्ताव प्राप्त करें" : "Get CSR Proposal"}
+                  <TreePine className="h-4 w-4" />
+                  {isHi ? "मुफ़्त पेड़ लगवाओ" : "Plant trees free"}
                   <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-              <Link to="/single-tree-pack" className="w-full sm:w-auto">
+              <Link to="/csr-carbon-offset" className="w-full sm:w-auto">
                 <Button
                   size="lg"
                   variant="outline"
                   className="w-full sm:w-auto px-8 py-6 text-base bg-white/[0.03] hover:bg-white/[0.08] border-white/20 text-white hover:text-white backdrop-blur-xl rounded-xl font-semibold"
                 >
-                  <TreePine className="h-4 w-4" />
-                  {isHi ? `एक पेड़ लगाओ` : `Plant a single tree`}
-                  <span className="ml-1 text-emerald-300">₹{SINGLE_TREE_PRICE}</span>
+                  <Building2 className="h-4 w-4" />
+                  {isHi ? "CSR प्रस्ताव प्राप्त करें" : "Get CSR Proposal"}
                 </Button>
               </Link>
             </motion.div>
