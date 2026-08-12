@@ -59,46 +59,105 @@ serve(async (req) => {
     
     const isAdmin = !!roleData;
 
-    // Fetch order with user profile
-    const { data: order, error: orderError } = await supabase
-      .from("orders")
-      .select(`
-        id,
-        quantity,
-        status,
-        total_price,
-        created_at,
-        updated_at,
-        user_id,
-        delivery_location,
-        tree:trees(name)
-      `)
-      .eq("id", orderId)
-      .single();
+    // Order-like record used for the certificate (paid order OR free plantation request)
+    let order: {
+      id: string;
+      quantity: number;
+      status: string;
+      updated_at: string;
+      user_id: string | null;
+    } | null = null;
+    let recipientOverride: string | null = null;
+    let refLabel = "Order";
 
-    if (orderError || !order) {
-      console.error("Order fetch error:", orderError);
-      return new Response(
-        JSON.stringify({ error: "Order not found" }),
-        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    if (requestId) {
+      const { data: request, error: requestError } = await supabase
+        .from("tree_plantation_requests")
+        .select("id, tracking_id, quantity, status, updated_at, user_id, name")
+        .eq("id", requestId)
+        .single();
+
+      if (requestError || !request) {
+        console.error("Request fetch error:", requestError);
+        return new Response(
+          JSON.stringify({ error: "Request not found" }),
+          { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      if (!isAdmin && request.user_id !== user.id) {
+        return new Response(
+          JSON.stringify({ error: "Access denied" }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      if (request.status !== "completed") {
+        return new Response(
+          JSON.stringify({ error: "Certificate is available once your trees are planted" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      order = {
+        id: request.id,
+        quantity: request.quantity,
+        status: request.status,
+        updated_at: request.updated_at,
+        user_id: request.user_id,
+      };
+      recipientOverride = request.name || null;
+      refLabel = `Request ${request.tracking_id}`;
+    } else {
+      const { data: paidOrder, error: orderError } = await supabase
+        .from("orders")
+        .select(`
+          id,
+          quantity,
+          status,
+          total_price,
+          created_at,
+          updated_at,
+          user_id,
+          delivery_location,
+          tree:trees(name)
+        `)
+        .eq("id", orderId)
+        .single();
+
+      if (orderError || !paidOrder) {
+        console.error("Order fetch error:", orderError);
+        return new Response(
+          JSON.stringify({ error: "Order not found" }),
+          { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      // Authorization check - user can only access their own orders unless admin
+      if (!isAdmin && paidOrder.user_id !== user.id) {
+        return new Response(
+          JSON.stringify({ error: "Access denied" }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      // Only allow certificate for completed orders
+      if (paidOrder.status !== "completed") {
+        return new Response(
+          JSON.stringify({ error: "Certificate only available for completed orders" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      order = {
+        id: paidOrder.id,
+        quantity: paidOrder.quantity,
+        status: paidOrder.status,
+        updated_at: paidOrder.updated_at,
+        user_id: paidOrder.user_id,
+      };
     }
 
-    // Authorization check - user can only access their own orders unless admin
-    if (!isAdmin && order.user_id !== user.id) {
-      return new Response(
-        JSON.stringify({ error: "Access denied" }),
-        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    // Only allow certificate for completed orders
-    if (order.status !== "completed") {
-      return new Response(
-        JSON.stringify({ error: "Certificate only available for completed orders" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
 
     // Get user profile
     const { data: profile } = await supabase
