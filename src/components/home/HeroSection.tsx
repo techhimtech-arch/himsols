@@ -18,7 +18,6 @@ import forestMist from "@/assets/learn/hero-forest-mist.jpg";
 
 const HeroTreeScene = lazy(() => import("./HeroTreeScene"));
 
-const SINGLE_TREE_PRICE = 269;
 
 // Detect if we should skip the WebGL scene (small screens or reduced-motion)
 function useLite() {
