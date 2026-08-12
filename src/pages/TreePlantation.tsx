@@ -266,11 +266,20 @@ const TreePlantation = () => {
                     id="quantity"
                     type="number"
                     min="1"
+                    max={MAX_FREE_TREES}
                     value={formData.quantity}
                     onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
                     required
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Free requests: 1–{MAX_FREE_TREES} trees. Need more?{" "}
+                    <Link to="/bulk-plantation" className="text-primary underline">
+                      See bulk / CSR plantation
+                    </Link>
+                    .
+                  </p>
                 </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="message">{t("plantation.additionalInfo")}</Label>
                   <Textarea
