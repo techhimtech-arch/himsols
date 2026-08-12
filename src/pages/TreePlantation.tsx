@@ -50,6 +50,16 @@ const TreePlantation = () => {
     e.preventDefault();
     if (!user) return;
 
+    const qty = parseInt(formData.quantity);
+    if (!Number.isFinite(qty) || qty < 1 || qty > MAX_FREE_TREES) {
+      toast({
+        title: "Check the number of trees",
+        description: `Free requests are limited to ${MAX_FREE_TREES} trees. For larger plantations, please use the CSR / bulk plantation page.`,
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -65,13 +75,13 @@ const TreePlantation = () => {
         .insert({
           user_id: user.id,
           tracking_id: trackingData,
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          location: formData.location,
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim(),
+          location: formData.location.trim(),
           tree_type: formData.treeType,
-          quantity: parseInt(formData.quantity),
-          message: formData.message || null,
+          quantity: qty,
+          message: formData.message.trim() || null,
         });
 
       if (insertError) throw insertError;
@@ -91,10 +101,8 @@ const TreePlantation = () => {
         message: "",
       });
 
-      // Navigate to track request page
-      setTimeout(() => {
-        navigate("/track-request");
-      }, 2000);
+      setSubmittedTrackingId(trackingData as string);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error: any) {
       console.error('Error submitting request:', error);
       toast({
@@ -106,6 +114,7 @@ const TreePlantation = () => {
       setIsSubmitting(false);
     }
   };
+
 
   const treeTypes = [
     { nameKey: "plantation.deodar", icon: <TreePine className="h-8 w-8 text-primary" />, descKey: "plantation.deodarDesc" },
