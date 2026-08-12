@@ -382,7 +382,7 @@ serve(async (req) => {
     });
 
     // Order ID
-    page.drawText(`Order: #${order.id.slice(0, 8).toUpperCase()}`, {
+    page.drawText(refLabel === "Order" ? `Order: #${order.id.slice(0, 8).toUpperCase()}` : refLabel, {
       x: margin + 30,
       y: footerY - 15,
       size: 9,
