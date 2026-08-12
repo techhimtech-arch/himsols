@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, CheckCircle, Clock, Truck, MapPin, Calendar, Package, TreePine } from "lucide-react";
+import { Search, CheckCircle, Clock, Truck, MapPin, Calendar, Package, TreePine, Award, Loader2 } from "lucide-react";
+import { UpiSupportCard } from "@/components/UpiSupportCard";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,6 +14,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 
 interface RequestData {
+  id: string;
   tracking_id: string;
   status: string;
   location: string;
@@ -41,6 +43,63 @@ const TrackRequest = () => {
   const [userScrapRequests, setUserScrapRequests] = useState<ScrapRequestData[]>([]);
   const [loading, setLoading] = useState(false);
   const [requestType, setRequestType] = useState<"tree" | "scrap" | null>(null);
+  const [downloadingCert, setDownloadingCert] = useState(false);
+
+  const handleDownloadCertificate = async (requestId: string, trackingId: string) => {
+    setDownloadingCert(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast({
+          title: "Login required",
+          description: "Please login to download your certificate.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-certificate`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({ requestId }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to generate certificate");
+      }
+
+      const blob = await response.blob();
+      if (blob.type !== "application/pdf" || blob.size === 0) {
+        throw new Error("Certificate could not be generated. Please try again.");
+      }
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `HIMSOLS-Certificate-${trackingId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      toast({ title: "Certificate downloaded", description: "Thank you for planting with us!" });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to download certificate",
+        variant: "destructive",
+      });
+    } finally {
+      setDownloadingCert(false);
+    }
+  };
 
   useEffect(() => {
     if (user) {
@@ -63,7 +122,7 @@ const TrackRequest = () => {
     // Load tree plantation requests
     const { data: treeData } = await supabase
       .from('tree_plantation_requests')
-      .select('tracking_id, status, location, quantity, tree_type, created_at')
+      .select('id, tracking_id, status, location, quantity, tree_type, created_at')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
 
@@ -93,7 +152,7 @@ const TrackRequest = () => {
       if (trimmedId.startsWith('HMS-')) {
         const { data, error } = await supabase
           .from('tree_plantation_requests')
-          .select('tracking_id, status, location, quantity, tree_type, created_at')
+          .select('id, tracking_id, status, location, quantity, tree_type, created_at')
           .eq('tracking_id', trimmedId)
           .single();
 
@@ -405,8 +464,33 @@ const TrackRequest = () => {
                     Request Date: {new Date(requestData.created_at).toLocaleDateString()}
                   </p>
                 </div>
+
+                {requestData.status === "completed" ? (
+                  <div className="mt-6 text-center">
+                    <Button
+                      size="lg"
+                      onClick={() => handleDownloadCertificate(requestData.id, requestData.tracking_id)}
+                      disabled={downloadingCert}
+                    >
+                      {downloadingCert ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Award className="h-4 w-4" />
+                      )}
+                      Download Certificate
+                    </Button>
+                  </div>
+                ) : (
+                  <p className="mt-6 text-center text-sm text-muted-foreground">
+                    Your certificate will be available here once the plantation is completed.
+                  </p>
+                )}
               </CardContent>
             </Card>
+
+            <div className="mt-8">
+              <UpiSupportCard note={`Himsols trees ${requestData.tracking_id}`} compact />
+            </div>
           </div>
         </section>
       )}
