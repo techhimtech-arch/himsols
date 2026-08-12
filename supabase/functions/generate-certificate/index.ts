@@ -14,14 +14,15 @@ serve(async (req) => {
   }
 
   try {
-    const { orderId } = await req.json();
-    
-    if (!orderId) {
+    const { orderId, requestId } = await req.json();
+
+    if (!orderId && !requestId) {
       return new Response(
-        JSON.stringify({ error: "Order ID is required" }),
+        JSON.stringify({ error: "Order ID or Request ID is required" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
 
     // Get auth token
     const authHeader = req.headers.get("Authorization");
