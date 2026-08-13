@@ -176,6 +176,32 @@ const TreePlantation = () => {
             </Card>
 
             <UpiSupportCard note={`Himsols trees ${submittedTrackingId}`} />
+
+            <Card className="bg-muted/40">
+              <CardContent className="p-5 md:p-6">
+                <p className="text-sm text-muted-foreground mb-4">
+                  Planting on behalf of a company, school or as a gift? We run paid drives with
+                  geo-tagged reports and certificates.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Link to="/corporate" className="w-full sm:w-auto">
+                    <Button variant="outline" size="sm" className="w-full">
+                      CSR / company proposal
+                    </Button>
+                  </Link>
+                  <Link to="/schools" className="w-full sm:w-auto">
+                    <Button variant="outline" size="sm" className="w-full">
+                      School program
+                    </Button>
+                  </Link>
+                  <Link to="/climate-impact-pack" className="w-full sm:w-auto">
+                    <Button variant="outline" size="sm" className="w-full">
+                      Sponsor 10 trees
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </section>
       )}

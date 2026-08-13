@@ -59,12 +59,12 @@ export const Navbar = () => {
           <Logo size="md" />
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-5 lg:gap-6">
             {navItems.map((item) => (
               <Link
                 key={item.id}
                 to={item.path}
-                className="text-foreground hover:text-primary transition-all duration-300 font-medium hover:scale-110 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full"
+                className="whitespace-nowrap text-sm lg:text-base text-foreground hover:text-primary transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full"
               >
                 {getLabel(item)}
               </Link>

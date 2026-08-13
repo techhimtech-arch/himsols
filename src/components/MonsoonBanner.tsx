@@ -51,7 +51,7 @@ export const MonsoonBanner = () => {
   };
 
   return (
-    <div className="relative z-50 bg-gradient-to-r from-primary via-primary to-primary/90 text-primary-foreground border-b border-primary-foreground/10">
+    <div className="relative z-40 mt-16 bg-gradient-to-r from-primary via-primary to-primary/90 text-primary-foreground border-b border-primary-foreground/10">
       <div className="container mx-auto px-3 py-2 flex items-center gap-2 sm:gap-4 text-xs sm:text-sm">
         <CloudRain className="h-4 w-4 shrink-0 animate-pulse" aria-hidden />
         <Link

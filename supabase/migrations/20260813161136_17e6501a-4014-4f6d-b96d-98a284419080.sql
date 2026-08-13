@@ -1,0 +1,1 @@
+UPDATE public.navigation_items SET is_active = false WHERE path IN ('/', '/blog') AND is_active = true;
