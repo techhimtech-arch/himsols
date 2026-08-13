@@ -1,11 +1,13 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { HeroSection } from "@/components/home/HeroSection";
+import { FourDoorsSection } from "@/components/home/FourDoorsSection";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
 import { ImpactDashboardSection } from "@/components/home/ImpactDashboardSection";
 import { FreePlantationSection } from "@/components/home/FreePlantationSection";
 import { TrustProofSection } from "@/components/home/TrustProofSection";
 import { CSRSection } from "@/components/home/CSRSection";
+import { LearnHubStripSection } from "@/components/home/LearnHubStripSection";
 import { HomepageFAQSection } from "@/components/home/HomepageFAQSection";
 import { FinalCTASection } from "@/components/home/FinalCTASection";
 import { MobileStickyCTA } from "@/components/home/MobileStickyCTA";
