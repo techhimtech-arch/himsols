@@ -54,12 +54,15 @@ Har door ke liye ek hi primary page, ek hi CTA. Homepage sirf ye 4 doors dikhaye
 - Schools: `/schools`
 - Individual: `/tree-plantation` (free request), `/climate-impact-pack` + `/single-tree-pack` (jo pay karna chahe), `/gift-cards` **CSR/individual gifting ke roop me hi** — apna alag program nahi
 - Farmers: `/partner-with-us` / farmer registration + partner dashboard
-- Proof: `/impact`, `/gallery`, `/track-request`, blog + SEO pages
+- Proof: `/impact`, `/gallery`, `/track-request`
+- **Content side (5th, non-revenue lane):** Blog, `/learn` cinematic pages, `/green-quiz`, `/days` + SEO pages — ye engagement + organic traffic lane hai. Nav me ek hi "Learn" dropdown ke andar, homepage pe ek chhoti strip. Isse SEO aur repeat visitors aate hain, isliye rakhna.
 - Account + Admin
 
 **Band karo (already mostly hidden — permanent band):**
-- Marketplace, ornamental plants, campaigns/fundraisers, wallet, referral, quiz, learn lessons/videos, scrap
+- Marketplace, ornamental plants, campaigns/fundraisers, wallet, referral, scrap
+- Learn me sirf cinematic pages + blog + quiz rahenge; **lessons/videos modules** (0 videos, 0 completions) hidden hi rahenge — adhoore dikhte hain.
 - Wajah: ye alag business hain, alag operations maangte hain, aur "hum kya karte hain" ka answer todte hain. Zero traction bhi hai.
+
 
 **Gift card ka naya role:** apna hero program nahi — CSR/individual checkout ka ek option ("kisi ko gift karo"). Nav se hata, corporate + individual page ke andar rakho.
 
@@ -75,7 +78,7 @@ Free tree model band nahi karna — usko lead engine ke roop me treat karo, prod
 
 1. **Homepage restructure** — hero ke turant baad ek "4 doors" grid section (Companies / Schools / Individuals / Farmers) jisme har card ka apna CTA. Hero ka primary CTA free plantation hi rahe, secondary "For companies".
 2. **Positioning copy** — hero subheading, About, footer tagline sab me ek hi line: plantation implementation partner + "farmers ke liye free". Koi NGO/charity language nahi, koi "donate" nahi.
-3. **Navbar simplify** — Home · For Companies · Schools · Plant a Tree · For Farmers · Impact · Blog. Gift cards nav se hatakar Companies + Plant-a-Tree page ke andar.
+3. **Navbar simplify** — Home · For Companies · Schools · Plant a Tree · For Farmers · Impact · Learn (dropdown: Blog, Learn pages, Green Quiz, Days). Gift cards nav se hatakar Companies + Plant-a-Tree page ke andar.
 4. **Free request thank-you page** — tracking ID + optional UPI ke saath ek soft line: "Company ho? CSR proposal dekho" + paid pack option.
 5. **Sitemap/llms.txt/SEO** — sirf 4 doors + proof pages; band features permanently out.
 6. **DB-driven nav/footer** rows (`navigation_items`, `footer_links`) ko is structure ke hisaab se on/off karna — code se nahi.
