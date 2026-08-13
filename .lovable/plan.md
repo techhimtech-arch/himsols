@@ -78,7 +78,7 @@ Free tree model band nahi karna — usko lead engine ke roop me treat karo, prod
 
 1. **Homepage restructure** — hero ke turant baad ek "4 doors" grid section (Companies / Schools / Individuals / Farmers) jisme har card ka apna CTA. Hero ka primary CTA free plantation hi rahe, secondary "For companies".
 2. **Positioning copy** — hero subheading, About, footer tagline sab me ek hi line: plantation implementation partner + "farmers ke liye free". Koi NGO/charity language nahi, koi "donate" nahi.
-3. **Navbar simplify** — Home · For Companies · Schools · Plant a Tree · For Farmers · Impact · Blog. Gift cards nav se hatakar Companies + Plant-a-Tree page ke andar.
+3. **Navbar simplify** — Home · For Companies · Schools · Plant a Tree · For Farmers · Impact · Learn (dropdown: Blog, Learn pages, Green Quiz, Days). Gift cards nav se hatakar Companies + Plant-a-Tree page ke andar.
 4. **Free request thank-you page** — tracking ID + optional UPI ke saath ek soft line: "Company ho? CSR proposal dekho" + paid pack option.
 5. **Sitemap/llms.txt/SEO** — sirf 4 doors + proof pages; band features permanently out.
 6. **DB-driven nav/footer** rows (`navigation_items`, `footer_links`) ko is structure ke hisaab se on/off karna — code se nahi.
