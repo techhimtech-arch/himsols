@@ -39,7 +39,7 @@ export const HeroSection = memo(() => {
   const headlineTop = isHi ? "हिमाचल में" : "We plant trees";
   const headlineAccent = isHi ? "पेड़ लगाते हैं." : "in Himachal.";
   const headlineSub = isHi
-    ? "कंपनियों व स्कूलों के लिए पेड, किसानों व व्यक्तियों के लिए मुफ़्त।"
+    ? "कंपनियों और स्कूलों के लिए सशुल्क, किसानों और व्यक्तियों के लिए मुफ़्त।"
     : "Paid for companies & schools. Free for individuals & farmers.";
 
   return (
