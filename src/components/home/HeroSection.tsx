@@ -122,8 +122,8 @@ export const HeroSection = memo(() => {
               className="mt-7 md:mt-8 text-base md:text-lg text-white/60 max-w-xl mx-auto lg:mx-0 leading-relaxed"
             >
               {isHi
-                ? "हर पेड़ जियो-टैग किया गया, सर्वाइवल ट्रैक किया गया, और आपकी ESG रिपोर्ट के लिए तैयार। हिमाचल के किसानों की ज़मीन पर, पारदर्शी दस्तावेज़ों के साथ।"
-                : "Every tree geo-tagged, survival-tracked, and documented for your ESG report. Planted on farmer land in Himachal Pradesh — full transparency, no greenwashing."}
+                ? "हिमाचल में किसानों की ज़मीन और जंगल क्षेत्रों में देशी पेड़। हर पेड़ जियो-टैग, फ़ोटो प्रमाण और सर्वाइवल ट्रैकिंग के साथ — किसान के लिए यह सेवा मुफ़्त है।"
+                : "Native trees on farmer land and forest patches across Himachal Pradesh. Every tree geo-tagged, photographed and survival-tracked — and for the farmer, the service is free."}
             </motion.p>
 
             {monsoon && (
