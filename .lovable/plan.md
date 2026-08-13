@@ -54,12 +54,15 @@ Har door ke liye ek hi primary page, ek hi CTA. Homepage sirf ye 4 doors dikhaye
 - Schools: `/schools`
 - Individual: `/tree-plantation` (free request), `/climate-impact-pack` + `/single-tree-pack` (jo pay karna chahe), `/gift-cards` **CSR/individual gifting ke roop me hi** — apna alag program nahi
 - Farmers: `/partner-with-us` / farmer registration + partner dashboard
-- Proof: `/impact`, `/gallery`, `/track-request`, blog + SEO pages
+- Proof: `/impact`, `/gallery`, `/track-request`
+- **Content side (5th, non-revenue lane):** Blog, `/learn` cinematic pages, `/green-quiz`, `/days` + SEO pages — ye engagement + organic traffic lane hai. Nav me ek hi "Learn" dropdown ke andar, homepage pe ek chhoti strip. Isse SEO aur repeat visitors aate hain, isliye rakhna.
 - Account + Admin
 
 **Band karo (already mostly hidden — permanent band):**
-- Marketplace, ornamental plants, campaigns/fundraisers, wallet, referral, quiz, learn lessons/videos, scrap
+- Marketplace, ornamental plants, campaigns/fundraisers, wallet, referral, scrap
+- Learn me sirf cinematic pages + blog + quiz rahenge; **lessons/videos modules** (0 videos, 0 completions) hidden hi rahenge — adhoore dikhte hain.
 - Wajah: ye alag business hain, alag operations maangte hain, aur "hum kya karte hain" ka answer todte hain. Zero traction bhi hai.
+
 
 **Gift card ka naya role:** apna hero program nahi — CSR/individual checkout ka ek option ("kisi ko gift karo"). Nav se hata, corporate + individual page ke andar rakho.
 
