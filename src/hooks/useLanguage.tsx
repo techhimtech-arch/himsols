@@ -89,7 +89,7 @@ const translations: Record<Language, Record<string, string>> = {
     "cta.getStarted": "Get Started Today",
     
     // Footer
-    "footer.tagline": "Building a sustainable future through eco-friendly initiatives and community empowerment.",
+    "footer.tagline": "Himachal Pradesh ka plantation partner — paid tree drives for companies and schools, free plantation for individuals and farmers.",
     "footer.quickLinks": "Quick Links",
     "footer.contact": "Contact",
     "footer.followUs": "Follow Us",
@@ -304,7 +304,7 @@ const translations: Record<Language, Record<string, string>> = {
     "cta.getStarted": "आज ही शुरू करें",
     
     // Footer
-    "footer.tagline": "पर्यावरण-अनुकूल पहल और सामुदायिक सशक्तिकरण के माध्यम से टिकाऊ भविष्य का निर्माण।",
+    "footer.tagline": "हिमाचल प्रदेश का वृक्षारोपण पार्टनर — कंपनियों और स्कूलों के लिए सशुल्क, व्यक्तियों और किसानों के लिए मुफ़्त।",
     "footer.quickLinks": "त्वरित लिंक",
     "footer.contact": "संपर्क",
     "footer.followUs": "हमें फॉलो करें",
