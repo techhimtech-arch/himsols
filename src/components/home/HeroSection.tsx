@@ -36,9 +36,11 @@ export const HeroSection = memo(() => {
   const monsoon = isMonsoonWindow();
   const lite = useLite();
 
-  const headlineTop = isHi ? "हिमाचल में" : "Verified plantation";
-  const headlineAccent = isHi ? "सत्यापित वृक्षारोपण." : "in Himachal.";
-  const headlineSub = isHi ? "रिपोर्ट-रेडी CSR प्रभाव." : "Report-ready CSR impact.";
+  const headlineTop = isHi ? "हिमाचल में" : "We plant trees";
+  const headlineAccent = isHi ? "पेड़ लगाते हैं." : "in Himachal.";
+  const headlineSub = isHi
+    ? "कंपनियों व स्कूलों के लिए पेड, किसानों व व्यक्तियों के लिए मुफ़्त।"
+    : "Paid for companies & schools. Free for individuals & farmers.";
 
   return (
     <section className="relative w-full min-h-[92vh] md:min-h-screen flex items-center overflow-hidden bg-[#020804]">
