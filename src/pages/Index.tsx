@@ -18,8 +18,9 @@ const Index = () => {
     <div className="min-h-screen">
       <SEO
         title="Himsols — Tree Plantation Partner in Himachal Pradesh"
-        description="We plant trees in Himachal Pradesh — paid CSR & school drives, free plantation for individuals and farmers. Geo-tagged photos, survival tracking, CO₂ estimates."
-        keywords="CSR tree plantation India, ESG plantation partner, free tree plantation, school plantation program, carbon offset Himachal, plantation implementation partner"
+        description="We plant trees in Himachal Pradesh — CSR & school drives, individual and farmer plantation requests, geo-tagged photos, survival tracking and CO₂ estimates."
+        keywords="CSR tree plantation India, ESG plantation partner, tree plantation Himachal, school plantation program, carbon offset Himachal, plantation implementation partner"
+
         url="https://himsols.online/"
       />
       <SEOSchemas includeServices={true} />

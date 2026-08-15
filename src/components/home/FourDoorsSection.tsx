@@ -26,19 +26,20 @@ const doors = [
   {
     icon: TreePine,
     tag: "For individuals",
-    title: "Plant a tree — free",
-    text: "Request a free plantation in your name, or gift trees to someone. Support is welcome but always optional.",
-    cta: "Request free plantation",
+    title: "Plant a tree",
+    text: "Request a plantation in your name, or gift trees to someone. Support is welcome but always optional.",
+    cta: "Request plantation",
     to: "/tree-plantation",
   },
   {
     icon: Tractor,
     tag: "For farmers",
     title: "Get trees on your land",
-    text: "Register your land and we bring saplings, plantation support and survival payouts — free for the farmer.",
+    text: "Register your land and we bring saplings, plantation support and survival payouts.",
     cta: "Register as a farmer",
     to: "/farmer-registration",
   },
+
 ];
 
 export const FourDoorsSection = memo(() => {
@@ -53,9 +54,10 @@ export const FourDoorsSection = memo(() => {
             We plant trees in Himachal — pick your door
           </h2>
           <p className="text-muted-foreground">
-            Paid for companies and schools, free for individuals and farmers. Every tree gets the
-            same plantation and proof process.
+            Companies and schools fund large drives. Individuals and farmers request plantations.
+            Every tree gets the same plantation and proof process.
           </p>
+
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">

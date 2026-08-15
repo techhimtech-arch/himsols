@@ -38,9 +38,7 @@ export const HeroSection = memo(() => {
 
   const headlineTop = isHi ? "हिमाचल में" : "We plant trees";
   const headlineAccent = isHi ? "पेड़ लगाते हैं." : "in Himachal.";
-  const headlineSub = isHi
-    ? "कंपनियों और स्कूलों के लिए सशुल्क, किसानों और व्यक्तियों के लिए मुफ़्त।"
-    : "Paid for companies & schools. Free for individuals & farmers.";
+
 
   return (
     <section className="relative w-full min-h-[92vh] md:min-h-screen flex items-center overflow-hidden bg-[#020804]">
@@ -110,9 +108,6 @@ export const HeroSection = memo(() => {
               <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl mt-1 text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 via-emerald-400 to-teal-300">
                 {headlineAccent}
               </span>
-              <span className="block text-xl sm:text-2xl md:text-3xl lg:text-4xl mt-4 md:mt-5 font-semibold text-white/70">
-                {headlineSub}
-              </span>
             </motion.h1>
 
             <motion.p
@@ -122,9 +117,10 @@ export const HeroSection = memo(() => {
               className="mt-7 md:mt-8 text-base md:text-lg text-white/60 max-w-xl mx-auto lg:mx-0 leading-relaxed"
             >
               {isHi
-                ? "हिमाचल में किसानों की ज़मीन और जंगल क्षेत्रों में देशी पेड़। हर पेड़ जियो-टैग, फ़ोटो प्रमाण और सर्वाइवल ट्रैकिंग के साथ — किसान के लिए यह सेवा मुफ़्त है।"
-                : "Native trees on farmer land and forest patches across Himachal Pradesh. Every tree geo-tagged, photographed and survival-tracked — and for the farmer, the service is free."}
+                ? "हिमाचल में किसानों की ज़मीन और जंगल क्षेत्रों में देशी पेड़। हर पेड़ जियो-टैग, फ़ोटो प्रमाण और सर्वाइवल ट्रैकिंग के साथ।"
+                : "Native trees on farmer land and forest patches across Himachal Pradesh. Every tree geo-tagged, photographed and survival-tracked."}
             </motion.p>
+
 
             {monsoon && (
               <motion.div
@@ -158,7 +154,8 @@ export const HeroSection = memo(() => {
                   className="w-full sm:w-auto px-8 py-6 text-base bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-bold rounded-xl shadow-[0_0_40px_-8px_rgba(16,185,129,0.6)] hover:shadow-[0_0_60px_-4px_rgba(16,185,129,0.8)] transition-all group"
                 >
                   <TreePine className="h-4 w-4" />
-                  {isHi ? "मुफ़्त पेड़ लगवाओ" : "Plant trees free"}
+                  {isHi ? "पेड़ लगवाओ" : "Plant trees"}
+
                   <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>

@@ -26,7 +26,8 @@ export const FinalCTASection = memo(() => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link to="/tree-plantation">
             <Button size="lg" className="bg-background text-foreground hover:bg-background/90 gap-2 group px-8 w-full sm:w-auto text-base">
-              {isHi ? "मुफ़्त पेड़ लगवाओ" : "Plant Trees Free"}
+              {isHi ? "पेड़ लगवाओ" : "Plant Trees"}
+
               <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Button>
           </Link>
