@@ -154,7 +154,8 @@ export const HeroSection = memo(() => {
                   className="w-full sm:w-auto px-8 py-6 text-base bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-bold rounded-xl shadow-[0_0_40px_-8px_rgba(16,185,129,0.6)] hover:shadow-[0_0_60px_-4px_rgba(16,185,129,0.8)] transition-all group"
                 >
                   <TreePine className="h-4 w-4" />
-                  {isHi ? "मुफ़्त पेड़ लगवाओ" : "Plant trees free"}
+                  {isHi ? "पेड़ लगवाओ" : "Plant trees"}
+
                   <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
