@@ -18,7 +18,7 @@ const steps = [
   {
     icon: Award,
     title: "Get your certificate",
-    text: "Once planted, download your certificate from the tracking page — free of cost.",
+    text: "Once planted, download your certificate from the tracking page.",
   },
 ];
 

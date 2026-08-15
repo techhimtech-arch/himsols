@@ -304,7 +304,7 @@ const translations: Record<Language, Record<string, string>> = {
     "cta.getStarted": "आज ही शुरू करें",
     
     // Footer
-    "footer.tagline": "हिमाचल प्रदेश का वृक्षारोपण पार्टनर — कंपनियों और स्कूलों के लिए सशुल्क, व्यक्तियों और किसानों के लिए मुफ़्त।",
+    "footer.tagline": "हिमाचल प्रदेश का वृक्षारोपण पार्टनर — कंपनियों और स्कूलों के लिए CSR ड्राइव, व्यक्तियों और किसानों के लिए वृक्षारोपण अनुरोध।",
     "footer.quickLinks": "त्वरित लिंक",
     "footer.contact": "संपर्क",
     "footer.followUs": "हमें फॉलो करें",
