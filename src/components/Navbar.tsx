@@ -80,9 +80,10 @@ export const Navbar = () => {
           <div className="hidden md:flex items-center gap-3">
             <Link to="/tree-plantation">
               <Button size="sm" className="gap-2">
-                🌱 Plant Free
+                🌱 Plant trees
               </Button>
             </Link>
+
             <LanguageToggle />
             <CartSheet />
             {user ? (
@@ -151,9 +152,10 @@ export const Navbar = () => {
             <div className="pt-4 space-y-3">
               <Link to="/tree-plantation" onClick={() => setIsMenuOpen(false)}>
                 <Button className="w-full gap-2">
-                  🌱 Plant Free
+                  🌱 Plant trees
                 </Button>
               </Link>
+
               <CartSheet />
               {user ? (
                 <>
