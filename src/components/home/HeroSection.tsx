@@ -38,9 +38,7 @@ export const HeroSection = memo(() => {
 
   const headlineTop = isHi ? "हिमाचल में" : "We plant trees";
   const headlineAccent = isHi ? "पेड़ लगाते हैं." : "in Himachal.";
-  const headlineSub = isHi
-    ? "कंपनियों और स्कूलों के लिए सशुल्क, किसानों और व्यक्तियों के लिए मुफ़्त।"
-    : "Paid for companies & schools. Free for individuals & farmers.";
+
 
   return (
     <section className="relative w-full min-h-[92vh] md:min-h-screen flex items-center overflow-hidden bg-[#020804]">
