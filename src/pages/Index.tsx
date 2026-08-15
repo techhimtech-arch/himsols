@@ -7,7 +7,7 @@ import { ImpactDashboardSection } from "@/components/home/ImpactDashboardSection
 import { FreePlantationSection } from "@/components/home/FreePlantationSection";
 import { TrustProofSection } from "@/components/home/TrustProofSection";
 import { CSRSection } from "@/components/home/CSRSection";
-import { LearnHubStripSection } from "@/components/home/LearnHubStripSection";
+import { EngageSection } from "@/components/home/EngageSection";
 import { HomepageFAQSection } from "@/components/home/HomepageFAQSection";
 import { FinalCTASection } from "@/components/home/FinalCTASection";
 import { MobileStickyCTA } from "@/components/home/MobileStickyCTA";
@@ -32,7 +32,7 @@ const Index = () => {
         <CSRSection />
         <ImpactDashboardSection />
         <TrustProofSection />
-        <LearnHubStripSection />
+        <EngageSection />
         <HomepageFAQSection />
         <FinalCTASection />
       </main>
