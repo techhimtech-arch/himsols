@@ -35,16 +35,17 @@ export const FreePlantationSection = () => {
         >
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-5">
             <Gift className="h-4 w-4" />
-            Free for everyone
+            Open to all
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Plant trees with us — no payment needed
+            Plant trees with us
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            You don't have to buy a pack to make an impact. Request a free plantation, and we'll
-            plant native saplings and send you proof. If you have extra saplings at home, we'll plant
-            those for you too.
+            Request a plantation and we'll plant native saplings and send you proof. If you have
+            extra saplings at home, we'll plant those for you too. Contributions are welcome but
+            always optional.
           </p>
+
         </motion.div>
 
         <div className="grid md:grid-cols-3 gap-6 mb-10">
@@ -73,10 +74,11 @@ export const FreePlantationSection = () => {
           <Link to="/tree-plantation" className="w-full sm:w-auto">
             <Button size="lg" className="w-full sm:w-auto group">
               <Sprout className="h-4 w-4" />
-              Request free plantation
+              Request plantation
               <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Button>
           </Link>
+
           <Link to="/corporate" className="w-full sm:w-auto">
             <Button size="lg" variant="outline" className="w-full sm:w-auto">
               I'm here for CSR / bulk

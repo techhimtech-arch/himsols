@@ -89,7 +89,7 @@ const translations: Record<Language, Record<string, string>> = {
     "cta.getStarted": "Get Started Today",
     
     // Footer
-    "footer.tagline": "Himachal Pradesh's tree plantation partner — paid drives for companies and schools, free plantation for individuals and farmers.",
+    "footer.tagline": "Himachal Pradesh's tree plantation partner — CSR and school drives, individual and farmer plantation requests.",
     "footer.quickLinks": "Quick Links",
     "footer.contact": "Contact",
     "footer.followUs": "Follow Us",
