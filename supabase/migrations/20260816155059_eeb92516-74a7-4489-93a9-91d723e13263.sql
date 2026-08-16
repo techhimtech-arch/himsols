@@ -1,0 +1,1 @@
+UPDATE public.navigation_items SET parent_id = NULL WHERE path = '/farmer-registration';
