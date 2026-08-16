@@ -133,11 +133,11 @@ const TreePlantation = () => {
           <TreePine className="h-16 w-16 mx-auto mb-6" />
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 backdrop-blur text-sm font-semibold mb-5">
             <Gift className="h-4 w-4" />
-            100% free — no payment needed
+            Support optional
           </div>
           <h1 className="text-5xl font-bold mb-6">{t("plantation.title")}</h1>
           <p className="text-xl max-w-3xl mx-auto">
-            Request a free plantation. We plant native saplings on verified farmer land and in forest
+            Send a plantation request. We plant native saplings on verified farmer land and in forest
             patches in Himachal, and you get a certificate once your trees are planted.
           </p>
           <p className="text-sm max-w-2xl mx-auto mt-4 text-white/80">
