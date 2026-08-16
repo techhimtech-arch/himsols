@@ -54,7 +54,7 @@ const TreePlantation = () => {
     if (!Number.isFinite(qty) || qty < 1 || qty > MAX_FREE_TREES) {
       toast({
         title: "Check the number of trees",
-        description: `Free requests are limited to ${MAX_FREE_TREES} trees. For larger plantations, please use the CSR / bulk plantation page.`,
+        description: `Requests are limited to ${MAX_FREE_TREES} trees. For larger plantations, please use the CSR / bulk plantation page.`,
         variant: "destructive",
       });
       return;
@@ -133,11 +133,11 @@ const TreePlantation = () => {
           <TreePine className="h-16 w-16 mx-auto mb-6" />
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 backdrop-blur text-sm font-semibold mb-5">
             <Gift className="h-4 w-4" />
-            100% free — no payment needed
+            Support optional
           </div>
           <h1 className="text-5xl font-bold mb-6">{t("plantation.title")}</h1>
           <p className="text-xl max-w-3xl mx-auto">
-            Request a free plantation. We plant native saplings on verified farmer land and in forest
+            Send a plantation request. We plant native saplings on verified farmer land and in forest
             patches in Himachal, and you get a certificate once your trees are planted.
           </p>
           <p className="text-sm max-w-2xl mx-auto mt-4 text-white/80">
@@ -155,7 +155,7 @@ const TreePlantation = () => {
                 <CheckCircle2 className="h-12 w-12 text-primary mx-auto mb-4" />
                 <h2 className="text-2xl font-bold mb-2">Request received — thank you!</h2>
                 <p className="text-muted-foreground mb-4">
-                  Your free plantation request is in. Save your tracking ID to follow progress and
+                  Your plantation request is in. Save your tracking ID to follow progress and
                   download your certificate once the trees are planted.
                 </p>
                 <div className="inline-block px-4 py-2 rounded-lg bg-muted font-mono font-bold text-lg mb-5">
@@ -180,8 +180,8 @@ const TreePlantation = () => {
             <Card className="bg-muted/40">
               <CardContent className="p-5 md:p-6">
                 <p className="text-sm text-muted-foreground mb-4">
-                  Planting on behalf of a company, school or as a gift? We run paid drives with
-                  geo-tagged reports and certificates.
+                  Planting on behalf of a company or school, or want to gift trees to someone? We
+                  run structured drives with geo-tagged reports and certificates.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Link to="/corporate" className="w-full sm:w-auto">
@@ -197,6 +197,11 @@ const TreePlantation = () => {
                   <Link to="/climate-impact-pack" className="w-full sm:w-auto">
                     <Button variant="outline" size="sm" className="w-full">
                       Sponsor 10 trees
+                    </Button>
+                  </Link>
+                  <Link to="/gift-cards" className="w-full sm:w-auto">
+                    <Button variant="outline" size="sm" className="w-full">
+                      Gift trees to someone
                     </Button>
                   </Link>
                 </div>
@@ -342,7 +347,7 @@ const TreePlantation = () => {
                     required
                   />
                   <p className="text-xs text-muted-foreground">
-                    Free requests: 1–{MAX_FREE_TREES} trees. Need more?{" "}
+                    Requests: 1–{MAX_FREE_TREES} trees. Need more?{" "}
                     <Link to="/bulk-plantation" className="text-primary underline">
                       See bulk / CSR plantation
                     </Link>

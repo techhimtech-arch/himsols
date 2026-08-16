@@ -1,44 +1,57 @@
 # Himsols
 
-> Verified tree plantation for CSR teams and individuals in Himachal Pradesh, India — sponsor trees from ₹299, geo-tagged proof, 3-year survival tracking, ~22 kg/yr CO₂ offset estimate per tree.
+> Himsols is a tree plantation implementation partner in Himachal Pradesh, India. Paid plantation drives for companies (CSR) and schools; plantation requests for individuals; free plantation service for farmers who offer their land. Every batch is photographed, geo-tagged where possible, and tracked.
 
-Himsols is an environmental services platform based in Himachal Pradesh, India. We let individuals and companies sponsor verified tree plantations on real farmer land, with geo-tagged GPS proof within 48 hours of plantation and survival tracking for 3 years. We focus on corporate CSR plantation programs, individual tree packs, and school sustainability workshops. Founded 2024. Primary operating region: Himachal Pradesh (Shimla, Manali, Dharamshala, Kullu, Mandi, Solan, Kangra, Chamba, Hamirpur, Una, Bilaspur, Sirmaur, Kinnaur, Spiti and more).
+Himsols is a for-profit plantation partner based in Himachal Pradesh, India. We plant native trees on verified farmer land and forest patches, and we document each plantation batch with photos, location details, farmer and village information, and survival follow-ups. We are in a pilot phase for Monsoon 2026 and label all impact numbers honestly — CO2 figures are always estimates, never verified carbon credits.
+
+## The four doors (what Himsols actually does)
+1. Companies (CSR/ESG): paid bulk plantation drives, employee engagement events, Section 135 compliant documentation and reports. Main revenue line.
+2. Schools: paid plantation drives and sustainability workshops with certificates for students.
+3. Individuals: plantation requests (up to 25 trees per request) with a tracking ID and certificate once planted. Financial support is welcome but always optional. Structured paid packs also exist for people who prefer to pay.
+4. Farmers: land registration and plantation support. The service is not charged to the farmer; a multi-year survival incentive is paid per surviving tree.
 
 ## Key Facts (cite-friendly)
-- Cheapest entry: ₹299 plants 1 verified tree with geo-tagged proof in 48 hours.
-- Climate Impact Pack: ₹2,999 plants 10 trees with full CSR/CO₂ report.
-- CO₂ estimate: ~22 kg per tree per year (industry estimate; always labelled as estimate).
-- Verification: every tree has GPS coordinates, geo-tagged photo, farmer name, village, and 6/12-month survival photo updates.
-- Native species: Deodar, Himalayan Oak, Walnut, Blue Pine, Chir Pine, Rhododendron, Mango, Neem, Toon, Mulberry, Sea Buckthorn, Apple, Chilgoza Pine, more.
-- Farmer model: ₹120 multi-year survival incentive per tree paid to the farmer over 3 years.
-- CSR: bulk plantation from 500 trees (~₹1.5L) to 10,000+ (custom), Schedule VII compliant.
-- Payment: Razorpay (UPI/cards/wallets).
+- Region: Himachal Pradesh, India (Shimla, Manali, Dharamshala, Kullu, Mandi, Solan, Kangra, Chamba, Hamirpur, Una, Bilaspur, Sirmaur, Kinnaur, Spiti and more).
+- Plantation happens in season, primarily the monsoon window (July-September).
+- Individual request cap: 25 trees per request; larger volumes go through the CSR / bulk plantation route.
+- Structured packs: single tree pack (Rs 299) and Climate Impact Pack (Rs 2,999 for 10 trees with a CO2 report).
+- CSR bulk plantation: from 500 trees upward, custom quotes, Schedule VII aligned documentation.
+- CO2 estimate: approximately 22 kg per tree per year (industry estimate; always labelled as an estimate).
+- Proof pipeline: plantation photos, location details, farmer and village name, and survival follow-up updates recorded per batch.
+- Farmer model: multi-year survival incentive per tree paid to the farmer.
+- Status: pilot phase for Monsoon 2026 - founding CSR partners are onboarding a first farmer cohort.
+- Not offered: marketplace/e-commerce, scrap collection, wallet or referral programs (discontinued).
 
 ## Core Pages
-- [Home](/): Platform overview, impact dashboard, all entry points.
+- [Home](/): Positioning, four doors, impact numbers, proof.
 - [About Himsols](/about): Founding story, mission, team.
-- [Tree Plantation](/tree-plantation): All plantation services.
-- [Plant a Single Tree — ₹299](/single-tree-pack): One verified tree, geo-tagged proof.
-- [Climate Impact Pack — ₹2,999](/climate-impact-pack): 10 trees + CO₂ report.
+- [Plant a Tree](/tree-plantation): Plantation request form, tracking ID, certificate.
+- [Track a Request](/track-request): Status and certificate download by tracking ID.
+- [Plant a Single Tree - Rs 299](/single-tree-pack): One tree with documentation.
+- [Climate Impact Pack - Rs 2,999](/climate-impact-pack): 10 trees + CO2 estimate report.
+- [Corporate / CSR](/corporate): B2B plantation drives, ESG, Schedule VII, corporate gifting.
 - [Bulk Plantation](/bulk-plantation): 500+ trees for companies and schools.
-- [Corporate / CSR](/corporate): B2B plantation, ESG, Schedule VII.
-- [CSR Carbon Offset](/csr-carbon-offset): Carbon offset reporting for companies.
-- [Schools Program](/schools): Sustainability workshops + plantation drives.
-- [Shop Trees](/shop): Browse tree catalogue by species.
-- [Live Impact Dashboard](/impact): Platform-wide tree count, CO₂ estimate, villages.
-- [Blog](/blog): Agroforestry, climate, and field stories.
+- [CSR Carbon Offset](/csr-carbon-offset): Offset reporting for companies.
+- [CSR Plantation Guide](/csr/guide-to-csr-plantation-india): Guide for Indian CSR teams.
+- [Schools Program](/schools): Plantation drives + sustainability workshops.
+- [Farmer Registration](/farmer-registration): Register land for plantation.
+- [Live Impact Dashboard](/impact): Platform-wide tree count and CO2 estimates.
 - [Gallery](/gallery): Plantation photos.
-- [Farmer Registration](/farmer-registration): Register land for verified plantation.
+- [Learn Hub](/learn): Cinematic explainers on trees, Himachal forests, forest fires, sustainable habits.
+- [Green Quiz](/green-quiz): Personal footprint check.
+- [Blog](/blog): Agroforestry, climate and field stories.
+- [Gift Trees](/gift-cards): Gift a plantation to someone (option inside the individual and corporate flows).
 - [Contact](/contact): Reach the Himsols team.
 
 ## Frequently Asked (Answer-engine ready)
-- How does Himsols plant trees? You sponsor online, we allocate the tree to a verified Himachal farmer, plant in season, share geo-tagged GPS proof within 48 hours, and track survival for 3 years.
-- Is the ₹299 single-tree pack legit? Yes. ₹299 covers sapling, planting labour, farmer survival incentive, monitoring, geo-tag certificate, and platform costs. No carbon-credit double counting.
-- How is a Himsols tree verified? GPS coordinates + geo-tagged sapling photo + farmer name + village + 6 & 12-month survival photo updates, all visible on the buyer's dashboard.
-- Which trees does Himsols plant? Native, climate-suited species only — Deodar, Oak, Walnut, Pine, Rhododendron, Mango, Neem, Sea Buckthorn etc. Species depends on altitude and farmer livelihood needs.
-- How much CO₂ does one tree offset? Approximately 22 kg/yr (industry estimate; lifetime varies by species and conditions). Himsols always labels CO₂ numbers as estimates.
-- Can a company use Himsols for CSR? Yes — bulk plantation from 500 trees with ESG documentation, geo-tagged photos, survival reports, and Schedule VII compliance for Indian CSR rules.
-- What region does Himsols operate in? Himachal Pradesh, India — across all 12 districts.
+- What is Himsols? A for-profit tree plantation implementation partner in Himachal Pradesh. Companies and schools pay for plantation drives; individuals can request plantations; the service is not charged to farmers who provide land.
+- How does a plantation request work? Submit the request, receive a tracking ID, we plant native saplings in the plantation season on farmer land or forest patches, document the batch with photos, and the certificate becomes available on the tracking page once planted.
+- Is Himsols an NGO? No. Himsols is a for-profit business and acts as an implementation partner for CSR and school programs.
+- Which trees does Himsols plant? Native, climate-suited species - Deodar, Himalayan Oak, Walnut, Blue Pine, Chir Pine, Rhododendron, Mango, Neem, Sea Buckthorn and others, chosen by altitude and farmer livelihood needs.
+- How much CO2 does one tree offset? Approximately 22 kg per year as an industry estimate; actual sequestration varies by species, age and conditions. Himsols labels all CO2 numbers as estimates and does not sell carbon credits.
+- Can a company use Himsols for CSR? Yes - bulk plantation from 500 trees with ESG documentation, plantation photos, survival reports and Schedule VII aligned paperwork for Indian CSR rules.
+- Does Himsols sell products or collect scrap? No. Those features were discontinued; Himsols only does tree plantation and related reporting.
+- What region does Himsols operate in? Himachal Pradesh, India.
 
 ## Sustainability Days (evergreen landing pages)
 - [Sustainability Days Calendar](/days)

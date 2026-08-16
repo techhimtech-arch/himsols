@@ -23,7 +23,7 @@ const organizationSchema = {
   "alternateName": "हिमसोल्स",
   "url": "https://himsols.online",
   "logo": "https://himsols.online/favicon.png",
-  "description": "Himsols provides tree plantation, waste management, and conservation services for rural communities in Himachal Pradesh. पर्यावरण संरक्षण के लिए हमसे जुड़ें।",
+  "description": "Himsols is a tree plantation implementation partner in Himachal Pradesh — CSR and school plantation drives, individual plantation requests, and free plantation support for farmers. पर्यावरण संरक्षण के लिए हमसे जुड़ें।",
   "foundingDate": "2024",
   "areaServed": {
     "@type": "Place",
@@ -46,7 +46,7 @@ const localBusinessSchema = {
   "@id": "https://himsols.online",
   "url": "https://himsols.online",
   "image": "https://himsols.online/favicon.png",
-  "description": "Tree plantation, waste management, and eco-friendly products for Himachal Pradesh communities",
+  "description": "Tree plantation partner in Himachal Pradesh — CSR and school drives, individual plantation requests, farmer land plantation",
   "address": {
     "@type": "PostalAddress",
     "addressRegion": "Himachal Pradesh",

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User } from "lucide-react";
+import { Menu, X, User, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
@@ -26,6 +26,7 @@ interface NavItem {
   sort_order: number;
   is_active: boolean;
   is_visible_mobile: boolean;
+  parent_id: string | null;
 }
 
 export const Navbar = () => {
@@ -52,6 +53,9 @@ export const Navbar = () => {
     return language === "hi" && item.label_hi ? item.label_hi : item.label;
   };
 
+  const topLevel = navItems.filter((i) => !i.parent_id);
+  const childrenOf = (id: string) => navItems.filter((i) => i.parent_id === id);
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/60 backdrop-blur-2xl border-b border-white/30 shadow-soft">
       <div className="container mx-auto px-4">
@@ -60,15 +64,38 @@ export const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-5 lg:gap-6">
-            {navItems.map((item) => (
-              <Link
-                key={item.id}
-                to={item.path}
-                className="whitespace-nowrap text-sm lg:text-base text-foreground hover:text-primary transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full"
-              >
-                {getLabel(item)}
-              </Link>
-            ))}
+            {topLevel.map((item) => {
+              const children = childrenOf(item.id);
+              if (children.length === 0) {
+                return (
+                  <Link
+                    key={item.id}
+                    to={item.path}
+                    className="whitespace-nowrap text-sm lg:text-base text-foreground hover:text-primary transition-all duration-300 font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full"
+                  >
+                    {getLabel(item)}
+                  </Link>
+                );
+              }
+              return (
+                <DropdownMenu key={item.id}>
+                  <DropdownMenuTrigger className="whitespace-nowrap flex items-center gap-1 text-sm lg:text-base text-foreground hover:text-primary transition-colors font-medium outline-none">
+                    {getLabel(item)}
+                    <ChevronDown className="h-4 w-4" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="bg-background z-50">
+                    <DropdownMenuItem asChild>
+                      <Link to={item.path}>{getLabel(item)}</Link>
+                    </DropdownMenuItem>
+                    {children.map((child) => (
+                      <DropdownMenuItem key={child.id} asChild>
+                        <Link to={child.path}>{getLabel(child)}</Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              );
+            })}
             {isAdmin && (
               <Link to="/admin" className="text-foreground hover:text-primary transition-all duration-300 font-medium hover:scale-110 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full">
                 {t("nav.admin")}
@@ -128,17 +155,30 @@ export const Navbar = () => {
         {/* Mobile Menu */}
         {isMenuOpen && (
           <div className="md:hidden py-4 space-y-4 animate-fade-in">
-            {navItems
+            {topLevel
               .filter((item) => item.is_visible_mobile)
               .map((item) => (
-                <Link
-                  key={item.id}
-                  to={item.path}
-                  className="block text-foreground hover:text-primary transition-colors py-2"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {getLabel(item)}
-                </Link>
+                <div key={item.id}>
+                  <Link
+                    to={item.path}
+                    className="block text-foreground hover:text-primary transition-colors py-2"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {getLabel(item)}
+                  </Link>
+                  {childrenOf(item.id)
+                    .filter((child) => child.is_visible_mobile)
+                    .map((child) => (
+                      <Link
+                        key={child.id}
+                        to={child.path}
+                        className="block pl-4 text-sm text-muted-foreground hover:text-primary transition-colors py-1.5"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        {getLabel(child)}
+                      </Link>
+                    ))}
+                </div>
               ))}
             {isAdmin && (
               <Link
