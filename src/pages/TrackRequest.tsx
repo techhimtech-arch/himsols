@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, CheckCircle, Clock, Truck, MapPin, Calendar, Package, TreePine, Award, Loader2 } from "lucide-react";
 import { UpiSupportCard } from "@/components/UpiSupportCard";
+import { ShareButtons } from "@/components/ShareButtons";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
