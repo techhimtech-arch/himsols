@@ -1,6 +1,6 @@
 import { Suspense, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Float, Html, Environment } from "@react-three/drei";
+import { Float, Html } from "@react-three/drei";
 import * as THREE from "three";
 import { TreePine, Users, MapPin } from "lucide-react";
 
@@ -151,7 +151,8 @@ export default function HeroTreeScene() {
           </div>
         </OrbitStat>
         <Motes />
-        <Environment preset="forest" />
+        <hemisphereLight args={[0x8fd6a0, 0x0b1f14, 0.9]} />
+
       </Suspense>
     </Canvas>
   );
