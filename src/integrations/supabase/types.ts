@@ -633,11 +633,14 @@ export type Database = {
           contact_person: string
           created_at: string
           email: string
+          estimated_budget: number | null
+          estimated_trees: number | null
           id: string
           interest_area: string | null
           message: string | null
           notes: string | null
           phone: string
+          proposal_sent_at: string | null
           status: string
           updated_at: string
           website: string | null
@@ -649,11 +652,14 @@ export type Database = {
           contact_person: string
           created_at?: string
           email: string
+          estimated_budget?: number | null
+          estimated_trees?: number | null
           id?: string
           interest_area?: string | null
           message?: string | null
           notes?: string | null
           phone: string
+          proposal_sent_at?: string | null
           status?: string
           updated_at?: string
           website?: string | null
@@ -665,11 +671,14 @@ export type Database = {
           contact_person?: string
           created_at?: string
           email?: string
+          estimated_budget?: number | null
+          estimated_trees?: number | null
           id?: string
           interest_area?: string | null
           message?: string | null
           notes?: string | null
           phone?: string
+          proposal_sent_at?: string | null
           status?: string
           updated_at?: string
           website?: string | null
@@ -2768,6 +2777,42 @@ export type Database = {
       generate_referral_code: { Args: never; Returns: string }
       generate_tracking_id: { Args: never; Returns: string }
       generate_waste_tracking_id: { Args: never; Returns: string }
+      get_public_batch: {
+        Args: { p_batch_id: string }
+        Returns: {
+          batch_id: string
+          district: string
+          plantation_date: string
+          review_date: string
+          species: string
+          status: string
+          tree_count: number
+          trees_alive: number
+          village: string
+        }[]
+      }
+      get_public_batch_photos: {
+        Args: { p_batch_id: string }
+        Returns: {
+          caption: string
+          created_at: string
+          latitude: number
+          longitude: number
+          photo_url: string
+        }[]
+      }
+      get_public_batches: {
+        Args: { p_limit?: number }
+        Returns: {
+          batch_id: string
+          district: string
+          photo_count: number
+          plantation_date: string
+          species: string
+          status: string
+          tree_count: number
+        }[]
+      }
       get_visitor_count: { Args: never; Returns: number }
       has_role: {
         Args: {

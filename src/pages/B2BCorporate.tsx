@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { WhoWeServeSection } from "@/components/corporate/WhoWeServeSection";
+import { CSRCalculator } from "@/components/corporate/CSRCalculator";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -94,11 +95,15 @@ const B2BCorporate = () => {
         ? `\n\n🎁 BULK GIFT CARDS REQUEST:\nQuantity: ${formData.giftCardQuantity} cards\nValue per card: ₹${formData.giftCardValue}`
         : "";
       
-      const { error } = await supabase.from("contact_messages").insert({
-        name: `${formData.companyName} - ${formData.contactPerson}`,
-        email: formData.email, phone: formData.phone, 
-        subject: formData.interest === "bulk-gift-cards" ? `🎁 Bulk Gift Cards Inquiry: ${formData.giftCardQuantity} cards` : `B2B Inquiry: ${formData.interest}`,
-        message: `Company: ${formData.companyName}\nContact: ${formData.contactPerson}\nEmployees: ${formData.employees}${giftCardInfo}\n\n${formData.message}`
+      const { error } = await (supabase as any).from("csr_partners").insert({
+        company_name: formData.companyName,
+        company_type: formData.interest === "bulk-gift-cards" ? "gifting" : "corporate",
+        contact_person: formData.contactPerson,
+        email: formData.email,
+        phone: formData.phone,
+        interest_area: formData.interest || "CSR plantation",
+        message: `Employees: ${formData.employees}${giftCardInfo}\n\n${formData.message}`,
+        status: "inquiry",
       });
       if (error) throw error;
       toast({ title: "Inquiry Submitted!", description: "Our team will contact you within 24 hours." });
@@ -159,6 +164,7 @@ const B2BCorporate = () => {
 
       {/* Who We Serve - tailored institution pitches */}
       <WhoWeServeSection />
+      <CSRCalculator />
 
 
       {/* Why Green Gifting */}
