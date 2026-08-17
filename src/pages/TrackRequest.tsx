@@ -491,6 +491,21 @@ const TrackRequest = () => {
             <div className="mt-8">
               <UpiSupportCard note={`Himsols trees ${requestData.tracking_id}`} compact />
             </div>
+
+            <div className="mt-8 text-center">
+              <p className="text-sm text-muted-foreground mb-3">
+                Tell someone about your plantation — it helps more trees get planted.
+              </p>
+              <div className="flex justify-center">
+                <ShareButtons
+                  title="I got trees planted in Himachal with Himsols"
+                  description={`${requestData.quantity} ${requestData.tree_type} trees being planted in ${requestData.location}.`}
+                  url="/tree-plantation"
+                  whatsappMessage={`I just requested ${requestData.quantity} ${requestData.tree_type} trees to be planted in Himachal Pradesh with Himsols. You can request yours too:`}
+                  variant="full"
+                />
+              </div>
+            </div>
           </div>
         </section>
       )}
