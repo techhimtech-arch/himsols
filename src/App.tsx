@@ -83,6 +83,7 @@ const LearnHowWePlant = lazy(() => import("./pages/LearnHowWePlant"));
 const LearnHimachalJungles = lazy(() => import("./pages/LearnHimachalJungles"));
 const LearnForestFires = lazy(() => import("./pages/LearnForestFires"));
 const LearnSustainabilityHabits = lazy(() => import("./pages/LearnSustainabilityHabits"));
+const BatchProof = lazy(() => import("./pages/BatchProof"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -152,6 +153,7 @@ const App = () => (
                       <Route path="/shop" element={<Shop />} />
                       <Route path="/shop/:id" element={<TreeCheckout />} />
                       <Route path="/gallery" element={<Gallery />} />
+                      <Route path="/batch/:code" element={<BatchProof />} />
                       <Route path="/order-history" element={<OrderHistory />} />
                       <Route path="/cart" element={<Cart />} />
                       <Route path="/waste-management" element={<WasteManagement />} />
