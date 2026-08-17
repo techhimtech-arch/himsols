@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { WhoWeServeSection } from "@/components/corporate/WhoWeServeSection";
+import { CSRCalculator } from "@/components/corporate/CSRCalculator";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -159,6 +160,7 @@ const B2BCorporate = () => {
 
       {/* Who We Serve - tailored institution pitches */}
       <WhoWeServeSection />
+      <CSRCalculator />
 
 
       {/* Why Green Gifting */}
