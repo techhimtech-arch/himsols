@@ -19,7 +19,7 @@ export const MobileStickyCTA = () => {
       <Link to="/tree-plantation" className="block">
         <Button size="lg" className="w-full gap-2">
           <TreePine className="h-5 w-5" />
-          Plant Trees
+          Plant trees
           <ArrowRight className="h-4 w-4" />
         </Button>
       </Link>
