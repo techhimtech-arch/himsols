@@ -117,8 +117,8 @@ export const HeroSection = memo(() => {
               className="mt-7 md:mt-8 text-base md:text-lg text-white/60 max-w-xl mx-auto lg:mx-0 leading-relaxed"
             >
               {isHi
-                ? "हिमाचल में किसानों की ज़मीन और जंगल क्षेत्रों में देशी पेड़। हर पेड़ जियो-टैग, फ़ोटो प्रमाण और सर्वाइवल ट्रैकिंग के साथ।"
-                : "Native trees on farmer land and forest patches across Himachal Pradesh. Every tree geo-tagged, photographed and survival-tracked."}
+                ? "हिमसोल्स हिमाचल प्रदेश में वृक्षारोपण कार्यान्वयन पार्टनर है — हम देशी पेड़ लगाते हैं, जियो-टैग करते हैं और सर्वाइवल ट्रैक करते हैं। किसानों के लिए नि:शुल्क।"
+                : "Himsols is a tree plantation implementation partner in Himachal Pradesh — we plant native trees, geo-tag them and track survival. Free for farmers."}
             </motion.p>
 
 
@@ -166,7 +166,7 @@ export const HeroSection = memo(() => {
                   className="w-full sm:w-auto px-8 py-6 text-base bg-white/[0.03] hover:bg-white/[0.08] border-white/20 text-white hover:text-white backdrop-blur-xl rounded-xl font-semibold"
                 >
                   <Building2 className="h-4 w-4" />
-                  {isHi ? "CSR प्रस्ताव प्राप्त करें" : "Get CSR Proposal"}
+                  {isHi ? "CSR प्रस्ताव प्राप्त करें" : "Get CSR proposal"}
                 </Button>
               </Link>
             </motion.div>

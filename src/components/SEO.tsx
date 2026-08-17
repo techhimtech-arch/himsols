@@ -121,7 +121,7 @@ const resolveCanonicalUrl = (explicit?: string) => canonicalUrl(explicit);
 
 export const SEO = ({
   title = "Himsols — पर्यावरण समाधान | Environmental Solutions",
-  description = "Himsols - Verified tree plantation with geo-tagged proof and farmer-led care in rural Himachal Pradesh. पर्यावरण संरक्षण के लिए हमसे जुड़ें।",
+  description = "Himsols is a tree plantation implementation partner in Himachal Pradesh — we plant native trees, geo-tag them and track survival. Free for farmers.",
   keywords = "tree plantation, CSR plantation India, geo-tagged trees, agroforestry, carbon offset, Himachal Pradesh, पेड़ लगाओ, पर्यावरण",
   image = "https://himsols.online/pwa-512x512.png",
   url,

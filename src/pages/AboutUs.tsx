@@ -75,7 +75,7 @@ const AboutUs = memo(() => {
         <div className="container mx-auto px-4 text-center max-w-4xl">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
             <Sprout className="h-4 w-4" />
-            <span>Rural Green Infrastructure Platform</span>
+            <span>Plantation Implementation Partner</span>
           </div>
           <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
             From Plantation to{" "}
@@ -84,7 +84,7 @@ const AboutUs = memo(() => {
             </span>
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
-            India plants millions of trees every year. But most don't survive — because planting is treated as an event, not a long-term responsibility. We are building something that changes this.
+            Himsols is a tree plantation implementation partner in Himachal Pradesh — we plant native trees, geo-tag them and track survival. Free for farmers.
           </p>
         </div>
       </section>

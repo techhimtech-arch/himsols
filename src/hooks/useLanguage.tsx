@@ -89,7 +89,7 @@ const translations: Record<Language, Record<string, string>> = {
     "cta.getStarted": "Get Started Today",
     
     // Footer
-    "footer.tagline": "Himachal Pradesh's tree plantation partner — CSR and school drives, individual and farmer plantation requests.",
+    "footer.tagline": "Himsols is a tree plantation implementation partner in Himachal Pradesh — we plant native trees, geo-tag them and track survival. Free for farmers.",
     "footer.quickLinks": "Quick Links",
     "footer.contact": "Contact",
     "footer.followUs": "Follow Us",
@@ -304,7 +304,7 @@ const translations: Record<Language, Record<string, string>> = {
     "cta.getStarted": "आज ही शुरू करें",
     
     // Footer
-    "footer.tagline": "हिमाचल प्रदेश का वृक्षारोपण पार्टनर — कंपनियों और स्कूलों के लिए CSR ड्राइव, व्यक्तियों और किसानों के लिए वृक्षारोपण अनुरोध।",
+    "footer.tagline": "हिमसोल्स हिमाचल प्रदेश में वृक्षारोपण कार्यान्वयन पार्टनर है — हम देशी पेड़ लगाते हैं, जियो-टैग करते हैं और सर्वाइवल ट्रैक करते हैं। किसानों के लिए नि:शुल्क।",
     "footer.quickLinks": "त्वरित लिंक",
     "footer.contact": "संपर्क",
     "footer.followUs": "हमें फॉलो करें",
