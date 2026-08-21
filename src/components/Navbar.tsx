@@ -7,7 +7,6 @@ import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { CartSheet } from "@/components/CartSheet";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { Logo } from "@/components/Logo";
 import {
