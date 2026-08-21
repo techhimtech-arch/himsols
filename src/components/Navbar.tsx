@@ -193,11 +193,12 @@ export const Navbar = () => {
             <div className="pt-4 space-y-3">
               <Link to="/tree-plantation" onClick={() => setIsMenuOpen(false)}>
                 <Button className="w-full gap-2">
-                  🌱 {language === "hi" ? "पेड़ लगवाओ" : "Plant trees"}
+                  <Sprout className="h-4 w-4" />
+                  {language === "hi" ? "पेड़ लगवाओ" : "Plant trees"}
                 </Button>
               </Link>
 
-              <CartSheet />
+
               {user ? (
                 <>
                   <Link to="/profile" className="flex-1" onClick={() => setIsMenuOpen(false)}>
