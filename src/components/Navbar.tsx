@@ -1,13 +1,12 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, ChevronDown } from "lucide-react";
+import { Menu, X, User, ChevronDown, Sprout } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { CartSheet } from "@/components/CartSheet";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { Logo } from "@/components/Logo";
 import {
@@ -107,12 +106,13 @@ export const Navbar = () => {
           <div className="hidden md:flex items-center gap-3">
             <Link to="/tree-plantation">
               <Button size="sm" className="gap-2">
-                🌱 {language === "hi" ? "पेड़ लगवाओ" : "Plant trees"}
+                <Sprout className="h-4 w-4" />
+                {language === "hi" ? "पेड़ लगवाओ" : "Plant trees"}
               </Button>
             </Link>
 
             <LanguageToggle />
-            <CartSheet />
+
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -192,11 +192,12 @@ export const Navbar = () => {
             <div className="pt-4 space-y-3">
               <Link to="/tree-plantation" onClick={() => setIsMenuOpen(false)}>
                 <Button className="w-full gap-2">
-                  🌱 {language === "hi" ? "पेड़ लगवाओ" : "Plant trees"}
+                  <Sprout className="h-4 w-4" />
+                  {language === "hi" ? "पेड़ लगवाओ" : "Plant trees"}
                 </Button>
               </Link>
 
-              <CartSheet />
+
               {user ? (
                 <>
                   <Link to="/profile" className="flex-1" onClick={() => setIsMenuOpen(false)}>

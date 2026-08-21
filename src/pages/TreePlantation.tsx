@@ -34,21 +34,37 @@ const TreePlantation = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedTrackingId, setSubmittedTrackingId] = useState<string | null>(null);
 
+  // View-first: no login wall. We restore any draft saved before sign-in.
   useEffect(() => {
-    if (!user) {
-      toast({
-        title: t("plantation.authRequired"),
-        description: t("plantation.pleaseLogin"),
-        variant: "destructive",
-      });
-      navigate("/auth?redirect=/tree-plantation");
+    try {
+      const draft = sessionStorage.getItem("plantation_draft");
+      if (draft) {
+        setFormData((prev) => ({ ...prev, ...JSON.parse(draft) }));
+        sessionStorage.removeItem("plantation_draft");
+      }
+    } catch {
+      /* ignore malformed draft */
     }
-  }, [user, navigate, toast, t]);
-
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+
+    // Ask for login only at submit time, keeping what the user typed.
+    if (!user) {
+      try {
+        sessionStorage.setItem("plantation_draft", JSON.stringify(formData));
+      } catch {
+        /* storage unavailable — continue to auth anyway */
+      }
+      toast({
+        title: t("plantation.authRequired"),
+        description: t("plantation.pleaseLogin"),
+      });
+      navigate("/auth?redirect=/tree-plantation");
+      return;
+    }
+
 
     const qty = parseInt(formData.quantity);
     if (!Number.isFinite(qty) || qty < 1 || qty > MAX_FREE_TREES) {
