@@ -107,12 +107,13 @@ export const Navbar = () => {
           <div className="hidden md:flex items-center gap-3">
             <Link to="/tree-plantation">
               <Button size="sm" className="gap-2">
-                🌱 {language === "hi" ? "पेड़ लगवाओ" : "Plant trees"}
+                <Sprout className="h-4 w-4" />
+                {language === "hi" ? "पेड़ लगवाओ" : "Plant trees"}
               </Button>
             </Link>
 
             <LanguageToggle />
-            <CartSheet />
+
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
