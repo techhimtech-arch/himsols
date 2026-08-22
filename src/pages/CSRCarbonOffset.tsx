@@ -36,10 +36,10 @@ const offerings = [
 ];
 
 const whyPartner = [
-  { icon: Users, title: "Local Farmer Partners", desc: "Direct collaboration with our pilot cohort of farmer partners across Himachal Pradesh — onboarding 50 for Monsoon 2026." },
-  { icon: Leaf, title: "Community-Driven Approach", desc: "Programs rooted in local communities for lasting environmental impact." },
-  { icon: Globe, title: "Transparent Impact Tracking", desc: "Real-time dashboards showing your plantation's progress and carbon offset." },
-  { icon: ShieldCheck, title: "ESG-Aligned Initiatives", desc: "Programs designed to support your company's ESG goals and sustainability commitments." },
+  { icon: Users, title: "Verified Farmer Network", desc: "We onboard and verify farmer land patches across Himachal Pradesh. Our Pilot Cohort target is 50 verified partners for Monsoon 2026." },
+  { icon: Leaf, title: "Implementation, Not Just Ideas", desc: "We coordinate sapling supply, plantation labour, geo-tagging and survival audits — end to end." },
+  { icon: Globe, title: "Transparent Proof Pipeline", desc: "Every plantation gets dated geo-tagged photos, GPS records and survival reports you can use in CSR audits." },
+  { icon: ShieldCheck, title: "CSR & ESG Ready", desc: "Documentation is structured for Section 135 reporting, BRSR disclosures and board presentations." },
 ];
 
 const CSRCarbonOffset = () => {
@@ -103,14 +103,15 @@ const CSRCarbonOffset = () => {
         <div className="container mx-auto px-4 text-center">
           <div className="inline-flex items-center gap-2 bg-primary-foreground/10 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
             <Globe className="w-4 h-4" />
-            <span className="text-sm font-medium">Corporate Sustainability</span>
+            <span className="text-sm font-medium">Pilot Cohort · Monsoon 2026</span>
           </div>
-          <h1 className="text-3xl md:text-5xl font-bold mb-4">Offset Your Carbon Footprint in Himachal Pradesh</h1>
+          <h1 className="text-3xl md:text-5xl font-bold mb-4">CSR Plantation Implementation Partner in Himachal</h1>
           <p className="text-lg max-w-2xl mx-auto opacity-90">
-            Verified plantation drives with transparent impact reporting. Partner with us for ESG-aligned sustainability initiatives.
+            We coordinate native tree plantation on verified farmer land and forest patches,
+            then deliver geo-tagged photos, survival tracking and CSR-ready documentation.
           </p>
           <Button size="lg" className="mt-8 gap-2 bg-primary-foreground text-primary hover:bg-primary-foreground/90" onClick={() => document.getElementById('csr-form')?.scrollIntoView({ behavior: 'smooth' })}>
-            Partner With Us <ArrowRight className="w-4 h-4" />
+            Request a CSR Proposal <ArrowRight className="w-4 h-4" />
           </Button>
         </div>
       </section>

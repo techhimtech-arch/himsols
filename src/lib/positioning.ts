@@ -9,8 +9,8 @@ export const POSITIONING = {
   },
   // The one positioning line used on hero, about and footer
   line: {
-    en: "Himsols is a tree plantation implementation partner in Himachal Pradesh — we plant native trees, geo-tag them and track survival. Free for farmers.",
-    hi: "हिमसोल्स हिमाचल प्रदेश में वृक्षारोपण कार्यान्वयन पार्टनर है — हम देशी पेड़ लगाते हैं, जियो-टैग करते हैं और सर्वाइवल ट्रैक करते हैं। किसानों के लिए नि:शुल्क।",
+    en: "Himsols is Himachal's plantation implementation partner. We coordinate native tree planting on verified farmer land and forest patches, then deliver geo-tagged photos, survival tracking and certificates.",
+    hi: "हिमसोल्स हिमाचल का वृक्षारोपण कार्यान्वयन पार्टनर है। हम सत्यापित किसान भूमि और वन क्षेत्रों पर देशी पेड़ लगाने का समन्वय करते हैं, फिर जियो-टैग फोटो, सर्वाइवल ट्रैकिंग और प्रमाण पत्र देते हैं।",
   },
 } as const;
 

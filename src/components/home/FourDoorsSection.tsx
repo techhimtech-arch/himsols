@@ -51,13 +51,13 @@ export const FourDoorsSection = memo(() => {
             One team, four ways in
           </span>
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mt-4 mb-4">
-            We plant trees in Himachal — pick your door
+            Himachal's plantation implementation partner
           </h2>
           <p className="text-muted-foreground">
-            Companies and schools fund large drives. Individuals and farmers request plantations.
-            Every tree gets the same plantation and proof process.
+            We coordinate native tree planting on verified farmer land and forest patches,
+            then deliver geo-tagged photos, survival tracking and certificates.
+            Pick the door that fits you.
           </p>
-
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
