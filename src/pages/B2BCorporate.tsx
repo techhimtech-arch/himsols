@@ -129,10 +129,10 @@ const B2BCorporate = () => {
               <span className="text-sm font-medium">For Businesses & Enterprises</span>
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
-              {getSetting("hero_title", "Himsols – Corporate Green Gifting")}
+              {getSetting("hero_title", "Himsols — Plantation Implementation Partner for CSR & Schools")}
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              {getSetting("hero_subtitle", "Transform your corporate gifting and CSR initiatives.")}
+              {getSetting("hero_subtitle", "We coordinate native tree plantation on verified farmer land and forest patches in Himachal, then deliver geo-tagged photos, survival tracking and CSR-ready reports.")}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="gap-2" onClick={() => document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' })}>
