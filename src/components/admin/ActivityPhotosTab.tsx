@@ -25,6 +25,16 @@ import { Plus, Pencil, Trash2, Loader2, Image, Upload, Images, X, CheckCircle } 
 import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/hooks/useAuth";
 import { compressImage, formatFileSize } from "@/lib/imageCompression";
+import { readExifGps, getDeviceLocation, GOOGLE_MAPS_LINK } from "@/lib/exifGps";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { MapPin, Crosshair, ExternalLink } from "lucide-react";
 
 interface PlantationPhoto {
   id: string;
@@ -33,6 +43,10 @@ interface PlantationPhoto {
   latitude: number | null;
   longitude: number | null;
   created_at: string;
+  batch_id?: string | null;
+  taken_at?: string | null;
+  gps_source?: string | null;
+  gps_accuracy_m?: number | null;
 }
 
 interface BulkUploadFile {
@@ -41,12 +55,24 @@ interface BulkUploadFile {
   caption: string;
   status: 'pending' | 'uploading' | 'done' | 'error';
   progress: number;
+  latitude: number | null;
+  longitude: number | null;
+  takenAt: string | null;
 }
+
+interface BatchOption {
+  batch_id: string;
+  species: string;
+  plantation_date: string;
+}
+
+const NO_BATCH = "__none__";
 
 export const ActivityPhotosTab = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [photos, setPhotos] = useState<PlantationPhoto[]>([]);
+  const [batches, setBatches] = useState<BatchOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [bulkDialogOpen, setBulkDialogOpen] = useState(false);
@@ -56,18 +82,25 @@ export const ActivityPhotosTab = () => {
     caption: "",
     latitude: "",
     longitude: "",
+    batchId: NO_BATCH,
+    takenAt: "",
   });
+  const [gpsSource, setGpsSource] = useState<string | null>(null);
+  const [gpsAccuracy, setGpsAccuracy] = useState<number | null>(null);
+  const [locating, setLocating] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [compressionInfo, setCompressionInfo] = useState<string | null>(null);
-  
+
   // Bulk upload state
   const [bulkFiles, setBulkFiles] = useState<BulkUploadFile[]>([]);
+  const [bulkBatchId, setBulkBatchId] = useState<string>(NO_BATCH);
   const [bulkUploading, setBulkUploading] = useState(false);
   const [bulkProgress, setBulkProgress] = useState(0);
 
   useEffect(() => {
     loadPhotos();
+    loadBatches();
   }, []);
 
   const loadPhotos = async () => {
@@ -91,13 +124,89 @@ export const ActivityPhotosTab = () => {
     }
   };
 
+  const loadBatches = async () => {
+    const { data, error } = await supabase
+      .from("tree_allocations")
+      .select("batch_id, species, plantation_date")
+      .not("batch_id", "is", null)
+      .order("plantation_date", { ascending: false })
+      .limit(200);
+
+    if (error) {
+      console.error("Error loading batches:", error);
+      return;
+    }
+    const seen = new Set<string>();
+    const unique: BatchOption[] = [];
+    (data || []).forEach((row: any) => {
+      if (row.batch_id && !seen.has(row.batch_id)) {
+        seen.add(row.batch_id);
+        unique.push(row as BatchOption);
+      }
+    });
+    setBatches(unique);
+  };
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const originalSize = file.size;
-      setSelectedFile(file);
-      setPreviewUrl(URL.createObjectURL(file));
-      setCompressionInfo(`Original: ${formatFileSize(originalSize)} → Will be compressed on upload`);
+    if (!file) return;
+
+    const originalSize = file.size;
+    setSelectedFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
+    setCompressionInfo(`Original: ${formatFileSize(originalSize)} → Will be compressed on upload`);
+
+    // Read GPS + capture time straight from the camera's EXIF data.
+    const exif = await readExifGps(file);
+    if (exif.latitude !== null && exif.longitude !== null) {
+      setFormData((prev) => ({
+        ...prev,
+        latitude: exif.latitude!.toFixed(6),
+        longitude: exif.longitude!.toFixed(6),
+        takenAt: exif.takenAt || prev.takenAt,
+      }));
+      setGpsSource("exif");
+      setGpsAccuracy(null);
+      toast({
+        title: "GPS found in photo",
+        description: `${exif.latitude.toFixed(5)}, ${exif.longitude.toFixed(5)} — read from camera metadata.`,
+      });
+    } else {
+      setGpsSource(null);
+      setGpsAccuracy(null);
+      setFormData((prev) => ({ ...prev, takenAt: exif.takenAt || prev.takenAt }));
+      toast({
+        title: "No GPS in this photo",
+        description:
+          "WhatsApp/screenshot images lose metadata. Use the original camera file, or tag with your current location while standing at the site.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const useCurrentLocation = async () => {
+    setLocating(true);
+    try {
+      const loc = await getDeviceLocation();
+      setFormData((prev) => ({
+        ...prev,
+        latitude: loc.latitude.toFixed(6),
+        longitude: loc.longitude.toFixed(6),
+      }));
+      setGpsSource("device");
+      setGpsAccuracy(Math.round(loc.accuracy));
+      toast({
+        title: "Location tagged",
+        description: `${loc.latitude.toFixed(5)}, ${loc.longitude.toFixed(5)} (±${Math.round(loc.accuracy)}m)`,
+      });
+    } catch (err: any) {
+      toast({
+        title: "Location failed",
+        description: err.message || "Could not read your location.",
+        variant: "destructive",
+      });
+    } finally {
+      setLocating(false);
     }
   };
 
@@ -128,16 +237,24 @@ export const ActivityPhotosTab = () => {
     return urlData.publicUrl;
   };
 
-  // Bulk upload handlers
-  const handleBulkFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Bulk upload handlers — EXIF GPS is read per file before compression
+  const handleBulkFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    const newFiles: BulkUploadFile[] = files.map(file => ({
-      file,
-      preview: URL.createObjectURL(file),
-      caption: "",
-      status: 'pending' as const,
-      progress: 0
-    }));
+    const newFiles: BulkUploadFile[] = await Promise.all(
+      files.map(async (file) => {
+        const exif = await readExifGps(file);
+        return {
+          file,
+          preview: URL.createObjectURL(file),
+          caption: "",
+          status: 'pending' as const,
+          progress: 0,
+          latitude: exif.latitude,
+          longitude: exif.longitude,
+          takenAt: exif.takenAt,
+        };
+      }),
+    );
     setBulkFiles(prev => [...prev, ...newFiles]);
   };
 
@@ -178,6 +295,11 @@ export const ActivityPhotosTab = () => {
             photo_url: photoUrl,
             caption: bulkFile.caption || null,
             uploaded_by: user.id,
+            batch_id: bulkBatchId === NO_BATCH ? null : bulkBatchId,
+            latitude: bulkFile.latitude,
+            longitude: bulkFile.longitude,
+            taken_at: bulkFile.takenAt,
+            gps_source: bulkFile.latitude !== null ? "exif" : null,
           });
 
         if (error) throw error;
@@ -303,7 +425,11 @@ export const ActivityPhotosTab = () => {
       caption: photo.caption || "",
       latitude: photo.latitude?.toString() || "",
       longitude: photo.longitude?.toString() || "",
+      batchId: photo.batch_id || NO_BATCH,
+      takenAt: photo.taken_at || "",
     });
+    setGpsSource(photo.gps_source || null);
+    setGpsAccuracy(photo.gps_accuracy_m ?? null);
     setPreviewUrl(photo.photo_url);
     setDialogOpen(true);
   };
@@ -332,7 +458,9 @@ export const ActivityPhotosTab = () => {
   };
 
   const resetForm = () => {
-    setFormData({ caption: "", latitude: "", longitude: "" });
+    setFormData({ caption: "", latitude: "", longitude: "", batchId: NO_BATCH, takenAt: "" });
+    setGpsSource(null);
+    setGpsAccuracy(null);
     setSelectedFile(null);
     setPreviewUrl(null);
     setCompressionInfo(null);

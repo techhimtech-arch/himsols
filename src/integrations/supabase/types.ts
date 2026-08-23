@@ -1786,36 +1786,48 @@ export type Database = {
       }
       plantation_photos: {
         Row: {
+          batch_id: string | null
           caption: string | null
           created_at: string | null
+          gps_accuracy_m: number | null
+          gps_source: string | null
           id: string
           latitude: number | null
           longitude: number | null
           order_id: string | null
           photo_url: string
           request_id: string | null
+          taken_at: string | null
           uploaded_by: string
         }
         Insert: {
+          batch_id?: string | null
           caption?: string | null
           created_at?: string | null
+          gps_accuracy_m?: number | null
+          gps_source?: string | null
           id?: string
           latitude?: number | null
           longitude?: number | null
           order_id?: string | null
           photo_url: string
           request_id?: string | null
+          taken_at?: string | null
           uploaded_by: string
         }
         Update: {
+          batch_id?: string | null
           caption?: string | null
           created_at?: string | null
+          gps_accuracy_m?: number | null
+          gps_source?: string | null
           id?: string
           latitude?: number | null
           longitude?: number | null
           order_id?: string | null
           photo_url?: string
           request_id?: string | null
+          taken_at?: string | null
           uploaded_by?: string
         }
         Relationships: [
@@ -2796,9 +2808,11 @@ export type Database = {
         Returns: {
           caption: string
           created_at: string
+          gps_source: string
           latitude: number
           longitude: number
           photo_url: string
+          taken_at: string
         }[]
       }
       get_public_batches: {
