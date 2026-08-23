@@ -25,6 +25,16 @@ import { Plus, Pencil, Trash2, Loader2, Image, Upload, Images, X, CheckCircle } 
 import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/hooks/useAuth";
 import { compressImage, formatFileSize } from "@/lib/imageCompression";
+import { readExifGps, getDeviceLocation, GOOGLE_MAPS_LINK } from "@/lib/exifGps";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { MapPin, Crosshair, ExternalLink } from "lucide-react";
 
 interface PlantationPhoto {
   id: string;
@@ -227,16 +237,24 @@ export const ActivityPhotosTab = () => {
     return urlData.publicUrl;
   };
 
-  // Bulk upload handlers
-  const handleBulkFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Bulk upload handlers — EXIF GPS is read per file before compression
+  const handleBulkFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    const newFiles: BulkUploadFile[] = files.map(file => ({
-      file,
-      preview: URL.createObjectURL(file),
-      caption: "",
-      status: 'pending' as const,
-      progress: 0
-    }));
+    const newFiles: BulkUploadFile[] = await Promise.all(
+      files.map(async (file) => {
+        const exif = await readExifGps(file);
+        return {
+          file,
+          preview: URL.createObjectURL(file),
+          caption: "",
+          status: 'pending' as const,
+          progress: 0,
+          latitude: exif.latitude,
+          longitude: exif.longitude,
+          takenAt: exif.takenAt,
+        };
+      }),
+    );
     setBulkFiles(prev => [...prev, ...newFiles]);
   };
 
@@ -402,7 +420,11 @@ export const ActivityPhotosTab = () => {
       caption: photo.caption || "",
       latitude: photo.latitude?.toString() || "",
       longitude: photo.longitude?.toString() || "",
+      batchId: photo.batch_id || NO_BATCH,
+      takenAt: photo.taken_at || "",
     });
+    setGpsSource(photo.gps_source || null);
+    setGpsAccuracy(photo.gps_accuracy_m ?? null);
     setPreviewUrl(photo.photo_url);
     setDialogOpen(true);
   };
@@ -431,7 +453,9 @@ export const ActivityPhotosTab = () => {
   };
 
   const resetForm = () => {
-    setFormData({ caption: "", latitude: "", longitude: "" });
+    setFormData({ caption: "", latitude: "", longitude: "", batchId: NO_BATCH, takenAt: "" });
+    setGpsSource(null);
+    setGpsAccuracy(null);
     setSelectedFile(null);
     setPreviewUrl(null);
     setCompressionInfo(null);
