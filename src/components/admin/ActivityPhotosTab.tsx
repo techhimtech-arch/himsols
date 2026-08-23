@@ -295,6 +295,11 @@ export const ActivityPhotosTab = () => {
             photo_url: photoUrl,
             caption: bulkFile.caption || null,
             uploaded_by: user.id,
+            batch_id: bulkBatchId === NO_BATCH ? null : bulkBatchId,
+            latitude: bulkFile.latitude,
+            longitude: bulkFile.longitude,
+            taken_at: bulkFile.takenAt,
+            gps_source: bulkFile.latitude !== null ? "exif" : null,
           });
 
         if (error) throw error;
