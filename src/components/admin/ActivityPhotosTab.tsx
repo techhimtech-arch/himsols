@@ -386,6 +386,10 @@ export const ActivityPhotosTab = () => {
         latitude: formData.latitude ? parseFloat(formData.latitude) : null,
         longitude: formData.longitude ? parseFloat(formData.longitude) : null,
         uploaded_by: user.id,
+        batch_id: formData.batchId === NO_BATCH ? null : formData.batchId,
+        taken_at: formData.takenAt || null,
+        gps_source: formData.latitude ? gpsSource || "manual" : null,
+        gps_accuracy_m: gpsAccuracy,
       };
 
       if (editingPhoto) {
