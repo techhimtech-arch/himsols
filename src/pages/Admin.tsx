@@ -21,6 +21,7 @@ import { SettingsTab } from "@/components/admin/SettingsTab";
 import { CorporateTab } from "@/components/admin/CorporateTab";
 import { BlogTab } from "@/components/admin/BlogTab";
 import { ActivityPhotosTab } from "@/components/admin/ActivityPhotosTab";
+import { PlantationBatchesTab } from "@/components/admin/PlantationBatchesTab";
 import { TestimonialsTab } from "@/components/admin/TestimonialsTab";
 import { ActivitiesTab } from "@/components/admin/ActivitiesTab";
 import { PartnerTypesTab } from "@/components/admin/PartnerTypesTab";
@@ -148,6 +149,7 @@ const Admin = () => {
                 <TabsTrigger value="donations" className="text-xs md:text-sm">Contributions</TabsTrigger>
                 <TabsTrigger value="photos" className="text-xs md:text-sm"><Image className="h-3 w-3 md:h-4 md:w-4 mr-1" />Photos</TabsTrigger>
                 <TabsTrigger value="blog" className="text-xs md:text-sm"><FileText className="h-3 w-3 md:h-4 md:w-4 mr-1" />Blog</TabsTrigger>
+                <TabsTrigger value="batches" className="text-xs md:text-sm"><MapPin className="h-3 w-3 md:h-4 md:w-4 mr-1" />Batches</TabsTrigger>
                 <TabsTrigger value="testimonials" className="text-xs md:text-sm"><Quote className="h-3 w-3 md:h-4 md:w-4 mr-1" />Reviews</TabsTrigger>
                 <TabsTrigger value="live-stats" className="text-xs md:text-sm"><BarChart3 className="h-3 w-3 md:h-4 md:w-4 mr-1" />Stats</TabsTrigger>
                 <TabsTrigger value="live-visitors" className="text-xs md:text-sm"><Activity className="h-3 w-3 md:h-4 md:w-4 mr-1" />Live</TabsTrigger>
@@ -198,6 +200,7 @@ const Admin = () => {
             <TabsContent value="trees"><TreesTab /></TabsContent>
             <TabsContent value="plants"><PlantsTab /></TabsContent>
             <TabsContent value="blog"><BlogTab /></TabsContent>
+            <TabsContent value="batches"><PlantationBatchesTab /></TabsContent>
             <TabsContent value="photos"><ActivityPhotosTab /></TabsContent>
             <TabsContent value="testimonials"><TestimonialsTab /></TabsContent>
             <TabsContent value="activities"><ActivitiesTab /></TabsContent>

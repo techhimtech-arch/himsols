@@ -125,27 +125,47 @@ export const ActivityPhotosTab = () => {
   };
 
   const loadBatches = async () => {
-    const { data, error } = await supabase
-      .from("tree_allocations")
-      .select("batch_id, species, plantation_date")
-      .not("batch_id", "is", null)
-      .order("plantation_date", { ascending: false })
-      .limit(200);
+    const [allocRes, ownRes] = await Promise.all([
+      supabase
+        .from("tree_allocations")
+        .select("batch_id, species, plantation_date")
+        .not("batch_id", "is", null)
+        .order("plantation_date", { ascending: false })
+        .limit(200),
+      supabase
+        .from("plantation_batches")
+        .select("batch_code, species, plantation_date")
+        .order("plantation_date", { ascending: false })
+        .limit(200),
+    ]);
 
-    if (error) {
-      console.error("Error loading batches:", error);
-      return;
-    }
+    if (allocRes.error) console.error("Error loading allocation batches:", allocRes.error);
+    if (ownRes.error) console.error("Error loading plantation batches:", ownRes.error);
+
+    const rows: BatchOption[] = [
+      ...(ownRes.data || []).map((r: any) => ({
+        batch_id: r.batch_code,
+        species: r.species,
+        plantation_date: r.plantation_date,
+      })),
+      ...(allocRes.data || []).map((r: any) => ({
+        batch_id: r.batch_id,
+        species: r.species,
+        plantation_date: r.plantation_date,
+      })),
+    ];
+
     const seen = new Set<string>();
     const unique: BatchOption[] = [];
-    (data || []).forEach((row: any) => {
+    rows.forEach((row) => {
       if (row.batch_id && !seen.has(row.batch_id)) {
         seen.add(row.batch_id);
-        unique.push(row as BatchOption);
+        unique.push(row);
       }
     });
     setBatches(unique);
   };
+
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -386,6 +406,10 @@ export const ActivityPhotosTab = () => {
         latitude: formData.latitude ? parseFloat(formData.latitude) : null,
         longitude: formData.longitude ? parseFloat(formData.longitude) : null,
         uploaded_by: user.id,
+        batch_id: formData.batchId === NO_BATCH ? null : formData.batchId,
+        taken_at: formData.takenAt || null,
+        gps_source: formData.latitude ? gpsSource || "manual" : null,
+        gps_accuracy_m: gpsAccuracy,
       };
 
       if (editingPhoto) {
@@ -508,6 +532,29 @@ export const ActivityPhotosTab = () => {
                 <DialogTitle>Bulk Upload Photos</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
+                {/* Batch link for the whole set */}
+                <div className="space-y-2">
+                  <Label>Link all photos to batch</Label>
+                  <Select
+                    value={bulkBatchId}
+                    onValueChange={setBulkBatchId}
+                    disabled={bulkUploading}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="No batch — gallery only" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value={NO_BATCH}>No batch — gallery only</SelectItem>
+                      {batches.map((b) => (
+                        <SelectItem key={b.batch_id} value={b.batch_id}>
+                          {b.batch_id} · {b.species} ·{" "}
+                          {new Date(b.plantation_date).toLocaleDateString("en-IN")}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 {/* File selector */}
                 <div className="space-y-2">
                   <Label>Select Multiple Images</Label>
@@ -520,7 +567,8 @@ export const ActivityPhotosTab = () => {
                     className="cursor-pointer"
                   />
                   <p className="text-xs text-muted-foreground">
-                    Images will be automatically compressed to max 1200x1200 @ 80% quality
+                    GPS and capture time are read from each photo's camera metadata before
+                    compression. Upload original files for real geo-tagged proof.
                   </p>
                 </div>
 
@@ -568,7 +616,13 @@ export const ActivityPhotosTab = () => {
                           />
                           <div className="flex items-center justify-between">
                             <span className="text-xs text-muted-foreground">
-                              {formatFileSize(bulkFile.file.size)}
+                              {bulkFile.latitude !== null ? (
+                                <Badge variant="secondary" className="text-[10px]">
+                                  <MapPin className="h-3 w-3 mr-1" />GPS
+                                </Badge>
+                              ) : (
+                                <Badge variant="destructive" className="text-[10px]">No GPS</Badge>
+                              )}
                             </span>
                             {bulkFile.status === 'done' && (
                               <CheckCircle className="h-4 w-4 text-green-500" />
@@ -687,29 +741,134 @@ export const ActivityPhotosTab = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="latitude">Latitude (optional)</Label>
+              <div className="space-y-2">
+                <Label>Link to plantation batch (recommended)</Label>
+                <Select
+                  value={formData.batchId}
+                  onValueChange={(v) => setFormData({ ...formData, batchId: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="No batch — gallery only" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={NO_BATCH}>No batch — gallery only</SelectItem>
+                    {batches.map((b) => (
+                      <SelectItem key={b.batch_id} value={b.batch_id}>
+                        {b.batch_id} · {b.species} ·{" "}
+                        {new Date(b.plantation_date).toLocaleDateString("en-IN")}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  Linked photos appear on the public proof page /batch/&lt;code&gt;.
+                </p>
+              </div>
+
+              {/* GPS proof block */}
+              <div className="space-y-3 rounded-lg border border-border p-3">
+                <div className="flex items-center justify-between gap-2">
+                  <Label className="flex items-center gap-1.5">
+                    <MapPin className="h-4 w-4 text-primary" />
+                    GPS proof
+                  </Label>
+                  {gpsSource === "exif" && <Badge variant="secondary">From camera EXIF</Badge>}
+                  {gpsSource === "device" && (
+                    <Badge variant="secondary">
+                      Device location{gpsAccuracy ? ` ±${gpsAccuracy}m` : ""}
+                    </Badge>
+                  )}
+                  {gpsSource === "manual" && <Badge variant="outline">Entered manually</Badge>}
+                  {!gpsSource && !formData.latitude && (
+                    <Badge variant="destructive">No GPS yet</Badge>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="latitude" className="text-xs">Latitude</Label>
+                    <Input
+                      id="latitude"
+                      type="number"
+                      step="any"
+                      value={formData.latitude}
+                      onChange={(e) => {
+                        setFormData({ ...formData, latitude: e.target.value });
+                        setGpsSource("manual");
+                        setGpsAccuracy(null);
+                      }}
+                      placeholder="31.1048"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="longitude" className="text-xs">Longitude</Label>
+                    <Input
+                      id="longitude"
+                      type="number"
+                      step="any"
+                      value={formData.longitude}
+                      onChange={(e) => {
+                        setFormData({ ...formData, longitude: e.target.value });
+                        setGpsSource("manual");
+                        setGpsAccuracy(null);
+                      }}
+                      placeholder="77.1734"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={useCurrentLocation}
+                    disabled={locating}
+                  >
+                    {locating ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Crosshair className="h-4 w-4 mr-2" />
+                    )}
+                    Use my current location
+                  </Button>
+                  {formData.latitude && formData.longitude && (
+                    <a
+                      href={GOOGLE_MAPS_LINK(
+                        parseFloat(formData.latitude),
+                        parseFloat(formData.longitude),
+                      )}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-xs text-primary underline"
+                    >
+                      Verify on map <ExternalLink className="h-3 w-3" />
+                    </a>
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="takenAt" className="text-xs">
+                    Photo taken at (auto-filled from camera when available)
+                  </Label>
                   <Input
-                    id="latitude"
-                    type="number"
-                    step="any"
-                    value={formData.latitude}
-                    onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
-                    placeholder="31.1048"
+                    id="takenAt"
+                    type="datetime-local"
+                    value={formData.takenAt ? formData.takenAt.slice(0, 16) : ""}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        takenAt: e.target.value ? new Date(e.target.value).toISOString() : "",
+                      })
+                    }
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="longitude">Longitude (optional)</Label>
-                  <Input
-                    id="longitude"
-                    type="number"
-                    step="any"
-                    value={formData.longitude}
-                    onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
-                    placeholder="77.1734"
-                  />
-                </div>
+
+                <p className="text-xs text-muted-foreground">
+                  Best proof: upload the <strong>original camera file</strong> (not a WhatsApp
+                  forward) — GPS and time are read automatically. If metadata is missing, stand at
+                  the site and tag your current location.
+                </p>
               </div>
 
               <div className="flex gap-2 justify-end">
@@ -772,7 +931,8 @@ export const ActivityPhotosTab = () => {
                   <TableRow>
                     <TableHead className="w-24">Photo</TableHead>
                     <TableHead>Caption</TableHead>
-                    <TableHead>Location</TableHead>
+                    <TableHead>Batch</TableHead>
+                    <TableHead>GPS proof</TableHead>
                     <TableHead>Date</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
@@ -790,12 +950,39 @@ export const ActivityPhotosTab = () => {
                       <TableCell className="max-w-xs truncate">
                         {photo.caption || "-"}
                       </TableCell>
-                      <TableCell>
-                        {photo.latitude && photo.longitude
-                          ? `${photo.latitude.toFixed(4)}, ${photo.longitude.toFixed(4)}`
-                          : "-"}
+                      <TableCell className="font-mono text-xs">
+                        {photo.batch_id || "-"}
                       </TableCell>
-                      <TableCell>{formatDate(photo.created_at)}</TableCell>
+                      <TableCell>
+                        {photo.latitude && photo.longitude ? (
+                          <div className="space-y-1">
+                            <a
+                              href={GOOGLE_MAPS_LINK(photo.latitude, photo.longitude)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-primary underline inline-flex items-center gap-1"
+                            >
+                              {photo.latitude.toFixed(4)}, {photo.longitude.toFixed(4)}
+                              <ExternalLink className="h-3 w-3" />
+                            </a>
+                            <div>
+                              <Badge
+                                variant={photo.gps_source === "exif" ? "secondary" : "outline"}
+                                className="text-[10px]"
+                              >
+                                {photo.gps_source === "exif"
+                                  ? "camera EXIF"
+                                  : photo.gps_source === "device"
+                                    ? "device"
+                                    : "manual"}
+                              </Badge>
+                            </div>
+                          </div>
+                        ) : (
+                          <Badge variant="destructive" className="text-[10px]">No GPS</Badge>
+                        )}
+                      </TableCell>
+                      <TableCell>{formatDate(photo.taken_at || photo.created_at)}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex gap-2 justify-end">
                           <Button size="sm" variant="outline" onClick={() => handleEdit(photo)}>
