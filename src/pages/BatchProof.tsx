@@ -38,6 +38,7 @@ const BatchProof = () => {
   });
 
   const co2 = batch ? ((batch.tree_count * CO2_PER_TREE_PER_YEAR) / 1000).toFixed(2) : "0";
+  const geoCount = photos.filter((p: any) => p.latitude && p.longitude).length;
 
   return (
     <div className="min-h-screen bg-background">
@@ -134,10 +135,15 @@ const BatchProof = () => {
                 </CardContent>
               </Card>
 
-              <h2 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
+              <h2 className="text-xl font-bold text-foreground mb-2 flex items-center gap-2">
                 <Camera className="h-5 w-5 text-primary" />
                 Photos ({photos.length})
               </h2>
+              {photos.length > 0 && (
+                <p className="text-sm text-muted-foreground mb-4">
+                  {geoCount} of {photos.length} photos carry GPS coordinates you can open on a map.
+                </p>
+              )}
               {photos.length === 0 ? (
                 <p className="text-muted-foreground mb-8">
                   Photos for this batch are being uploaded — check back shortly.
@@ -152,11 +158,25 @@ const BatchProof = () => {
                         loading="lazy"
                         className="w-full h-48 object-cover"
                       />
-                      <figcaption className="p-3 text-xs text-muted-foreground">
-                        {p.caption || "Plantation photo"}
-                        {p.latitude && p.longitude
-                          ? ` · ${Number(p.latitude).toFixed(4)}, ${Number(p.longitude).toFixed(4)}`
-                          : ""}
+                      <figcaption className="p-3 text-xs text-muted-foreground space-y-1">
+                        <p>{p.caption || "Plantation photo"}</p>
+                        {p.taken_at && (
+                          <p>Taken {new Date(p.taken_at).toLocaleString("en-IN")}</p>
+                        )}
+                        {p.latitude && p.longitude ? (
+                          <a
+                            href={`https://www.google.com/maps?q=${p.latitude},${p.longitude}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-primary underline"
+                          >
+                            <MapPin className="h-3 w-3" />
+                            {Number(p.latitude).toFixed(5)}, {Number(p.longitude).toFixed(5)}
+                            {p.gps_source === "exif" ? " · from camera" : ""}
+                          </a>
+                        ) : (
+                          <p className="italic">No GPS metadata on this photo.</p>
+                        )}
                       </figcaption>
                     </figure>
                   ))}
