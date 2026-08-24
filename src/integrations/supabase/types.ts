@@ -1784,6 +1784,69 @@ export type Database = {
           },
         ]
       }
+      plantation_batches: {
+        Row: {
+          batch_code: string
+          created_at: string
+          created_by: string | null
+          district: string | null
+          id: string
+          is_public: boolean
+          latitude: number | null
+          longitude: number | null
+          notes: string | null
+          plantation_date: string
+          review_date: string | null
+          species: string
+          status: string
+          title: string | null
+          tree_count: number
+          trees_alive: number | null
+          updated_at: string
+          village: string | null
+        }
+        Insert: {
+          batch_code: string
+          created_at?: string
+          created_by?: string | null
+          district?: string | null
+          id?: string
+          is_public?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          notes?: string | null
+          plantation_date?: string
+          review_date?: string | null
+          species?: string
+          status?: string
+          title?: string | null
+          tree_count?: number
+          trees_alive?: number | null
+          updated_at?: string
+          village?: string | null
+        }
+        Update: {
+          batch_code?: string
+          created_at?: string
+          created_by?: string | null
+          district?: string | null
+          id?: string
+          is_public?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          notes?: string | null
+          plantation_date?: string
+          review_date?: string | null
+          species?: string
+          status?: string
+          title?: string | null
+          tree_count?: number
+          trees_alive?: number | null
+          updated_at?: string
+          village?: string | null
+        }
+        Relationships: []
+      }
       plantation_photos: {
         Row: {
           batch_id: string | null
