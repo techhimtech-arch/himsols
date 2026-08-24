@@ -125,27 +125,47 @@ export const ActivityPhotosTab = () => {
   };
 
   const loadBatches = async () => {
-    const { data, error } = await supabase
-      .from("tree_allocations")
-      .select("batch_id, species, plantation_date")
-      .not("batch_id", "is", null)
-      .order("plantation_date", { ascending: false })
-      .limit(200);
+    const [allocRes, ownRes] = await Promise.all([
+      supabase
+        .from("tree_allocations")
+        .select("batch_id, species, plantation_date")
+        .not("batch_id", "is", null)
+        .order("plantation_date", { ascending: false })
+        .limit(200),
+      supabase
+        .from("plantation_batches")
+        .select("batch_code, species, plantation_date")
+        .order("plantation_date", { ascending: false })
+        .limit(200),
+    ]);
 
-    if (error) {
-      console.error("Error loading batches:", error);
-      return;
-    }
+    if (allocRes.error) console.error("Error loading allocation batches:", allocRes.error);
+    if (ownRes.error) console.error("Error loading plantation batches:", ownRes.error);
+
+    const rows: BatchOption[] = [
+      ...(ownRes.data || []).map((r: any) => ({
+        batch_id: r.batch_code,
+        species: r.species,
+        plantation_date: r.plantation_date,
+      })),
+      ...(allocRes.data || []).map((r: any) => ({
+        batch_id: r.batch_id,
+        species: r.species,
+        plantation_date: r.plantation_date,
+      })),
+    ];
+
     const seen = new Set<string>();
     const unique: BatchOption[] = [];
-    (data || []).forEach((row: any) => {
+    rows.forEach((row) => {
       if (row.batch_id && !seen.has(row.batch_id)) {
         seen.add(row.batch_id);
-        unique.push(row as BatchOption);
+        unique.push(row);
       }
     });
     setBatches(unique);
   };
+
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
