@@ -596,7 +596,13 @@ export const ActivityPhotosTab = () => {
                           />
                           <div className="flex items-center justify-between">
                             <span className="text-xs text-muted-foreground">
-                              {formatFileSize(bulkFile.file.size)}
+                              {bulkFile.latitude !== null ? (
+                                <Badge variant="secondary" className="text-[10px]">
+                                  <MapPin className="h-3 w-3 mr-1" />GPS
+                                </Badge>
+                              ) : (
+                                <Badge variant="destructive" className="text-[10px]">No GPS</Badge>
+                              )}
                             </span>
                             {bulkFile.status === 'done' && (
                               <CheckCircle className="h-4 w-4 text-green-500" />
@@ -905,7 +911,8 @@ export const ActivityPhotosTab = () => {
                   <TableRow>
                     <TableHead className="w-24">Photo</TableHead>
                     <TableHead>Caption</TableHead>
-                    <TableHead>Location</TableHead>
+                    <TableHead>Batch</TableHead>
+                    <TableHead>GPS proof</TableHead>
                     <TableHead>Date</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
@@ -923,12 +930,39 @@ export const ActivityPhotosTab = () => {
                       <TableCell className="max-w-xs truncate">
                         {photo.caption || "-"}
                       </TableCell>
-                      <TableCell>
-                        {photo.latitude && photo.longitude
-                          ? `${photo.latitude.toFixed(4)}, ${photo.longitude.toFixed(4)}`
-                          : "-"}
+                      <TableCell className="font-mono text-xs">
+                        {photo.batch_id || "-"}
                       </TableCell>
-                      <TableCell>{formatDate(photo.created_at)}</TableCell>
+                      <TableCell>
+                        {photo.latitude && photo.longitude ? (
+                          <div className="space-y-1">
+                            <a
+                              href={GOOGLE_MAPS_LINK(photo.latitude, photo.longitude)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-primary underline inline-flex items-center gap-1"
+                            >
+                              {photo.latitude.toFixed(4)}, {photo.longitude.toFixed(4)}
+                              <ExternalLink className="h-3 w-3" />
+                            </a>
+                            <div>
+                              <Badge
+                                variant={photo.gps_source === "exif" ? "secondary" : "outline"}
+                                className="text-[10px]"
+                              >
+                                {photo.gps_source === "exif"
+                                  ? "camera EXIF"
+                                  : photo.gps_source === "device"
+                                    ? "device"
+                                    : "manual"}
+                              </Badge>
+                            </div>
+                          </div>
+                        ) : (
+                          <Badge variant="destructive" className="text-[10px]">No GPS</Badge>
+                        )}
+                      </TableCell>
+                      <TableCell>{formatDate(photo.taken_at || photo.created_at)}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex gap-2 justify-end">
                           <Button size="sm" variant="outline" onClick={() => handleEdit(photo)}>
