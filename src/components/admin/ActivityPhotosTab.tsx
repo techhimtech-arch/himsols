@@ -512,6 +512,29 @@ export const ActivityPhotosTab = () => {
                 <DialogTitle>Bulk Upload Photos</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
+                {/* Batch link for the whole set */}
+                <div className="space-y-2">
+                  <Label>Link all photos to batch</Label>
+                  <Select
+                    value={bulkBatchId}
+                    onValueChange={setBulkBatchId}
+                    disabled={bulkUploading}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="No batch — gallery only" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value={NO_BATCH}>No batch — gallery only</SelectItem>
+                      {batches.map((b) => (
+                        <SelectItem key={b.batch_id} value={b.batch_id}>
+                          {b.batch_id} · {b.species} ·{" "}
+                          {new Date(b.plantation_date).toLocaleDateString("en-IN")}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 {/* File selector */}
                 <div className="space-y-2">
                   <Label>Select Multiple Images</Label>
@@ -524,7 +547,8 @@ export const ActivityPhotosTab = () => {
                     className="cursor-pointer"
                   />
                   <p className="text-xs text-muted-foreground">
-                    Images will be automatically compressed to max 1200x1200 @ 80% quality
+                    GPS and capture time are read from each photo's camera metadata before
+                    compression. Upload original files for real geo-tagged proof.
                   </p>
                 </div>
 
@@ -691,29 +715,134 @@ export const ActivityPhotosTab = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="latitude">Latitude (optional)</Label>
+              <div className="space-y-2">
+                <Label>Link to plantation batch (recommended)</Label>
+                <Select
+                  value={formData.batchId}
+                  onValueChange={(v) => setFormData({ ...formData, batchId: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="No batch — gallery only" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={NO_BATCH}>No batch — gallery only</SelectItem>
+                    {batches.map((b) => (
+                      <SelectItem key={b.batch_id} value={b.batch_id}>
+                        {b.batch_id} · {b.species} ·{" "}
+                        {new Date(b.plantation_date).toLocaleDateString("en-IN")}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  Linked photos appear on the public proof page /batch/&lt;code&gt;.
+                </p>
+              </div>
+
+              {/* GPS proof block */}
+              <div className="space-y-3 rounded-lg border border-border p-3">
+                <div className="flex items-center justify-between gap-2">
+                  <Label className="flex items-center gap-1.5">
+                    <MapPin className="h-4 w-4 text-primary" />
+                    GPS proof
+                  </Label>
+                  {gpsSource === "exif" && <Badge variant="secondary">From camera EXIF</Badge>}
+                  {gpsSource === "device" && (
+                    <Badge variant="secondary">
+                      Device location{gpsAccuracy ? ` ±${gpsAccuracy}m` : ""}
+                    </Badge>
+                  )}
+                  {gpsSource === "manual" && <Badge variant="outline">Entered manually</Badge>}
+                  {!gpsSource && !formData.latitude && (
+                    <Badge variant="destructive">No GPS yet</Badge>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="latitude" className="text-xs">Latitude</Label>
+                    <Input
+                      id="latitude"
+                      type="number"
+                      step="any"
+                      value={formData.latitude}
+                      onChange={(e) => {
+                        setFormData({ ...formData, latitude: e.target.value });
+                        setGpsSource("manual");
+                        setGpsAccuracy(null);
+                      }}
+                      placeholder="31.1048"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="longitude" className="text-xs">Longitude</Label>
+                    <Input
+                      id="longitude"
+                      type="number"
+                      step="any"
+                      value={formData.longitude}
+                      onChange={(e) => {
+                        setFormData({ ...formData, longitude: e.target.value });
+                        setGpsSource("manual");
+                        setGpsAccuracy(null);
+                      }}
+                      placeholder="77.1734"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={useCurrentLocation}
+                    disabled={locating}
+                  >
+                    {locating ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Crosshair className="h-4 w-4 mr-2" />
+                    )}
+                    Use my current location
+                  </Button>
+                  {formData.latitude && formData.longitude && (
+                    <a
+                      href={GOOGLE_MAPS_LINK(
+                        parseFloat(formData.latitude),
+                        parseFloat(formData.longitude),
+                      )}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-xs text-primary underline"
+                    >
+                      Verify on map <ExternalLink className="h-3 w-3" />
+                    </a>
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="takenAt" className="text-xs">
+                    Photo taken at (auto-filled from camera when available)
+                  </Label>
                   <Input
-                    id="latitude"
-                    type="number"
-                    step="any"
-                    value={formData.latitude}
-                    onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
-                    placeholder="31.1048"
+                    id="takenAt"
+                    type="datetime-local"
+                    value={formData.takenAt ? formData.takenAt.slice(0, 16) : ""}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        takenAt: e.target.value ? new Date(e.target.value).toISOString() : "",
+                      })
+                    }
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="longitude">Longitude (optional)</Label>
-                  <Input
-                    id="longitude"
-                    type="number"
-                    step="any"
-                    value={formData.longitude}
-                    onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
-                    placeholder="77.1734"
-                  />
-                </div>
+
+                <p className="text-xs text-muted-foreground">
+                  Best proof: upload the <strong>original camera file</strong> (not a WhatsApp
+                  forward) — GPS and time are read automatically. If metadata is missing, stand at
+                  the site and tag your current location.
+                </p>
               </div>
 
               <div className="flex gap-2 justify-end">
