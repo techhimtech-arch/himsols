@@ -162,6 +162,7 @@ const PlantTreesForUseCase = () => {
       <LeadCaptureForm
         source={`use-case:${data.slug}`}
         contextLabel={data.title}
+        title="Plan your plantation"
         defaultTrees={25}
         className="bg-muted/40"
       />
