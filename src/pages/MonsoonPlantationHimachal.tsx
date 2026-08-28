@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { LeadCaptureForm } from "@/components/leads/LeadCaptureForm";
 import { SEO } from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -395,6 +396,13 @@ const MonsoonPlantationHimachal = () => {
           </div>
         </div>
       </section>
+
+      <LeadCaptureForm
+        source="monsoon-2026"
+        contextLabel="Himachal Pradesh (Monsoon 2026)"
+        defaultTrees={500}
+        className="bg-muted/40"
+      />
 
       <Footer />
     </div>

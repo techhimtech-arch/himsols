@@ -1,6 +1,7 @@
 import { useParams, Link, Navigate } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { LeadCaptureForm } from "@/components/leads/LeadCaptureForm";
 import { SEO } from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -157,6 +158,14 @@ const PlantTreesForUseCase = () => {
           </div>
         </div>
       </section>
+
+      <LeadCaptureForm
+        source={`use-case:${data.slug}`}
+        contextLabel={data.title}
+        title="Plan your plantation"
+        defaultTrees={25}
+        className="bg-muted/40"
+      />
 
       <Footer />
     </div>

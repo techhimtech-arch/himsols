@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useParams, Link, Navigate } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { LeadCaptureForm } from "@/components/leads/LeadCaptureForm";
 import { SEO } from "@/components/SEO";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Button } from "@/components/ui/button";
@@ -255,6 +256,13 @@ const SustainabilityDayPage = () => {
           </div>
         </div>
       </section>
+
+      <LeadCaptureForm
+        source={`day:${day.slug}`}
+        contextLabel={day.name}
+        defaultTrees={50}
+        className="bg-muted/40"
+      />
 
       <Footer />
     </div>
