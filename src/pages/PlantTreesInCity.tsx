@@ -1,6 +1,7 @@
 import { useParams, Link, Navigate } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { LeadCaptureForm } from "@/components/leads/LeadCaptureForm";
 import { SEO } from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -161,6 +162,13 @@ const PlantTreesInCity = () => {
           </div>
         </div>
       </section>
+
+      <LeadCaptureForm
+        source={`city:${data.slug}`}
+        contextLabel={data.name}
+        defaultTrees={100}
+        className="bg-muted/40"
+      />
 
       <Footer />
     </div>
