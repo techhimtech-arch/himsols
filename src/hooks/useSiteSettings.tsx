@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 export interface SiteSettings {
   contact_phone: string;
   contact_email: string;
+  contact_email_secondary: string;
   whatsapp_number: string;
   whatsapp_enabled: string;
   facebook_url: string;
