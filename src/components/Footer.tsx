@@ -189,6 +189,12 @@ export const Footer = () => {
                       <span className="truncate">{settings.contact_email}</span>
                     </li>
                   )}
+                  {settings?.contact_email_secondary && (
+                    <li className="flex items-center gap-2 text-muted-foreground text-xs md:text-sm">
+                      <Mail className="h-3.5 w-3.5 md:h-4 md:w-4 text-primary flex-shrink-0" />
+                      <span className="truncate">{settings.contact_email_secondary}</span>
+                    </li>
+                  )}
                   {settings?.contact_phone && (
                     <li className="flex items-center gap-2 text-muted-foreground text-xs md:text-sm">
                       <Phone className="h-3.5 w-3.5 md:h-4 md:w-4 text-primary flex-shrink-0" />
