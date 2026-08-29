@@ -40,6 +40,7 @@ export const SettingsTab = () => {
       setFormData({
         contact_phone: settings.contact_phone || "",
         contact_email: settings.contact_email || "",
+        contact_email_secondary: settings.contact_email_secondary || "",
         whatsapp_number: settings.whatsapp_number || "",
         whatsapp_enabled: settings.whatsapp_enabled === "true",
         facebook_url: settings.facebook_url || "",
@@ -121,6 +122,7 @@ export const SettingsTab = () => {
       await Promise.all([
         updateSetting.mutateAsync({ key: "contact_phone", value: formData.contact_phone }),
         updateSetting.mutateAsync({ key: "contact_email", value: formData.contact_email }),
+        updateSetting.mutateAsync({ key: "contact_email_secondary", value: formData.contact_email_secondary }),
         updateSetting.mutateAsync({ key: "whatsapp_number", value: formData.whatsapp_number }),
         updateSetting.mutateAsync({ key: "whatsapp_enabled", value: formData.whatsapp_enabled ? "true" : "false" }),
         updateSetting.mutateAsync({ key: "facebook_url", value: formData.facebook_url }),
@@ -251,6 +253,19 @@ export const SettingsTab = () => {
                 value={formData.contact_email}
                 onChange={(e) => setFormData({ ...formData, contact_email: e.target.value })}
                 placeholder="info@himsols.online"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="contact_email_secondary" className="flex items-center gap-2">
+                <Mail className="h-4 w-4" />
+                Secondary Email
+              </Label>
+              <Input
+                id="contact_email_secondary"
+                type="email"
+                value={formData.contact_email_secondary}
+                onChange={(e) => setFormData({ ...formData, contact_email_secondary: e.target.value })}
+                placeholder="connect.himsols@gmail.com"
               />
             </div>
           </div>
