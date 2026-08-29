@@ -17,6 +17,7 @@ export const SettingsTab = () => {
   const [formData, setFormData] = useState({
     contact_phone: "",
     contact_email: "",
+    contact_email_secondary: "",
     whatsapp_number: "",
     whatsapp_enabled: false,
     facebook_url: "",
