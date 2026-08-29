@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { Logo } from "@/components/Logo";
+import { CartSheet } from "@/components/CartSheet";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -111,6 +112,8 @@ export const Navbar = () => {
               </Button>
             </Link>
 
+            <CartSheet />
+
             <LanguageToggle />
 
             {user ? (
@@ -141,6 +144,7 @@ export const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-2">
+            <CartSheet />
             <LanguageToggle />
             <Button
               variant="ghost"
