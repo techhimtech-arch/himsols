@@ -23,7 +23,7 @@ PUBLIC_ROUTES = [
     "/",
     "/about",
     "/corporate",
-    "/school-program",
+    "/schools",
     "/tree-plantation",
     "/partner-with-us",
     "/learn",
