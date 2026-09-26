@@ -1,0 +1,1 @@
+- WhatsApp enquiries use the existing public lead tables and only offer a prefilled wa.me handoff after a successful save; this keeps visitor contact details in the admin inbox without implying WhatsApp delivery or adding unsupported inbound automation.

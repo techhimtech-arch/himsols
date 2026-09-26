@@ -1,0 +1,3 @@
+- [ ] Add quick WhatsApp enquiry choices and capture contact details before chat opens.
+- [ ] Keep existing lead-page WhatsApp handoff tied to a saved enquiry.
+- [ ] Verify public enquiry submission and clarify WhatsApp auto-reply limitation.
