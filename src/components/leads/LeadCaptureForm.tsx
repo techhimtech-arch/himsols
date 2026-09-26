@@ -162,13 +162,6 @@ export const LeadCaptureForm = ({
                       <Send className="h-4 w-4 mr-2" />
                       {submitting ? "Sending…" : "Send request"}
                     </Button>
-                    {waLink && (
-                      <Button asChild type="button" variant="outline" size="lg">
-                        <a href={waLink} target="_blank" rel="noopener noreferrer">
-                          <MessageCircle className="h-4 w-4 mr-2" /> WhatsApp
-                        </a>
-                      </Button>
-                    )}
                   </div>
                 </form>
               </>
